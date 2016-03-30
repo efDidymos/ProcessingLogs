@@ -35,10 +35,13 @@ public:
 
     void printRows()
     {
-        prevPos = prevRows->read(prevPos, std::ios_base::beg);
+//        prevPos = prevRows->read(prevPos, std::ios_base::beg);
+//        prevRows->read(positionAtLadder.back(), std::ios_base::beg);
 
-        currPos = currRows->read(currPos, std::ios_base::beg);
-        prevPos = prevPos - currPos;
+
+//        currPos = currRows->read(currPos, std::ios_base::beg);
+        currPos = currRows->read(positionAtLadder.back(), std::ios_base::beg);
+//        prevPos = prevPos - currPos;
         positionAtLadder.push_back(currPos);
 
         nextPos = nextRows->read(currPos, std::ios_base::beg);
@@ -69,16 +72,10 @@ private:
     void swapToNext()
     {
         auto temp = prevRows;
-
         prevRows = currRows;
-        prevPos = currPos;
-
         currRows = nextRows;
-        currPos = nextPos;
-
         nextRows = temp;
 
-//        nextPos = nextRows->read(nextPos, std::ios_base::beg);
         nextPos = nextRows->read(positionAtLadder.back(), std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
     }
@@ -87,22 +84,17 @@ private:
     void swapToPrevious()
     {
         auto temp = nextRows;
-
         nextRows = currRows;
-        nextPos = currPos;
-
         currRows = prevRows;
-        currPos = prevPos;
-
         prevRows = temp;
 
-        // Climb up the ladder
-        positionAtLadder.pop_back();
-        positionAtLadder.pop_back();
-        positionAtLadder.pop_back();
+        // Climb up the ladder by one setp
         positionAtLadder.pop_back();
 
-        prevPos = prevRows->read(positionAtLadder.back(), std::ios_base::beg);
+//        std::cout << "second to last: " << positionAtLadder.end()[-3] << std::endl;
+
+        // Climb up the ladder by three setps only for looking
+        prevPos = prevRows->read(positionAtLadder.end()[-3], std::ios_base::beg);
     }
 
     unsigned short int rowCount;

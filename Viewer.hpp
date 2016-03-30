@@ -19,6 +19,8 @@ public:
         // Calculating size of the terminal
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
+//        std::cout << "size=" << size.ws_row << std::endl;
+
         rows = size.ws_row;
         if (rows == 0) rows = 10;
 

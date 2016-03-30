@@ -25,9 +25,9 @@ void UnzipedFileStrategy::execute()
         theLog.printRows();
         w.printCmd();
 
+        // Black magic to prevent Linux from buffering keystrokes.
         // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
         // http://stackoverflow.com/a/912796
-        // Black magic to prevent Linux from buffering keystrokes.
         struct termios t;
         tcgetattr(STDIN_FILENO, &t);
         t.c_lflag &= ~ICANON;
@@ -50,6 +50,9 @@ void UnzipedFileStrategy::execute()
             }
             else if (c == 'f')
                 w.printFilterCmd();
+//            else if (c == '1')
+//            else if (c == '2')
+//            else if (c == '3')
 
             std::cin.get(c);
         }
