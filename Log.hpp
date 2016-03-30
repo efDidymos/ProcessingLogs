@@ -8,13 +8,12 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
-#include <algorithm>
 #include "Rows.hpp"
 
 class Log
 {
 public:
-    Log(int rwCnt, std::ifstream *file)
+    Log(unsigned short int rwCnt, std::ifstream *file)
         :
         rowCount(rwCnt),
         prevPos(0),
@@ -106,7 +105,7 @@ private:
         prevPos = prevRows->read(positionAtLadder.back(), std::ios_base::beg);
     }
 
-    int rowCount;
+    unsigned short int rowCount;
 
     std::vector<long> positionAtLadder;
 

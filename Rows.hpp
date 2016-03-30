@@ -11,7 +11,7 @@
 class Rows
 {
 public:
-    Rows(std::ifstream *pFin, int rowCount)
+    Rows(std::ifstream *pFin, unsigned short int rowCount)
         :
         pFin(pFin),
         rowCount(rowCount)
@@ -48,7 +48,7 @@ public:
 
 private:
     std::ifstream *pFin;
-    int rowCount;
+    unsigned short int rowCount;
     std::vector<std::string> rows;
 };
 

@@ -2,8 +2,10 @@
 // Created by tomas on 28.3.2016.
 //
 
+#include <termio.h>
 #include "UnzipedFileStrategy.h"
 #include "../Log.hpp"
+#include "../Viewer.hpp"
 
 void UnzipedFileStrategy::execute()
 {
@@ -15,17 +17,42 @@ void UnzipedFileStrategy::execute()
     {
         std::cout << "The file opened successfully" << std::endl;
 
-        Log theLog(10, &fin);
+        Viewer w;
+        unsigned short int rowCount = w.getRows();
+
+        // (rowCount - 2) - last two lines are for displaying pseudo menu
+        Log theLog((rowCount - 2), &fin);
         theLog.printRows();
+        w.printCmd();
 
-        std::cout << "moving next" << std::endl;
-        theLog.next();
+        // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
+        // http://stackoverflow.com/a/912796
+        // Black magic to prevent Linux from buffering keystrokes.
+        struct termios t;
+        tcgetattr(STDIN_FILENO, &t);
+        t.c_lflag &= ~ICANON;
+        tcsetattr(STDIN_FILENO, TCSANOW, &t);
 
-        std::cout << "moving previous" << std::endl;
-        theLog.previous();
+        char c = ' ';
+        std::cin.get(c);
 
-        std::cout << "moving next" << std::endl;
-        theLog.next();
+        while (c != 'q')
+        {
+            if (c == 'j')
+            {
+                theLog.next();
+                w.printCmd();
+            }
+            else if (c == 'k')
+            {
+                theLog.previous();
+                w.printCmd();
+            }
+            else if (c == 'f')
+                w.printFilterCmd();
+
+            std::cin.get(c);
+        }
 
         // fastest way of print file
 //        cout << fin.rdbuf();

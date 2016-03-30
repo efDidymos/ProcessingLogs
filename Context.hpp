@@ -12,7 +12,6 @@ class Context
 public:
     Context()
     { }
-//    Context(StrategyInterface *s) : strategy(s) { }
 
     void setStrategy(StrategyInterface *s)
     {
