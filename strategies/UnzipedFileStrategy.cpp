@@ -3,6 +3,7 @@
 //
 
 #include "UnzipedFileStrategy.h"
+#include "../Log.hpp"
 
 void UnzipedFileStrategy::execute()
 {
@@ -14,22 +15,12 @@ void UnzipedFileStrategy::execute()
     {
         std::cout << "The file opened successfully" << std::endl;
 
+        Log theLog(10, 1269, &fin);
+//        Log theLog(10, 0, &fin);
+        theLog.printRows();
+//        theLog.next();
+
         // fastest way of print file
 //        cout << fin.rdbuf();
-
-        std::string line;
-
-//        fin.seekg(1269, ios::beg);
-
-        for (int i = 0; i != 5; i++)
-        {
-            getline(fin, line);
-            std::cout << line << std::endl;
-        }
-
-//        fin.clear();
-        currentPos = fin.tellg();
-        std::cout << "Last read position:" << currentPos << std::endl;
-        fin.close();
     }
 }
