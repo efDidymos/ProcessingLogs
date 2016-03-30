@@ -21,6 +21,9 @@ void UnzipedFileStrategy::execute()
         std::cout << "moving next" << std::endl;
         theLog.next();
 
+        std::cout << "moving previous" << std::endl;
+        theLog.previous();
+
         std::cout << "moving next" << std::endl;
         theLog.next();
 

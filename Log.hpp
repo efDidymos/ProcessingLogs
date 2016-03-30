@@ -20,11 +20,11 @@ public:
         prevPos(0),
         currPos(0), //  1269
         nextPos(0),
-        pFin(file),
         prevRows(new Rows(file, rwCnt)),
         currRows(new Rows(file, rwCnt)),
         nextRows(new Rows(file, rwCnt))
     {
+        positionAtLadder.push_back(0);
     }
 
     virtual ~Log()
@@ -40,8 +40,11 @@ public:
 
         currPos = currRows->read(currPos, std::ios_base::beg);
         prevPos = prevPos - currPos;
+        positionAtLadder.push_back(currPos);
 
         nextPos = nextRows->read(currPos, std::ios_base::beg);
+        positionAtLadder.push_back(nextPos);
+
         showRows();
     }
 
@@ -75,17 +78,37 @@ private:
         currPos = nextPos;
 
         nextRows = temp;
-        nextPos = nextRows->read(nextPos, std::ios_base::beg);
+
+//        nextPos = nextRows->read(nextPos, std::ios_base::beg);
+        nextPos = nextRows->read(positionAtLadder.back(), std::ios_base::beg);
+        positionAtLadder.push_back(nextPos);
     }
 
+    // Just switch the pointers.
     void swapToPrevious()
     {
-//        std::reverse(currentRows.begin(), currentRows.end());
-        showRows();
+        auto temp = nextRows;
+
+        nextRows = currRows;
+        nextPos = currPos;
+
+        currRows = prevRows;
+        currPos = prevPos;
+
+        prevRows = temp;
+
+        // Climb up the ladder
+        positionAtLadder.pop_back();
+        positionAtLadder.pop_back();
+        positionAtLadder.pop_back();
+        positionAtLadder.pop_back();
+
+        prevPos = prevRows->read(positionAtLadder.back(), std::ios_base::beg);
     }
 
-    std::ifstream *pFin;
     int rowCount;
+
+    std::vector<long> positionAtLadder;
 
     long prevPos;
     long currPos;
