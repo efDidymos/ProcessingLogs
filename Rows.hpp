@@ -20,6 +20,8 @@ public:
     long read(long pos, const std::ios_base::seekdir seekdir)
     {
         std::string line;
+        rows.clear();
+
         pFin->seekg(pos, seekdir);
 
         for (int i = 0; i < rowCount; i++)

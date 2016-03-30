@@ -19,14 +19,8 @@ public:
 
     void execute();
 
-    long getCurrentPos() const
-    {
-        return currentPos;
-    }
-
 private:
     std::ifstream fin;
-    long currentPos;
 };
 
 

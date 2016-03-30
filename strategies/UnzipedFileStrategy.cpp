@@ -15,10 +15,14 @@ void UnzipedFileStrategy::execute()
     {
         std::cout << "The file opened successfully" << std::endl;
 
-        Log theLog(10, 1269, &fin);
-//        Log theLog(10, 0, &fin);
+        Log theLog(10, &fin);
         theLog.printRows();
-//        theLog.next();
+
+        std::cout << "moving next" << std::endl;
+        theLog.next();
+
+        std::cout << "moving next" << std::endl;
+        theLog.next();
 
         // fastest way of print file
 //        cout << fin.rdbuf();

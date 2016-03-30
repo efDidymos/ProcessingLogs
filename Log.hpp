@@ -14,10 +14,12 @@
 class Log
 {
 public:
-    Log(int rwCnt, long curPos, std::ifstream *file)
+    Log(int rwCnt, std::ifstream *file)
         :
         rowCount(rwCnt),
-        currPos(curPos),
+        prevPos(0),
+        currPos(0), //  1269
+        nextPos(0),
         pFin(file),
         prevRows(new Rows(file, rwCnt)),
         currRows(new Rows(file, rwCnt)),
@@ -34,8 +36,11 @@ public:
 
     void printRows()
     {
-//        prevPos = prevRows->read(-currentPos, std::ios_base::beg);
+        prevPos = prevRows->read(prevPos, std::ios_base::beg);
+
         currPos = currRows->read(currPos, std::ios_base::beg);
+        prevPos = prevPos - currPos;
+
         nextPos = nextRows->read(currPos, std::ios_base::beg);
         showRows();
     }
@@ -43,13 +48,13 @@ public:
     void next()
     {
         swapToNext();
-        printRows();
+        showRows();
     }
 
     void previous()
     {
         swapToPrevious();
-        printRows();
+        showRows();
     }
 
 private:
@@ -58,21 +63,19 @@ private:
         std::cout << currRows;
     }
 
+    // Just switch the pointers.
     void swapToNext()
     {
-        // Just switch the pointers.
+        auto temp = prevRows;
 
-//        prevRows // delete its content
         prevRows = currRows;
         prevPos = currPos;
 
         currRows = nextRows;
         currPos = nextPos;
 
-//        nextPos     = nextRows->read(nextPos, std::ios_base::beg);
+        nextRows = temp;
         nextPos = nextRows->read(nextPos, std::ios_base::beg);
-
-        showRows();
     }
 
     void swapToPrevious()

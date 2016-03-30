@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
 
         context.performAction();
 
+        // Calculating size of the terminal
         struct winsize size;
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
