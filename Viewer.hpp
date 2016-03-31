@@ -42,15 +42,15 @@ public:
     {
         std::cout.width(columns);
         std::cout.fill('-');
-        std::cout << "\n[q]-quit\t[f]-filter options\t[j]-move down\t[k]-move up";
+        std::cout << "\n[q]-quit  [f]-filter options  [j]-move down  [k]-move up";
     }
 
     void printFilterCmd()
     {
         std::cout.flush();
         // Appended four white spaces due to completly overwrite the previous line
-        // without leaving a text fragments
-        std::cout << '\r' << "FILTER BY: (1) HTTP Code\t(2) Request method\t(3) Date    ";
+        // without leaving a text fragments from previous message
+        std::cout << '\r' << "FILTER BY: (1) HTTP Code  (2) Request method  (3) Date   ";
     }
 
     unsigned short int getRows() const
