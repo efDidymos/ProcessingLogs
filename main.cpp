@@ -2,7 +2,6 @@
 #include <boost/filesystem.hpp>
 #include "Context.hpp"
 #include "strategies/UnzipedFileStrategy.h"
-#include "strategies/GzipedFileStrategy.h"
 #include "strategies/UrlStrategy.h"
 
 using namespace std;
@@ -21,17 +20,17 @@ int main(int argc, char *argv[])
     {
         Context context;
         string argument = argv[1];
+        string ext = boost::filesystem::extension(argument);
 
-        if (boost::filesystem::exists(argument))
+        if (boost::filesystem::exists(argument) && ((ext == ".log") || (ext == ".gz")))
         {
-            string ext = boost::filesystem::extension(argument);
             if (ext == ".log")
                 context.setStrategy(new UnzipedFileStrategy(argument));
             else if (ext == ".gz")
                 context.setStrategy(new GzipedFileStrategy(argument));
             else
             {
-                cout << "Unknown file extension. Expected .log or .gz" << endl;
+                cerr << "ERROR opening the file! Please check the path correctness or extension [.log, .gz]." << endl;
                 return 0;
             }
         }

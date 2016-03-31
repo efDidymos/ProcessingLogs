@@ -5,7 +5,6 @@
 #ifndef PROCESSINGLOGS_GZIPEDFILESTRATEGY_H
 #define PROCESSINGLOGS_GZIPEDFILESTRATEGY_H
 
-#include <iostream>
 #include <fstream>
 #include "../StrategyInterface.hpp"
 
@@ -17,10 +16,7 @@ public:
     {
     }
 
-    void execute() override
-    {
-        std::cout << "GzipedFileStrategy::TODO" << std::endl;
-    }
+    void execute();
 
 private:
     std::ifstream fin;
