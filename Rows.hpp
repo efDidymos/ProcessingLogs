@@ -16,10 +16,6 @@ public:
         pFin(pFin),
         rowCount(rowCount)
     {
-        pFin->seekg(0, std::ios::end);
-        theEnd = pFin->tellg();
-
-        std::cout << "The end: " << theEnd << std::endl;
     }
 
     long read(long pos, const std::ios_base::seekdir seekdir)
@@ -60,7 +56,6 @@ public:
 
 private:
     std::ifstream *pFin;
-    long theEnd;
     unsigned short int rowCount;
     std::vector<std::string> rows;
 };

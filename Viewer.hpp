@@ -48,7 +48,9 @@ public:
     void printFilterCmd()
     {
         std::cout.flush();
-        std::cout << '\r' << "FILTER BY: (1) HTTP Code\t(2) Request method\t(3) Date";
+        // Appended four white spaces due to completly overwrite the previous line
+        // without leaving a text fragments
+        std::cout << '\r' << "FILTER BY: (1) HTTP Code\t(2) Request method\t(3) Date    ";
     }
 
     unsigned short int getRows() const

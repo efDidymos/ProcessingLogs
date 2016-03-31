@@ -20,6 +20,9 @@ public:
         nextRows(new Rows(file, rwCnt))
     {
         positionAtLadder.push_back(0);
+
+        file->seekg(0, std::ios::end);
+        theEnd = file->tellg();
     }
 
     virtual ~Log()
@@ -43,16 +46,12 @@ public:
 
     void next()
     {
-        // Boundary check for not jumping the begining of file
-//        if (positionAtLadder.back() != theEnd)
         swapToNext();
         showRows();
     }
 
     void previous()
     {
-        // Boundary check for not jumping the begining of file
-//        if (positionAtLadder.end()[-3] != 0)
         swapToPrevious();
         showRows();
     }
@@ -61,29 +60,28 @@ private:
     void showRows()
     {
         std::cout << currRows;
-
-        std::cout << "position -3: " << positionAtLadder.end()[-3] << std::endl;
-        std::cout << "position -2: " << positionAtLadder.end()[-2] << std::endl;
-        std::cout << "position back: " << positionAtLadder.back() << std::endl;
     }
 
     // Just switch the pointers.
     void swapToNext()
     {
-        auto temp = prevRows;
-        prevRows = currRows;
-        currRows = nextRows;
-        nextRows = temp;
+        // Boundary check for not over jump the end of the file
+        if (positionAtLadder.back() != theEnd)
+        {
+            auto temp = prevRows;
+            prevRows = currRows;
+            currRows = nextRows;
+            nextRows = temp;
 
-        long nextPos = nextRows->read(positionAtLadder.back(), std::ios_base::beg);
-        positionAtLadder.push_back(nextPos);
-
-//        std::cout << "nextPos: " << nextPos << std::endl;
+            long nextPos = nextRows->read(positionAtLadder.back(), std::ios_base::beg);
+            positionAtLadder.push_back(nextPos);
+        }
     }
 
     // Just switch the pointers.
     void swapToPrevious()
     {
+        // Boundary check for not over jump the begin of the file
         if (positionAtLadder.end()[-3] != 0)
         {
             auto temp = nextRows;
@@ -100,6 +98,7 @@ private:
     }
 
     std::vector<long> positionAtLadder;
+    long theEnd;
 
     Rows *prevRows;
     Rows *currRows;
