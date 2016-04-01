@@ -21,7 +21,7 @@ void UnzipedFileStrategy::execute()
         unsigned short int rowCount = w.getRows();
 
         // (rowCount - 2) - last two lines are for displaying pseudo menu
-        Log theLog((rowCount - 2), &fin);
+        Log theLog((rowCount - 17), &fin);
         theLog.printRows();
         w.printCmd();
 
@@ -56,8 +56,6 @@ void UnzipedFileStrategy::execute()
 
             std::cin.get(c);
         }
-
-        // fastest way of print file
-//        cout << fin.rdbuf();
+        std::cout << std::endl;
     }
 }

@@ -38,8 +38,6 @@ int main(int argc, char *argv[])
             context.setStrategy(new UrlStrategy(argument));
 
         context.performAction();
-
-//        cout << "\nSize: " << boost::filesystem::file_size(fileName) << endl;
     }
     return 0;
 }

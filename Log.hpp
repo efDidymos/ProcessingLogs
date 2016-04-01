@@ -59,7 +59,7 @@ public:
 private:
     void showRows()
     {
-        std::cout << currRows;
+        std::cout << std::endl << currRows;
     }
 
     // Just switch the pointers.
@@ -82,7 +82,7 @@ private:
     void swapToPrevious()
     {
         // Boundary check for not over jump the begin of the file
-        if (positionAtLadder.end()[-3] != 0)
+        if (positionAtLadder.end()[-2] != 0)
         {
             auto temp = nextRows;
             nextRows = currRows;

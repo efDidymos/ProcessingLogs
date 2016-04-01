@@ -29,7 +29,8 @@ void GzipedFileStrategy::execute()
     bio::copy(out, outStream);
 
     std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
-    sleep(5);   // just to see the results
+    // Just for the case that user do not see the results
+    sleep(5);
 
     // Call the appropriate strategy
     UnzipedFileStrategy us(unzipedFile);

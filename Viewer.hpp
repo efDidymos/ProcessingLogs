@@ -22,10 +22,10 @@ public:
 //        std::cout << "size=" << size.ws_row << std::endl;
 
         rows = size.ws_row;
-        if (rows == 0) rows = 10;
+        if (rows == 0) rows = 30;
 
         columns = size.ws_col;
-        if (columns == 0) columns = 10;
+        if (columns == 0) columns = 30;
 
 /*
         // Animation of counter
