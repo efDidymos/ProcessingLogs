@@ -4,28 +4,34 @@
 
 #include <iostream>
 #include "GzipedFileStrategy.h"
+#include "UnzipedFileStrategy.h"
 
 #include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 
 void GzipedFileStrategy::execute()
 {
-    std::cout << "GzipedFileStrategy::TODO" << std::endl;
+    std::cout << "The file opened successfully" << std::endl;
+    std::cout << "Starting decompressing the " << fileName << std::endl;
 
     namespace bio = boost::iostreams;
+
+    // Prepare name of the new unzipped file
+    // by trimming the .gz extension from filename
+    std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
 
     bio::filtering_istream out;
     out.push(bio::gzip_decompressor());
     out.push(fin);
 
-    // Open the file to be read
-    // only for first 10 lines
-    // just for test
-    std::string itReadLine;
-    for (int j = 0; j < 10; ++j)
-    {
-        std::getline(out, itReadLine);
-        // Initialise the parser
-        std::cout << itReadLine << std::endl;
-    }
+    std::ofstream outStream(unzipedFile, std::ios_base::out);
+    bio::copy(out, outStream);
+
+    std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
+    sleep(5);   // just to see the results
+
+    // Call the appropriate strategy
+    UnzipedFileStrategy us(unzipedFile);
+    us.execute();
 }
