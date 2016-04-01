@@ -23,7 +23,8 @@ $ ./bootstrap.sh
 # It stops building on first occured error 
 # and you could find and install missing parts
 # NOTICE: in the -s flag we use the path 
-#         to uncompressed zlib library
+#         to locate uncompressed zlib library
+# http://www.boost.org/doc/libs/1_60_0/libs/iostreams/doc/installation.html
 $ ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 
 # Last step is installation of the Boost library.
@@ -32,6 +33,7 @@ $ ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 # /usr/local/lib
 # NOTICE: in the -s flag we use the path 
 #         to uncompressed zlib library
+# http://www.boost.org/doc/libs/1_60_0/libs/iostreams/doc/installation.html
 $ sudo ./b2 install -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 ```
 
