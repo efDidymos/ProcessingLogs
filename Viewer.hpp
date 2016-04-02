@@ -21,6 +21,8 @@ public:
 
 //        std::cout << "size=" << size.ws_row << std::endl;
 
+        // If autodetection fails in recognition of terminal size
+        // use 30 rows as default
         rows = size.ws_row;
         if (rows == 0) rows = 30;
 
@@ -50,7 +52,7 @@ public:
         std::cout.flush();
         // Appended four white spaces due to completly overwrite the previous line
         // without leaving a text fragments from previous message
-        std::cout << '\r' << "FILTER BY: (1) HTTP Code  (2) Request method  (3) Date   ";
+        std::cout << '\r' << "FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
     }
 
     unsigned short int getRows() const

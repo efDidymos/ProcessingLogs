@@ -50,6 +50,7 @@ void UnzipedFileStrategy::execute()
             }
             else if (c == 'f')
                 w.printFilterCmd();
+//            else if (c == '0')    // default
 //            else if (c == '1')
 //            else if (c == '2')
 //            else if (c == '3')
