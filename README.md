@@ -1,5 +1,13 @@
 # ProcessingLogs
 Lightweight adaptation of log manager.
+It reads and filter logs that are stored in format:
+
+`
+"%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\""
+`
+
+More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_config.html
+
 
 #Ubuntu 14.04 instructions
 
