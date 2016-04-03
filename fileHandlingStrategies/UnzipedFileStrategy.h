@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "../StrategyInterface.hpp"
+#include "StrategyInterface.hpp"
 #include "GzipedFileStrategy.h"
 
 class UnzipedFileStrategy: public StrategyInterface

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include "Context.hpp"
-#include "strategies/UnzipedFileStrategy.h"
-#include "strategies/UrlStrategy.h"
+#include "fileHandlingStrategies/UnzipedFileStrategy.h"
+#include "fileHandlingStrategies/UrlStrategy.h"
 
 using namespace std;
 

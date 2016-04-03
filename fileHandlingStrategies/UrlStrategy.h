@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "../StrategyInterface.hpp"
+#include "StrategyInterface.hpp"
 
 class UrlStrategy: public StrategyInterface
 {

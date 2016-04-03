@@ -8,16 +8,12 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
-#include "Rows.hpp"
+#include "rowsFilteringStrategies/RowInterface.hpp"
 
 class Log
 {
 public:
-    Log(unsigned short int rwCnt, std::ifstream *file)
-        :
-        prevRows(new Rows(file, rwCnt)),
-        currRows(new Rows(file, rwCnt)),
-        nextRows(new Rows(file, rwCnt))
+    Log(std::ifstream *file)
     {
         positionAtLadder.push_back(0);
 
@@ -30,6 +26,17 @@ public:
         delete prevRows;
         delete currRows;
         delete nextRows;
+    }
+
+    void setDisplayRowStrategy(RowInterface *strategy)
+    {
+//        delete prevRows;
+//        delete currRows;
+//        delete nextRows;
+
+        prevRows = strategy;
+        currRows = strategy;
+        nextRows = strategy;
     }
 
     // Firstime print rows
@@ -100,9 +107,9 @@ private:
     std::vector<long> positionAtLadder;
     long theEnd;
 
-    Rows *prevRows;
-    Rows *currRows;
-    Rows *nextRows;
+    RowInterface *prevRows;
+    RowInterface *currRows;
+    RowInterface *nextRows;
 };
 
 

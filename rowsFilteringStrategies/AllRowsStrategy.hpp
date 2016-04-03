@@ -7,16 +7,16 @@
 
 #include <fstream>
 #include <vector>
+#include <iostream>
 
-#include <regex>
+#include "RowInterface.hpp"
 
-class Rows
+class AllRowsStrategy: public RowInterface
 {
 public:
-    Rows(std::ifstream *pFin, unsigned short int rowCount)
+    AllRowsStrategy(std::ifstream *pFin, unsigned short int rowCount)
         :
-        pFin(pFin),
-        rowCount(rowCount)
+        RowInterface(pFin, rowCount)
     {
     }
 
@@ -25,8 +25,6 @@ public:
         std::string line;
         rows.clear();
 
-//        ^(.*?)\[(\d{2})\/(.{3})\/(\d{4})(.*?)"(.*?)\s(.*?)"\s(\d{3})  // COMPLETE REGEX
-        static const std::regex e(R"delim(^(.*?)\[(\d{2})\/(.{3})\/(\d{4})(.*?)"(.*?)\s(.*?)"\s(\d{3}))delim");
         std::smatch m;
 
         pFin->seekg(pos, seekdir);
@@ -64,24 +62,6 @@ public:
 
         return pos;
     }
-
-    friend std::ostream &operator<<(std::ostream &os, Rows *r)
-    {
-        auto elements = r->getRows();
-        for (auto row : elements)
-            os << row << std::endl;
-        return os;
-    }
-
-    const std::vector<std::string> &getRows() const
-    {
-        return rows;
-    }
-
-private:
-    std::ifstream *pFin;
-    unsigned short int rowCount;
-    std::vector<std::string> rows;
 };
 
 

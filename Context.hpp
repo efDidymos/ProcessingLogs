@@ -5,7 +5,7 @@
 #ifndef PROCESSINGLOGS_CONTEXT_HPP
 #define PROCESSINGLOGS_CONTEXT_HPP
 
-#include "StrategyInterface.hpp"
+#include "fileHandlingStrategies/StrategyInterface.hpp"
 
 class Context
 {

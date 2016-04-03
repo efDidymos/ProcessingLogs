@@ -6,7 +6,7 @@
 #define PROCESSINGLOGS_GZIPEDFILESTRATEGY_H
 
 #include <fstream>
-#include "../StrategyInterface.hpp"
+#include "StrategyInterface.hpp"
 
 class GzipedFileStrategy: public StrategyInterface
 {

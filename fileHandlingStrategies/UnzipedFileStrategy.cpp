@@ -7,6 +7,8 @@
 #include "../Log.hpp"
 #include "../Viewer.hpp"
 
+#include "../rowsFilteringStrategies/AllRowsStrategy.hpp"
+
 void UnzipedFileStrategy::execute()
 {
     if (!fin.is_open())
@@ -21,7 +23,10 @@ void UnzipedFileStrategy::execute()
         unsigned short int rowCount = w.getRows();
 
         // (rowCount - 2) - last two lines are for displaying pseudo menu
-        Log theLog((rowCount - 17), &fin);
+        Log theLog(&fin);
+
+        theLog.setDisplayRowStrategy(new AllRowsStrategy(&fin, (rowCount - 17)));
+
         theLog.printRows();
         w.printCmd();
 
