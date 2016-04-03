@@ -27,7 +27,7 @@ void UnzipedFileStrategy::execute()
         // (rowCount - 2) - last two lines are for displaying pseudo menu
         Log theLog(&file);
 
-        theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 17)));
+        theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 5)));
         theLog.printRows();
         w.printCmdMenu();
 
@@ -58,7 +58,7 @@ void UnzipedFileStrategy::execute()
                 w.printFilterCmdMenu();
             else if (c == '0')    // Default: Show all rows without any filter
             {
-                theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 17)));
+                theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 5)));
                 theLog.printRows();
                 w.printCmdMenu();
             }
@@ -74,25 +74,25 @@ void UnzipedFileStrategy::execute()
                 {
                     case RequestMethod::POST: // POST
                         theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
-                                                                                   (rowCount - 17),
+                                                                                   (rowCount - 5),
                                                                                    RequestMethod::POST));
                         break;
 
                     case RequestMethod::GET: // GET
                         theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
-                                                                                   (rowCount - 17),
+                                                                                   (rowCount - 5),
                                                                                    RequestMethod::GET));
                         break;
 
                     case RequestMethod::HEAD: // HEAD
                         theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
-                                                                                   (rowCount - 17),
+                                                                                   (rowCount - 5),
                                                                                    RequestMethod::HEAD));
                         break;
 
                     case RequestMethod::UNKNOWN: // Unknown
                         theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
-                                                                                   (rowCount - 17),
+                                                                                   (rowCount - 5),
                                                                                    RequestMethod::UNKNOWN));
                         break;
 

@@ -29,6 +29,11 @@ public:
     {
     }
 
+    virtual RowInterface *Clone() const override
+    {
+        return new RequestMethodRowsStrategy(*this);
+    }
+
     long read(long pos, const std::ios_base::seekdir seekdir) override
     {
         std::string line;

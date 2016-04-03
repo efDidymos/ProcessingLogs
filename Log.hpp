@@ -30,18 +30,18 @@ public:
 
     void setDisplayRowStrategy(RowInterface *strategy)
     {
-        /*if (prevRows != nullptr)
+        if (prevRows != nullptr)
             delete prevRows;
 
         if (currRows != nullptr)
             delete currRows;
 
         if (nextRows != nullptr)
-            delete nextRows;*/
+            delete nextRows;
 
         prevRows = strategy;
-        currRows = strategy;
-        nextRows = strategy;
+        currRows = strategy->Clone();
+        nextRows = strategy->Clone();
     }
 
     // Firstime print rows

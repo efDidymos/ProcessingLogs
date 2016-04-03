@@ -25,6 +25,8 @@ public:
         rows.clear();
     }
 
+    virtual RowInterface *Clone() const = 0;
+
     virtual long read(long pos, const std::ios_base::seekdir seekdir) = 0;
 
     friend std::ostream &operator<<(std::ostream &os, RowInterface *r)
