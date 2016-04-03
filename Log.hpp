@@ -30,9 +30,14 @@ public:
 
     void setDisplayRowStrategy(RowInterface *strategy)
     {
-//        delete prevRows;
-//        delete currRows;
-//        delete nextRows;
+        /*if (prevRows != nullptr)
+            delete prevRows;
+
+        if (currRows != nullptr)
+            delete currRows;
+
+        if (nextRows != nullptr)
+            delete nextRows;*/
 
         prevRows = strategy;
         currRows = strategy;
@@ -64,7 +69,7 @@ public:
     }
 
 private:
-    void showCurrRows()
+    void showCurrRows() const
     {
         std::cout << std::endl << currRows;
     }
@@ -107,9 +112,9 @@ private:
     std::vector<long> positionAtLadder;
     long theEnd;
 
-    RowInterface *prevRows;
-    RowInterface *currRows;
-    RowInterface *nextRows;
+    RowInterface *prevRows = nullptr;
+    RowInterface *currRows = nullptr;
+    RowInterface *nextRows = nullptr;
 };
 
 

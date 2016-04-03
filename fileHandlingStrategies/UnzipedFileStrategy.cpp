@@ -3,11 +3,13 @@
 //
 
 #include <termio.h>
+
 #include "UnzipedFileStrategy.h"
 #include "../Log.hpp"
 #include "../Viewer.hpp"
 
 #include "../rowsFilteringStrategies/AllRowsStrategy.hpp"
+#include "../rowsFilteringStrategies/RequestMethodRowsStrategy.hpp"
 
 void UnzipedFileStrategy::execute()
 {
@@ -26,7 +28,6 @@ void UnzipedFileStrategy::execute()
         Log theLog(&file);
 
         theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 17)));
-
         theLog.printRows();
         w.printCmdMenu();
 
@@ -55,9 +56,53 @@ void UnzipedFileStrategy::execute()
             }
             else if (c == 'f')
                 w.printFilterCmdMenu();
-//            else if (c == '0')    // default
+            else if (c == '0')    // Default: Show all rows without any filter
+            {
+                theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 17)));
+                theLog.printRows();
+                w.printCmdMenu();
+            }
 //            else if (c == '1')
-//            else if (c == '2')
+            else if (c == '2')  // Show rows filtered by Request method
+            {
+                w.printFilterRequestMCmdMenu();
+
+                std::cin.get(c);
+                int opt = c - '0';
+
+                switch (opt)
+                {
+                    case RequestMethod::POST: // POST
+                        theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
+                                                                                   (rowCount - 17),
+                                                                                   RequestMethod::POST));
+                        break;
+
+                    case RequestMethod::GET: // GET
+                        theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
+                                                                                   (rowCount - 17),
+                                                                                   RequestMethod::GET));
+                        break;
+
+                    case RequestMethod::HEAD: // HEAD
+                        theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
+                                                                                   (rowCount - 17),
+                                                                                   RequestMethod::HEAD));
+                        break;
+
+                    case RequestMethod::UNKNOWN: // Unknown
+                        theLog.setDisplayRowStrategy(new RequestMethodRowsStrategy(&file,
+                                                                                   (rowCount - 17),
+                                                                                   RequestMethod::UNKNOWN));
+                        break;
+
+                    default:
+                        break;
+                }
+
+                theLog.printRows();
+                w.printCmdMenu();
+            }
 //            else if (c == '3')
 
             std::cin.get(c);

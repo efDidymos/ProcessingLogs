@@ -8,7 +8,6 @@
 #include <iostream>
 #include <fstream>
 #include "ProcessingInterface.hpp"
-#include "GzipedFileStrategy.h"
 
 class UnzipedFileStrategy: public ProcessingInterface
 {

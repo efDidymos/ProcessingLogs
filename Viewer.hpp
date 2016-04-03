@@ -40,14 +40,14 @@ public:
 */
     }
 
-    void printCmdMenu()
+    void printCmdMenu() const
     {
         std::cout.width(columns);
         std::cout.fill('-');
         std::cout << "\n[q]-quit  [f]-filter options  [j]-move down  [k]-move up";
     }
 
-    void printFilterCmdMenu()
+    void printFilterCmdMenu() const
     {
         std::cout.flush();
         // Appended four white spaces due to completly overwrite the showPrevRows line
@@ -55,7 +55,12 @@ public:
         std::cout << '\r' << "FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
     }
 
-    unsigned short int getRowsCount() const
+    void printFilterRequestMCmdMenu() const
+    {
+        std::cout << '\r' << "FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown";
+    }
+
+    const unsigned short int getRowsCount() const
     {
         return rows;
     }

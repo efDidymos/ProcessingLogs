@@ -13,19 +13,20 @@
 class RowInterface
 {
 public:
-    RowInterface(std::ifstream *file, unsigned short rowCnt)
+    RowInterface(std::ifstream *file, unsigned short rowCount)
         :
-        pFin(file),
-        rowCount(rowCnt),
-        e(R"delim(^(.*?)\[(\d{2})\/(.{3})\/(\d{4})(.*?)"(.*?)\s(.*?)"\s(\d{3}))delim")
+        file(file),
+        rowCount(rowCount)
     {
-        // COMPLETE REGEX
-        // ^(.*?)\[(\d{2})\/(.{3})\/(\d{4})(.*?)"(.*?)\s(.*?)"\s(\d{3})
+    }
+
+    virtual ~RowInterface()
+    {
+        rows.clear();
     }
 
     virtual long read(long pos, const std::ios_base::seekdir seekdir) = 0;
 
-//    friend std::ostream &operator<<(std::ostream &os, AllRowsStrategy *r)
     friend std::ostream &operator<<(std::ostream &os, RowInterface *r)
     {
         auto elements = r->getRows();
@@ -40,10 +41,9 @@ public:
     }
 
 protected:
-    std::ifstream *pFin;
+    std::ifstream *file;
     unsigned short int rowCount;
     std::vector<std::string> rows;
-    const std::regex e;
 };
 
 
