@@ -7,13 +7,13 @@
 
 #include <iostream>
 #include <fstream>
-#include "StrategyInterface.hpp"
+#include "ProcessingInterface.hpp"
 
-class UrlStrategy: public StrategyInterface
+class UrlStrategy: public ProcessingInterface
 {
 public:
     UrlStrategy(std::string fileName)
-        : fin(fileName, std::ios::in)
+        : file(fileName, std::ios::in)
     {
     }
 
@@ -24,7 +24,7 @@ public:
 
 
 private:
-    std::ifstream fin;
+    std::ifstream file;
 };
 
 

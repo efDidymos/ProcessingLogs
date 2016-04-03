@@ -18,16 +18,16 @@ int main(int argc, char *argv[])
     }
     else
     {
-        Context context;
+        Context processing;
         string argument = argv[1];
         string ext = boost::filesystem::extension(argument);
 
         if (boost::filesystem::exists(argument) && ((ext == ".log") || (ext == ".gz")))
         {
             if (ext == ".log")
-                context.setStrategy(new UnzipedFileStrategy(argument));
+                processing.setStrategy(new UnzipedFileStrategy(argument));
             else if (ext == ".gz")
-                context.setStrategy(new GzipedFileStrategy(argument));
+                processing.setStrategy(new GzipedFileStrategy(argument));
             else
             {
                 cerr << "ERROR opening the file! Please check the path correctness or extension [.log, .gz]." << endl;
@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
             }
         }
         else
-            context.setStrategy(new UrlStrategy(argument));
+            processing.setStrategy(new UrlStrategy(argument));
 
-        context.performAction();
+        processing.performAction();
     }
     return 0;
 }

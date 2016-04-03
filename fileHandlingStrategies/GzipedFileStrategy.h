@@ -6,15 +6,15 @@
 #define PROCESSINGLOGS_GZIPEDFILESTRATEGY_H
 
 #include <fstream>
-#include "StrategyInterface.hpp"
+#include "ProcessingInterface.hpp"
 
-class GzipedFileStrategy: public StrategyInterface
+class GzipedFileStrategy: public ProcessingInterface
 {
 public:
-    GzipedFileStrategy(std::string file)
+    GzipedFileStrategy(std::string fileName)
         :
-        fileName(file),
-        fin(file, std::ios::in)
+        fileName(fileName),
+        file(fileName, std::ios::in)
     {
     }
 
@@ -22,7 +22,7 @@ public:
 
 private:
     std::string fileName;
-    std::ifstream fin;
+    std::ifstream file;
 };
 
 

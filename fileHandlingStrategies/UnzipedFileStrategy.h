@@ -7,21 +7,21 @@
 
 #include <iostream>
 #include <fstream>
-#include "StrategyInterface.hpp"
+#include "ProcessingInterface.hpp"
 #include "GzipedFileStrategy.h"
 
-class UnzipedFileStrategy: public StrategyInterface
+class UnzipedFileStrategy: public ProcessingInterface
 {
 public:
     UnzipedFileStrategy(std::string fileName)
-        : fin(fileName, std::ios::in)
+        : file(fileName, std::ios::in)
     {
     }
 
     void execute();
 
 private:
-    std::ifstream fin;
+    std::ifstream file;
 };
 
 

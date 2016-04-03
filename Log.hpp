@@ -48,29 +48,29 @@ public:
         long nextPos = nextRows->read(currPos, std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
 
-        showRows();
+        showCurrRows();
     }
 
-    void next()
+    void showNextRows()
     {
-        swapToNext();
-        showRows();
+        swapToNextRows();
+        showCurrRows();
     }
 
-    void previous()
+    void showPrevRows()
     {
-        swapToPrevious();
-        showRows();
+        swapToPrevRows();
+        showCurrRows();
     }
 
 private:
-    void showRows()
+    void showCurrRows()
     {
         std::cout << std::endl << currRows;
     }
 
     // Just switch the pointers.
-    void swapToNext()
+    void swapToNextRows()
     {
         // Boundary check for not over jump the end of the file
         if (positionAtLadder.back() != theEnd)
@@ -86,7 +86,7 @@ private:
     }
 
     // Just switch the pointers.
-    void swapToPrevious()
+    void swapToPrevRows()
     {
         // Boundary check for not over jump the begin of the file
         if (positionAtLadder.end()[-2] != 0)

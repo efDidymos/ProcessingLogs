@@ -11,7 +11,7 @@
 
 void UnzipedFileStrategy::execute()
 {
-    if (!fin.is_open())
+    if (!file.is_open())
     {
         std::cout << "Can not open the file!" << std::endl;
     }
@@ -20,15 +20,15 @@ void UnzipedFileStrategy::execute()
         std::cout << "The file opened successfully" << std::endl;
 
         Viewer w;
-        unsigned short int rowCount = w.getRows();
+        unsigned short int rowCount = w.getRowsCount();
 
         // (rowCount - 2) - last two lines are for displaying pseudo menu
-        Log theLog(&fin);
+        Log theLog(&file);
 
-        theLog.setDisplayRowStrategy(new AllRowsStrategy(&fin, (rowCount - 17)));
+        theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, (rowCount - 17)));
 
         theLog.printRows();
-        w.printCmd();
+        w.printCmdMenu();
 
         // Black magic to prevent Linux from buffering keystrokes.
         // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
@@ -45,16 +45,16 @@ void UnzipedFileStrategy::execute()
         {
             if (c == 'j')
             {
-                theLog.next();
-                w.printCmd();
+                theLog.showNextRows();
+                w.printCmdMenu();
             }
             else if (c == 'k')
             {
-                theLog.previous();
-                w.printCmd();
+                theLog.showPrevRows();
+                w.printCmdMenu();
             }
             else if (c == 'f')
-                w.printFilterCmd();
+                w.printFilterCmdMenu();
 //            else if (c == '0')    // default
 //            else if (c == '1')
 //            else if (c == '2')

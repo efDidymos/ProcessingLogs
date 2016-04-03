@@ -6,7 +6,7 @@
 #define PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 
 
-class StrategyInterface
+class ProcessingInterface
 {
 public:
     virtual void execute() = 0;

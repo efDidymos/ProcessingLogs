@@ -23,7 +23,7 @@ void GzipedFileStrategy::execute()
 
     bio::filtering_istream out;
     out.push(bio::gzip_decompressor());
-    out.push(fin);
+    out.push(file);
 
     std::ofstream outStream(unzipedFile, std::ios_base::out);
     bio::copy(out, outStream);

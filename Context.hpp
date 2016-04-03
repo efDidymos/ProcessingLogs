@@ -5,7 +5,7 @@
 #ifndef PROCESSINGLOGS_CONTEXT_HPP
 #define PROCESSINGLOGS_CONTEXT_HPP
 
-#include "fileHandlingStrategies/StrategyInterface.hpp"
+#include "fileHandlingStrategies/ProcessingInterface.hpp"
 
 class Context
 {
@@ -13,7 +13,7 @@ public:
     Context()
     { }
 
-    void setStrategy(StrategyInterface *s)
+    void setStrategy(ProcessingInterface *s)
     {
         strategy = s;
     }
@@ -23,7 +23,7 @@ public:
         strategy->execute();
     }
 private:
-    StrategyInterface *strategy;
+    ProcessingInterface *strategy;
 };
 
 

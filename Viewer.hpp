@@ -40,22 +40,22 @@ public:
 */
     }
 
-    void printCmd()
+    void printCmdMenu()
     {
         std::cout.width(columns);
         std::cout.fill('-');
         std::cout << "\n[q]-quit  [f]-filter options  [j]-move down  [k]-move up";
     }
 
-    void printFilterCmd()
+    void printFilterCmdMenu()
     {
         std::cout.flush();
-        // Appended four white spaces due to completly overwrite the previous line
-        // without leaving a text fragments from previous message
+        // Appended four white spaces due to completly overwrite the showPrevRows line
+        // without leaving a text fragments from showPrevRows message
         std::cout << '\r' << "FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
     }
 
-    unsigned short int getRows() const
+    unsigned short int getRowsCount() const
     {
         return rows;
     }
