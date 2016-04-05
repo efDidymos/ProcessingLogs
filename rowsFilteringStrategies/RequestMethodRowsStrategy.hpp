@@ -36,7 +36,7 @@ public:
         return new RequestMethodRowsStrategy(*this);
     }
 
-    long &read(long &pos, const std::ios_base::seekdir &seekdir) override
+    long read(long pos, const std::ios_base::seekdir &seekdir) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();

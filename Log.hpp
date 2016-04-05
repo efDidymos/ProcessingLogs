@@ -30,6 +30,8 @@ public:
 
     void setDisplayRowStrategy(RowInterface *strategy)
     {
+        positionAtLadder.resize(1);
+
         if (prevRows != nullptr)
             delete prevRows;
 
