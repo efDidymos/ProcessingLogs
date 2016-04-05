@@ -60,7 +60,7 @@ public:
         std::cout << '\r' << "FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown";
     }
 
-    const unsigned short int getRowsCount() const
+    const unsigned short int &getRowsCount() const
     {
         return rows;
     }

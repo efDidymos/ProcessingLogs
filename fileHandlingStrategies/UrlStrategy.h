@@ -12,16 +12,12 @@
 class UrlStrategy: public ProcessingInterface
 {
 public:
-    UrlStrategy(std::string fileName)
+    UrlStrategy(const std::string &fileName)
         : file(fileName, std::ios::in)
     {
     }
 
-    void execute() override
-    {
-        std::cout << "UrlStrategy::TODO" << std::endl;
-    }
-
+    void execute();
 
 private:
     std::ifstream file;

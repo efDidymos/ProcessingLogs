@@ -11,7 +11,7 @@
 class GzipedFileStrategy: public ProcessingInterface
 {
 public:
-    GzipedFileStrategy(std::string fileName)
+    GzipedFileStrategy(const std::string &fileName)
         :
         fileName(fileName),
         file(fileName, std::ios::in)

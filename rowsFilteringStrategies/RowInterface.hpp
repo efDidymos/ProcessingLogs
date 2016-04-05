@@ -8,16 +8,15 @@
 #include <fstream>
 #include <vector>
 
-#include <regex>
-
 class RowInterface
 {
 public:
-    RowInterface(std::ifstream *file, unsigned short rowCount)
+    RowInterface(std::ifstream *file, unsigned short &rowCount)
         :
         file(file),
         rowCount(rowCount)
     {
+        rows.reserve(rowCount);
     }
 
     virtual ~RowInterface()
@@ -27,7 +26,7 @@ public:
 
     virtual RowInterface *Clone() const = 0;
 
-    virtual long read(long pos, const std::ios_base::seekdir seekdir) = 0;
+    virtual long &read(long &pos, const std::ios_base::seekdir &seekdir) = 0;
 
     friend std::ostream &operator<<(std::ostream &os, RowInterface *r)
     {

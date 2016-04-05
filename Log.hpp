@@ -112,6 +112,7 @@ private:
     std::vector<long> positionAtLadder;
     long theEnd;
 
+    // Three buffers
     RowInterface *prevRows = nullptr;
     RowInterface *currRows = nullptr;
     RowInterface *nextRows = nullptr;
