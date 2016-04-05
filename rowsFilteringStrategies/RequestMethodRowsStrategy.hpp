@@ -29,8 +29,6 @@ public:
         RowInterface(file, rowCount),
         requestedMethod(requestMethod)
     {
-        file->seekg(0, std::ios::end);
-        theEnd = file->tellg();
     }
 
     virtual RowInterface *Clone() const override
@@ -51,28 +49,21 @@ public:
         int i = 0;
 
         std::string c1, c2, c3, c4, c5, c6, c7, c8, c9;
+        std::stringstream ss;
 
         do
         {
-            getline(*file, line);
-
-            if ((line != ""))
+            if (getline(*file, line))
             {
                 pos = file->tellg();
 
-                std::istringstream ss(line);
+                ss << line;
 
-                ss >> c1
-                    >> c2
-                    >> c3
-                    >> c4
-                    >> c5
-                    >> c6
-                    >> c7
-                    >> c8
-                    >> c9;
+                ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6 >> c7 >> c8 >> c9;
 
-                c6 = c6.substr(1);  // Trim the
+                ss.str(""); // erase the buffer
+
+                c6 = c6.substr(1);  // Trim the Request method in read line
 
                 // If in the specific founded group by regex
                 // is the same string as desired and not UNKNOWN
@@ -81,7 +72,6 @@ public:
                     if (c6 == type[requestedMethod])
                     {
                         rows.push_back(line);
-//                        pos = file->tellg();
                         i++;
                     }
                 }
@@ -92,13 +82,15 @@ public:
                     if ((c6 != type[POST]) && (c6 != type[GET]) && (c6 != type[HEAD]))
                     {
                         rows.push_back(line);
-//                        pos = file->tellg();
                         i++;
                     }
                 }
             }
             else
+            {
+                pos = theEnd;
                 break;
+            }
         }
         while (i < rowCount);
 
@@ -144,8 +136,6 @@ private:
         {HEAD, "HEAD"},
         {UNKNOWN, "UNKNOWN"},
     };
-
-    long theEnd;
 };
 
 

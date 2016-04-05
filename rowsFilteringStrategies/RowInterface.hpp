@@ -17,6 +17,9 @@ public:
         rowCount(rowCount)
     {
         rows.reserve(rowCount);
+
+        file->seekg(0, std::ios::end);
+        theEnd = file->tellg();
     }
 
     virtual ~RowInterface()
@@ -45,6 +48,7 @@ protected:
     std::ifstream *file;
     unsigned short int rowCount;
     std::vector<std::string> rows;
+    long theEnd;
 };
 
 

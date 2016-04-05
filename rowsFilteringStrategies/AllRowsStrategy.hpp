@@ -33,14 +33,15 @@ public:
 
         for (int i = 0; i < rowCount; i++)
         {
-            getline(*file, line);
-
-            if (line == "")
-                break;
-            else
+            if (getline(*file, line))
             {
                 rows.push_back(line);
                 pos = file->tellg();
+            }
+            else
+            {
+                pos = theEnd;
+                break;
             }
         }
 
