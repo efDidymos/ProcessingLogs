@@ -94,11 +94,11 @@ public:
         }
         while (i < rowCount);
 
-        printProgBar((double) pos);
-
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-        std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << std::endl;
+        std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
+
+        printProgBar((double) pos);
 
         return pos;
     }
