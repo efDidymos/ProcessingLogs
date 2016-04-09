@@ -12,7 +12,7 @@
 class UrlStrategy: public ProcessingInterface
 {
 public:
-    UrlStrategy(const std::string &fileName)
+    UrlStrategy(const std::string fileName)
         : file(fileName, std::ios::in)
     {
     }

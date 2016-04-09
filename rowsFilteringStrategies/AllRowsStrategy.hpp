@@ -11,7 +11,7 @@
 class AllRowsStrategy: public RowInterface
 {
 public:
-    AllRowsStrategy(std::ifstream *file, unsigned short int &rowCount)
+    AllRowsStrategy(std::ifstream *file, unsigned short int rowCount)
         : RowInterface(file, rowCount)
     {
     }
@@ -21,7 +21,7 @@ public:
         return new AllRowsStrategy(*this);
     }
 
-    long read(long pos, const std::ios_base::seekdir &seekdir) override
+    long read(long pos, const std::ios_base::seekdir seekdir) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
@@ -50,6 +50,33 @@ public:
         std::cout << "\n --- Duration of AllRowsStrategy=" << diff.count() << std::endl;
 
         return pos;
+    }
+
+    virtual ~AllRowsStrategy()
+    {
+        std::cout << "\n --- DESTRUCTOR ~AllRowsStrategy" << std::endl;
+    }
+
+    void hello(bool &work, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
+    {
+        std::cout << "\n --- Created new thread--- \n";
+
+        std::unique_lock<std::mutex> lock(m_mutex);
+        while (!work)
+        {
+            if (running == false)
+            {
+                std::cout << "\n ENDING WORK \n";
+                break;
+            }
+
+            m_alarm.wait(lock);
+
+            std::cout << "\n ----------------- HELLO FROM AllRowsStrategy -----------------\n";
+            work = false;
+        }
+
+        std::cout << "\n ENDED \n";
     }
 };
 

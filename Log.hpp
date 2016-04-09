@@ -8,6 +8,9 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include "rowsFilteringStrategies/RowInterface.hpp"
 
 class Log
@@ -26,6 +29,21 @@ public:
         delete prevRows;
         delete currRows;
         delete nextRows;
+
+        std::cout << "Joining threads" << std::endl;
+
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
+            running = false;
+        }
+
+        m_alarm.notify_one();
+
+        if (t->joinable())
+            t->join();
+
+        delete tempRows;
+        delete t;
     }
 
     void setDisplayRowStrategy(RowInterface *strategy)
@@ -41,9 +59,31 @@ public:
         if (nextRows != nullptr)
             delete nextRows;
 
+        if (tempRows != nullptr)
+        {
+            std::cout << "Joining the SUB-THREAD for change of strategy" << std::endl;
+
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
+                running = false;
+            }
+
+            m_alarm.notify_one();
+
+            if (t->joinable())
+                t->join();
+
+            delete tempRows;
+            delete t;
+
+            running = true;
+        }
+
         prevRows = strategy;
         currRows = strategy->Clone();
         nextRows = strategy->Clone();
+
+        tempRows = strategy->Clone();
     }
 
     // Firstime print rows
@@ -55,6 +95,11 @@ public:
         long nextPos = nextRows->read(currPos, std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
 
+        std::cout << "\n --- Creating SUB-THREAD --- \n";
+
+        // Creating sub-thread
+        t = tempRows->threadHello(work, running, m_mutex, m_alarm);
+
         showCurrRows();
     }
 
@@ -62,6 +107,10 @@ public:
     {
         swapToNextRows();
         showCurrRows();
+
+        std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
+        work = true;
+        m_alarm.notify_one();
     }
 
     void showPrevRows()
@@ -118,6 +167,14 @@ private:
     RowInterface *prevRows = nullptr;
     RowInterface *currRows = nullptr;
     RowInterface *nextRows = nullptr;
+
+    RowInterface *tempRows = nullptr;
+
+    bool work = false;
+    bool running = true;
+    std::mutex m_mutex;
+    std::condition_variable m_alarm;
+    std::thread * t;
 };
 
 

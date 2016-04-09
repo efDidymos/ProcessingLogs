@@ -24,7 +24,9 @@ enum RequestMethod
 class RequestMethodRowsStrategy: public RowInterface
 {
 public:
-    RequestMethodRowsStrategy(std::ifstream *file, unsigned short &rowCount, RequestMethod requestMethod)
+    RequestMethodRowsStrategy(std::ifstream *file,
+                              unsigned short rowCount,
+                              RequestMethod requestMethod)
         :
         RowInterface(file, rowCount),
         requestedMethod(requestMethod)
@@ -36,7 +38,7 @@ public:
         return new RequestMethodRowsStrategy(*this);
     }
 
-    long read(long pos, const std::ios_base::seekdir &seekdir) override
+    long read(long pos, const std::ios_base::seekdir seekdir) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
@@ -125,6 +127,33 @@ public:
         }
 
         std::cout << "\r  [" << bar << "] " << percent << "%    " << std::flush;
+    }
+
+    virtual ~RequestMethodRowsStrategy()
+    {
+        std::cout << "\n --- DESTRUCTOR ~RequestMethodRowsStrategy" << std::endl;
+    }
+
+    void hello(bool &work, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
+    {
+        std::cout << "\n --- Created new thread--- \n";
+
+        std::unique_lock<std::mutex> lock(m_mutex);
+        while (!work)
+        {
+            if (running == false)
+            {
+                std::cout << "\n ENDING WORK \n";
+                break;
+            }
+
+            m_alarm.wait(lock);
+
+            std::cout << "\n ----------------- HELLO FROM RequestMethodRowsStrategy -----------------\n";
+            work = false;
+        }
+
+        std::cout << "\n ENDED \n";
     }
 
 private:

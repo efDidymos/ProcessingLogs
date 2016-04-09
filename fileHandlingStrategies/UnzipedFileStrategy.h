@@ -12,7 +12,7 @@
 class UnzipedFileStrategy: public ProcessingInterface
 {
 public:
-    UnzipedFileStrategy(const std::string &fileName)
+    UnzipedFileStrategy(const std::string fileName)
         : file(fileName, std::ios::in)
     {
     }
