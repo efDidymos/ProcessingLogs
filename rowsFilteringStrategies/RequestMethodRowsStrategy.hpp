@@ -134,23 +134,31 @@ public:
         std::cout << "\n --- DESTRUCTOR ~RequestMethodRowsStrategy" << std::endl;
     }
 
-    void hello(bool &work, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
+    void hello(bool &work, bool &show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
     {
         std::cout << "\n --- Created new thread--- \n";
 
         std::unique_lock<std::mutex> lock(m_mutex);
         while (!work)
         {
-            if (running == false)
+            m_alarm.wait(lock);
+
+            if (!running)
             {
                 std::cout << "\n ENDING WORK \n";
                 break;
             }
+            else
+                std::cout << "\n DO WORK \n";
 
-            m_alarm.wait(lock);
+            if (show)
+                std::cout << "\n SHOWING RESULTS \n";
+            else
+                std::cout << "\n WAITING FOR SHOWING RESULTS \n";
 
             std::cout << "\n ----------------- HELLO FROM RequestMethodRowsStrategy -----------------\n";
             work = false;
+            show = false;
         }
 
         std::cout << "\n ENDED \n";

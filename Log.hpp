@@ -83,6 +83,10 @@ public:
         nextRows = strategy->Clone();
 
         tempRows = strategy->Clone();
+
+        // Creating sub-thread
+        std::cout << "\n --- Creating SUB-THREAD --- \n";
+        t = tempRows->threadHello(work, show, running, m_mutex, m_alarm);
     }
 
     // Firstime print rows
@@ -94,10 +98,9 @@ public:
         long nextPos = nextRows->read(currPos, std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
 
-        std::cout << "\n --- Creating SUB-THREAD --- \n";
-
-        // Creating sub-thread
-        t = tempRows->threadHello(work, running, m_mutex, m_alarm);
+        std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
+        work = true;
+        m_alarm.notify_one();
 
         showCurrRows();
     }
@@ -109,6 +112,7 @@ public:
 
         std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
         work = true;
+        show = true;
         m_alarm.notify_one();
     }
 
@@ -171,6 +175,7 @@ private:
 
     bool work = false;
     bool running = true;
+    bool show = false;
     std::mutex m_mutex;
     std::condition_variable m_alarm;
     std::thread * t;
