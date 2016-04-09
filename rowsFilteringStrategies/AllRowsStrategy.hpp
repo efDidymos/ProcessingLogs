@@ -59,7 +59,7 @@ public:
 
     void hello(bool &work, bool &show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
     {
-        std::cout << "\n --- Created new thread--- \n";
+        std::cout << "\n --- Created new thread :: " << work << "--- \n";
 
         std::unique_lock<std::mutex> lock(m_mutex);
         while (!work)
@@ -72,16 +72,20 @@ public:
                 break;
             }
             else
-                std::cout << "\n DO WORK \n";
+            {
+                std::cout << "\n READ ROWS \n";
+                work = false;
+            }
 
             if (show)
+            {
+                show = false;
                 std::cout << "\n SHOWING RESULTS \n";
+            }
             else
                 std::cout << "\n WAITING FOR SHOWING RESULTS \n";
 
             std::cout << "\n ----------------- HELLO FROM AllRowsStrategy -----------------\n";
-            work = false;
-            show = false;
         }
 
         std::cout << "\n ENDED \n";

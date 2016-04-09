@@ -149,16 +149,20 @@ public:
                 break;
             }
             else
-                std::cout << "\n DO WORK \n";
+            {
+                std::cout << "\n READ ROWS \n";
+                work = false;
+            }
 
             if (show)
+            {
+                show = false;
                 std::cout << "\n SHOWING RESULTS \n";
+            }
             else
                 std::cout << "\n WAITING FOR SHOWING RESULTS \n";
 
             std::cout << "\n ----------------- HELLO FROM RequestMethodRowsStrategy -----------------\n";
-            work = false;
-            show = false;
         }
 
         std::cout << "\n ENDED \n";
