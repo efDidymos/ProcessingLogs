@@ -5,7 +5,6 @@
 #ifndef PROCESSINGLOGS_URLSTRATEGY_H
 #define PROCESSINGLOGS_URLSTRATEGY_H
 
-#include <iostream>
 #include <fstream>
 #include "ProcessingInterface.hpp"
 

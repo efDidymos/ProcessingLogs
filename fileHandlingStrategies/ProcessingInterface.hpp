@@ -5,7 +5,6 @@
 #ifndef PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 #define PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 
-
 class ProcessingInterface
 {
 public:

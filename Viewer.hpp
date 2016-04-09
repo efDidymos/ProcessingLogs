@@ -5,7 +5,6 @@
 #ifndef PROCESSINGLOGS_VIEWER_HPP
 #define PROCESSINGLOGS_VIEWER_HPP
 
-#include <iostream>
 #include <sys/ioctl.h>
 #include <unistd.h>     // because of first argument <STDOUT_FILENO> ioctl
 

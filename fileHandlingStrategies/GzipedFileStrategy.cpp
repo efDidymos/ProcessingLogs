@@ -2,9 +2,10 @@
 // Created by tomas on 28.3.2016.
 //
 
-#include <iostream>
 #include "GzipedFileStrategy.h"
 #include "UnzipedFileStrategy.h"
+
+#include <iostream>
 
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>

@@ -5,7 +5,6 @@
 #ifndef PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 #define PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 
-#include <iostream>
 #include <fstream>
 #include "ProcessingInterface.hpp"
 

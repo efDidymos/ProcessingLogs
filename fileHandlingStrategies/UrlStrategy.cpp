@@ -3,6 +3,7 @@
 //
 
 #include "UrlStrategy.h"
+#include <iostream>
 
 void UrlStrategy::execute()
 {

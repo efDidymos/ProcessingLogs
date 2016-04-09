@@ -5,12 +5,11 @@
 #ifndef PROCESSINGLOGS_THELOG_HPP
 #define PROCESSINGLOGS_THELOG_HPP
 
-#include <fstream>
 #include <vector>
-#include <iostream>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+
 #include "rowsFilteringStrategies/RowInterface.hpp"
 
 class Log
