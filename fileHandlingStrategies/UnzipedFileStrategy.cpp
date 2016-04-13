@@ -28,7 +28,7 @@ void UnzipedFileStrategy::execute()
         Log theLog(&file);
 
         theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
-        theLog.printRows();
+        theLog.showCurrRows();
         w.printCmdMenu();
 
         // Black magic to prevent Linux from buffering keystrokes.
@@ -59,7 +59,7 @@ void UnzipedFileStrategy::execute()
             else if (c == '0')    // Default: Show all rows without any filter
             {
                 theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
-                theLog.printRows();
+                theLog.showCurrRows();
                 w.printCmdMenu();
             }
 //            else if (c == '1')
@@ -100,7 +100,7 @@ void UnzipedFileStrategy::execute()
                         break;
                 }
 
-                theLog.printRows();
+                theLog.showCurrRows();
                 w.printCmdMenu();
             }
 //            else if (c == '3')

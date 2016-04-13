@@ -91,7 +91,6 @@ public:
                 std::cout << "\n READ ROWS \n";
                 long newPos = read(positionAtLadder.back(), std::ios_base::beg);
                 positionAtLadder.push_back(newPos);
-//                pos = newPos;
                 work = false;
             }
             lock.unlock();
