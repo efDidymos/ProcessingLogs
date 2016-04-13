@@ -28,12 +28,19 @@ public:
 
     virtual long read(long pos, const std::ios_base::seekdir seekdir) = 0;
 
-    virtual void hello(bool &work, bool &show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) = 0;
+    virtual void
+        hello(std::vector<long> &positionAtLadder,
+              bool &work,
+              bool &show,
+              bool &running,
+              std::mutex &m_mutex,
+              std::condition_variable &m_alarm) = 0;
 
-    std::thread *threadHello(bool &work, bool & show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm)
+    std::thread *threadHello(std::vector<long> & positionAtLadder, bool &work, bool & show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm)
     {
         return new std::thread(&RowInterface::hello,
                                this,
+                               std::ref(positionAtLadder),
                                std::ref(work),
                                std::ref(show),
                                std::ref(running),

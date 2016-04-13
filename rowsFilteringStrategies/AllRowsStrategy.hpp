@@ -57,33 +57,45 @@ public:
         std::cout << "\n --- DESTRUCTOR ~AllRowsStrategy" << std::endl;
     }
 
-    void hello(bool &work, bool &show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
+    void hello(std::vector<long> &positionAtLadder,
+               bool &work,
+               bool &show,
+               bool &running,
+               std::mutex &m_mutex,
+               std::condition_variable &m_alarm) override
     {
         std::cout << "\n --- Created new thread :: " << work << "--- \n";
 
-        std::unique_lock<std::mutex> lock(m_mutex);
-        while (!work)
+        while (running)
         {
-            m_alarm.wait(lock);
 
-            if (!running)
+            std::unique_lock<std::mutex> lock(m_mutex);
+            while (!work)
             {
-                std::cout << "\n ENDING WORK \n";
-                break;
+                std::cout << "\n SUB-Waitting ... \n";
+                m_alarm.wait(lock);
+            }
+
+            std::cout << "\n SUB-Wakeup ... \n";
+
+            if (show)
+            {
+                for (auto row : rows)
+                    std::cout << row << std::endl;
+
+                show = false;
+                work = false;
             }
             else
             {
                 std::cout << "\n READ ROWS \n";
+                long newPos = read(positionAtLadder.back(), std::ios_base::beg);
+                positionAtLadder.push_back(newPos);
+//                pos = newPos;
                 work = false;
             }
-
-            if (show)
-            {
-                show = false;
-                std::cout << "\n SHOWING RESULTS \n";
-            }
-            else
-                std::cout << "\n WAITING FOR SHOWING RESULTS \n";
+            lock.unlock();
+            m_alarm.notify_one();
 
             std::cout << "\n ----------------- HELLO FROM AllRowsStrategy -----------------\n";
         }

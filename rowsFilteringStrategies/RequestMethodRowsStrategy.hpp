@@ -134,7 +134,12 @@ public:
         std::cout << "\n --- DESTRUCTOR ~RequestMethodRowsStrategy" << std::endl;
     }
 
-    void hello(bool &work, bool &show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm) override
+    void hello(std::vector<long> &positionAtLadder,
+               bool &work,
+               bool &show,
+               bool &running,
+               std::mutex &m_mutex,
+               std::condition_variable &m_alarm) override
     {
         std::cout << "\n --- Created new thread--- \n";
 
