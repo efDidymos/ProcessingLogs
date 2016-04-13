@@ -66,8 +66,8 @@ public:
 
         // Creating sub-thread
         std::cout << "\n --- Creating SUB-THREAD --- \n";
-        t = strategy->threadHello(positionAtLadder, work, show, running, m_mutex, m_alarm);
-//        tB = strategy->Clone()->threadHello(positionAtLadder, work, show, running, m_mutex, m_alarm);
+        t = strategy->threadHello(positionAtLadder, work, read, show, running, m_mutex, m_alarm);
+//        tB = strategy->Clone()->threadHello(positionAtLadder, work, read, show, running, m_mutex, m_alarm);
     }
 
     void showNextRows()
@@ -83,6 +83,8 @@ public:
                 m_alarm.wait(lock);
             }
             work = true;
+            read = true;
+
             lock.unlock();
             m_alarm.notify_one();
 
@@ -110,6 +112,8 @@ public:
             positionAtLadder.pop_back();
 
             work = true;
+            read = true;
+
             lock.unlock();
             m_alarm.notify_one();
 
@@ -132,6 +136,7 @@ public:
         }
         work = true;
         show = true;
+
         lock.unlock();
         m_alarm.notify_one();
         std::cout << "\nPOST-showCurrRows = " << positionAtLadder.back() << "\n";
@@ -141,13 +146,14 @@ private:
     long theEnd;
 
     bool work = true;
-    bool running = true;
+    bool read = true;
     bool show = false;
+    bool running = true;
 
     std::mutex m_mutex;
     std::condition_variable m_alarm;
 
-    std::thread * t;
+    std::thread * t = nullptr;
 };
 
 

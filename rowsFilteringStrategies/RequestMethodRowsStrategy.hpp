@@ -38,7 +38,7 @@ public:
         return new RequestMethodRowsStrategy(*this);
     }
 
-    long read(long pos, const std::ios_base::seekdir seekdir) override
+    long readRows(long pos, const std::ios_base::seekdir seekdir) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
@@ -135,11 +135,12 @@ public:
     }
 
     void hello(std::vector<long> &positionAtLadder,
-               bool &work,
-               bool &show,
-               bool &running,
-               std::mutex &m_mutex,
-               std::condition_variable &m_alarm) override
+                   bool &work,
+                   bool &read,
+                   bool &show,
+                   bool &running,
+                   std::mutex &m_mutex,
+                   std::condition_variable &m_alarm) override
     {
         std::cout << "\n --- Created new thread--- \n";
 

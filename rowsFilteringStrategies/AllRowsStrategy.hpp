@@ -21,7 +21,7 @@ public:
         return new AllRowsStrategy(*this);
     }
 
-    long read(long pos, const std::ios_base::seekdir seekdir) override
+    long readRows(long pos, const std::ios_base::seekdir seekdir) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
@@ -58,17 +58,17 @@ public:
     }
 
     void hello(std::vector<long> &positionAtLadder,
-               bool &work,
-               bool &show,
-               bool &running,
-               std::mutex &m_mutex,
-               std::condition_variable &m_alarm) override
+                   bool &work,
+                   bool &read,
+                   bool &show,
+                   bool &running,
+                   std::mutex &m_mutex,
+                   std::condition_variable &m_alarm) override
     {
         std::cout << "\n --- Created new thread :: " << work << "--- \n";
 
         while (running)
         {
-
             std::unique_lock<std::mutex> lock(m_mutex);
             while (!work)
             {
@@ -86,17 +86,18 @@ public:
                 show = false;
                 work = false;
             }
-            else
+
+            if (read)
             {
                 std::cout << "\n READ ROWS \n";
-                long newPos = read(positionAtLadder.back(), std::ios_base::beg);
-                positionAtLadder.push_back(newPos);
+                long newPos = readRows(positionAtLadder.back(), std::ios_base::beg);
+                if (newPos != theEnd)   // check for not over jumping through boundary of end file
+                    positionAtLadder.push_back(newPos);
                 work = false;
             }
+
             lock.unlock();
             m_alarm.notify_one();
-
-            std::cout << "\n ----------------- HELLO FROM AllRowsStrategy -----------------\n";
         }
 
         std::cout << "\n ENDED \n";
