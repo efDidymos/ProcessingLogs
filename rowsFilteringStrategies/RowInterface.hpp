@@ -26,25 +26,29 @@ public:
 
     virtual RowInterface *Clone() const = 0;
 
-    virtual long readRows(long pos, const std::ios_base::seekdir seekdir) = 0;
+    virtual long
+        readRows(long pos, std::vector<std::string> &rowStack) = 0;
 
     virtual void
         hello(std::vector<long> &positionAtLadder,
+                      std::vector<std::string> &rowStack,
                       bool &work,
-                      bool &read,
-                      bool &show,
                       bool &running,
                       std::mutex &m_mutex,
                       std::condition_variable &m_alarm) = 0;
 
-    std::thread *threadHello(std::vector<long> & positionAtLadder, bool &work, bool & read, bool & show, bool &running, std::mutex &m_mutex, std::condition_variable &m_alarm)
+    std::thread *threadHello(std::vector<long> &positionAtLadder,
+                                 std::vector<std::string> &rowStack,
+                                 bool &work,
+                                 bool &running,
+                                 std::mutex &m_mutex,
+                                 std::condition_variable &m_alarm)
     {
         return new std::thread(&RowInterface::hello,
                                this,
                                std::ref(positionAtLadder),
+                               std::ref(rowStack),
                                std::ref(work),
-                               std::ref(read),
-                               std::ref(show),
                                std::ref(running),
                                std::ref(m_mutex),
                                std::ref(m_alarm));

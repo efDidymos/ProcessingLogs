@@ -21,21 +21,23 @@ public:
         return new AllRowsStrategy(*this);
     }
 
-    long readRows(long pos, const std::ios_base::seekdir seekdir) override
+    long readRows(long pos, std::vector<std::string> &rowStack) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
 
         std::string line;
-        rows.clear();
+//        rows.clear();
+        rowStack.clear();
 
-        file->seekg(pos, seekdir);
+        file->seekg(pos, std::ios_base::beg);
 
         for (int i = 0; i < rowCount; i++)
         {
             if (getline(*file, line))
             {
-                rows.push_back(line);
+//                rows.push_back(line);
+                rowStack.push_back(line);
                 pos = file->tellg();
             }
             else
@@ -58,9 +60,8 @@ public:
     }
 
     void hello(std::vector<long> &positionAtLadder,
+                   std::vector<std::string> &rowStack,
                    bool &work,
-                   bool &read,
-                   bool &show,
                    bool &running,
                    std::mutex &m_mutex,
                    std::condition_variable &m_alarm) override
@@ -76,25 +77,11 @@ public:
                 m_alarm.wait(lock);
             }
 
-            std::cout << "\n SUB-Wakeup ... \n";
-
-            if (show)
-            {
-                for (auto row : rows)
-                    std::cout << row << std::endl;
-
-                show = false;
-                work = false;
-            }
-
-            if (read)
-            {
-                std::cout << "\n READ ROWS \n";
-                long newPos = readRows(positionAtLadder.back(), std::ios_base::beg);
-                if (newPos != theEnd)   // check for not over jumping through boundary of end file
-                    positionAtLadder.push_back(newPos);
-                work = false;
-            }
+            std::cout << "\n READ ROWS \n";
+            long newPos = readRows(positionAtLadder.back(), rowStack);
+            if (newPos != theEnd)   // check for not over jumping through boundary of end file
+                positionAtLadder.push_back(newPos);
+            work = false;
 
             lock.unlock();
             m_alarm.notify_one();

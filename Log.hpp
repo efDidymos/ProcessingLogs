@@ -35,17 +35,18 @@ public:
         m_alarm.notify_one();
 
 
-        if (t->joinable())
-            t->join();
+        if (backThread->joinable())
+            backThread->join();
 
-        delete t;
+        delete backThread;
+        delete currThread;
     }
 
     void setDisplayRowStrategy(RowInterface *strategy)
     {
         positionAtLadder.resize(1);
 
-        if (t != nullptr)
+        if (backThread != nullptr)
         {
             std::cout << "Joining the SUB-THREAD for change of strategy" << std::endl;
 
@@ -56,41 +57,54 @@ public:
             }
             m_alarm.notify_one();
 
-            if (t->joinable())
-                t->join();
+            if (backThread->joinable())
+                backThread->join();
 
-            delete t;
+            delete backThread;
 
             running = true;
         }
 
+        // Main thread will work too
+        currThread = strategy;
+        long entryPos = currThread->readRows(positionAtLadder.back(), currRows);
+        positionAtLadder.push_back(entryPos);
+
         // Creating sub-thread
         std::cout << "\n --- Creating SUB-THREAD --- \n";
-        t = strategy->threadHello(positionAtLadder, work, read, show, running, m_mutex, m_alarm);
-//        tB = strategy->Clone()->threadHello(positionAtLadder, work, read, show, running, m_mutex, m_alarm);
+        backThread = strategy->Clone()->threadHello(positionAtLadder, nextRows, work, running, m_mutex, m_alarm);
     }
 
     void showNextRows()
     {
         // Boundary check for not over jump the end of the file
-        if (positionAtLadder.back() != theEnd)
-        {
-            std::cout << "\nPRE-showNextRows = " << positionAtLadder.back() << "\n";
-            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-            while (work)
-            {
-                std::cout << "\n Main-Waitting showNextRows... \n";
-                m_alarm.wait(lock);
-            }
-            work = true;
-            read = true;
-
-            lock.unlock();
-            m_alarm.notify_one();
-
-            std::cout << "\nPOST-showNextRows = " << positionAtLadder.back() << "\n";
+//        if (positionAtLadder.back() != theEnd)
+//        {
+//            std::cout << "\nPRE-showNextRows = " << positionAtLadder.back() << "\n";
+//            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
+//            while (work)
+//            {
+//                std::cout << "\n Main-Waitting showNextRows... \n";
+//                m_alarm.wait(lock);
+//            }
+//            work = true;
+//
+//            lock.unlock();
+//            m_alarm.notify_one();
+//
+//            std::cout << "\nPOST-showNextRows = " << positionAtLadder.back() << "\n";
 //        swapToNextRows();
+//        }
+
+        std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
+        while (work)
+        {
+            std::cout << "\n Main-Waitting showNextRows... \n";
+            m_alarm.wait(lock);
         }
+        std::swap(currRows, nextRows);
+        lock.unlock();
+
         showCurrRows();
     }
 
@@ -112,7 +126,6 @@ public:
             positionAtLadder.pop_back();
 
             work = true;
-            read = true;
 
             lock.unlock();
             m_alarm.notify_one();
@@ -128,6 +141,9 @@ public:
     {
         std::cout << "\nPRE-showCurrRows = " << positionAtLadder.back() << "\n";
 
+        for (auto row : currRows)
+            std::cout << row << std::endl;
+
         std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
         while(work)
         {
@@ -135,25 +151,27 @@ public:
             m_alarm.wait(lock);
         }
         work = true;
-        show = true;
 
         lock.unlock();
         m_alarm.notify_one();
+
         std::cout << "\nPOST-showCurrRows = " << positionAtLadder.back() << "\n";
     }
 private:
     std::vector<long> positionAtLadder;
     long theEnd;
 
-    bool work = true;
-    bool read = true;
-    bool show = false;
+    bool work = false;
     bool running = true;
 
     std::mutex m_mutex;
     std::condition_variable m_alarm;
 
-    std::thread * t = nullptr;
+    RowInterface * currThread = nullptr;
+    std::thread * backThread = nullptr;
+
+    std::vector<std::string> currRows;
+    std::vector<std::string> nextRows;
 };
 
 

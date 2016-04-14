@@ -38,7 +38,7 @@ public:
         return new RequestMethodRowsStrategy(*this);
     }
 
-    long readRows(long pos, const std::ios_base::seekdir seekdir) override
+    long readRows(long pos, std::vector<std::string> &rowStack) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
@@ -46,7 +46,7 @@ public:
         std::string line;
         rows.clear();
 
-        file->seekg(pos, seekdir);
+        file->seekg(pos, std::ios_base::beg);
 
         int i = 0;
 
@@ -135,9 +135,8 @@ public:
     }
 
     void hello(std::vector<long> &positionAtLadder,
+                   std::vector<std::string> &rowStack,
                    bool &work,
-                   bool &read,
-                   bool &show,
                    bool &running,
                    std::mutex &m_mutex,
                    std::condition_variable &m_alarm) override
@@ -160,13 +159,13 @@ public:
                 work = false;
             }
 
-            if (show)
-            {
-                show = false;
-                std::cout << "\n SHOWING RESULTS \n";
-            }
-            else
-                std::cout << "\n WAITING FOR SHOWING RESULTS \n";
+//            if (show)
+//            {
+//                show = false;
+//                std::cout << "\n SHOWING RESULTS \n";
+//            }
+//            else
+//                std::cout << "\n WAITING FOR SHOWING RESULTS \n";
 
             std::cout << "\n ----------------- HELLO FROM RequestMethodRowsStrategy -----------------\n";
         }
