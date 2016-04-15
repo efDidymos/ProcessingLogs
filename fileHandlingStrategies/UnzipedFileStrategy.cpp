@@ -6,8 +6,6 @@
 
 #include "UnzipedFileStrategy.h"
 #include "../Log.hpp"
-#include "../Viewer.hpp"
-
 #include "../rowsFilteringStrategies/AllRowsStrategy.hpp"
 #include "../rowsFilteringStrategies/RequestMethodRowsStrategy.hpp"
 
@@ -23,7 +21,6 @@ void UnzipedFileStrategy::execute()
 
         Viewer w;
         unsigned short int rowCount = w.getRowsCount();
-        rowCount = rowCount - 5;    // (rowCount - 2) - last two lines are for displaying pseudo menu
 
         Log theLog(&file);
 
@@ -63,7 +60,7 @@ void UnzipedFileStrategy::execute()
                 w.printCmdMenu();
             }
 //            else if (c == '1')
-            else if (c == '2')  // Show rows filtered by Request method
+            else if (c == '2')  // Show ows filtered by Request method
             {
                 w.printFilterRequestMCmdMenu();
 

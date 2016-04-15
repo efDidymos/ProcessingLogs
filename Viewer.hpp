@@ -18,32 +18,53 @@ public:
         // Calculating size of the terminal
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
-//        std::cout << "size=" << size.ws_row << std::endl;
-
         // If autodetection fails in recognition of terminal size
         // use 30 rows as default
-        rows = size.ws_row;
-        if (rows == 0) rows = 30;
+        rowsCount = size.ws_row;
+        if (rowsCount == 0) rowsCount = 30;
 
         columns = size.ws_col;
         if (columns == 0) columns = 30;
+    }
 
-/*
+    void animation()
+    {
         // Animation of counter
-        for (int j = 0; j < 5; j++)
+        for (int i = 0; i < 3; i++)
         {
             std::cout.flush();
-            std::cout << "\r" << j;
+            switch (i)
+            {
+                case 0:
+                    std::cout << "\r \\ READING                                                ";
+                    break;
+
+                case 1:
+                    std::cout << "\r | READING                                                      ";
+                    break;
+
+                case 2:
+                    std::cout << "\r / READING                                                      ";
+                    break;
+
+                case 3:
+                    std::cout << "\r --- READING                                                  ";
+                    break;
+            }
             sleep(1);
         }
-*/
+    }
+
+    void printHorizLine() const
+    {
+        std::cout.width(columns);
+        std::cout.fill('-');
     }
 
     void printCmdMenu() const
     {
-        std::cout.width(columns);
-        std::cout.fill('-');
-        std::cout << "\n[q]-quit  [f]-filter options  [j]-move down  [k]-move up";
+        printHorizLine();
+        std::cout << "\n [q]-quit  [f]-filter options  [j]-move down  [k]-move up";
     }
 
     void printFilterCmdMenu() const
@@ -59,13 +80,38 @@ public:
         std::cout << '\r' << "FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown";
     }
 
-    const unsigned short int &getRowsCount() const
+    const unsigned short int getRowsCount() const
     {
-        return rows;
+        return rowsCount - 2; // (rowCount - 7) - last lines are for displaying pseudo menu
+    }
+
+    void printProgBar(double value, long full) const
+    {
+        std::string bar;
+        int percent = ((value / full) * 100);
+
+        for (int i = 0; i < 50; i++)
+        {
+            if (i < (percent / 2))
+            {
+                bar.replace(i, 1, "=");
+            }
+            else if (i == (percent / 2))
+            {
+                bar.replace(i, 1, ">");
+            }
+            else
+            {
+                bar.replace(i, 1, " ");
+            }
+        }
+        printHorizLine();
+        std::cout << "\n ";
+        std::cout << "\r  File read [" << bar << "] " << percent << "%    \n" << std::flush;
     }
 
 private:
-    unsigned short int rows;
+    unsigned short int rowsCount;
     unsigned short int columns;
 };
 

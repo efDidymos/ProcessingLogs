@@ -32,18 +32,13 @@ public:
                           std::mutex &m_mutex,
                           std::condition_variable &m_alarm)
     {
-        std::cout << "\n --- Created new thread :: " << work << "--- \n";
 
         while (running)
         {
             std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
             while (!work)
-            {
-                std::cout << "\n SUB-Waitting ... \n";
                 m_alarm.wait(lock);
-            }
 
-            std::cout << "\n READ ROWS \n";
             long newPos = readRows(positionAtLadder.back(), rowStack);
             if (newPos != theEnd)   // check for not over jumping through boundary of end file
                 positionAtLadder.push_back(newPos);
@@ -52,8 +47,6 @@ public:
             lock.unlock();
             m_alarm.notify_one();
         }
-
-        std::cout << "\n ENDED \n";
     }
 
     std::thread *createSubThread(std::vector<long> &positionAtLadder,

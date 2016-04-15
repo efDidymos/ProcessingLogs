@@ -6,13 +6,20 @@
 #define PROCESSINGLOGS_ROWS_HPP
 
 #include "RowInterface.hpp"
+
+#ifndef NDEBUG
 #include <chrono>
+#endif
 
 class AllRowsStrategy: public RowInterface
 {
 public:
     AllRowsStrategy(std::ifstream *file, unsigned short int rowCount)
         : RowInterface(file, rowCount)
+    {
+    }
+
+    virtual ~AllRowsStrategy()
     {
     }
 
@@ -23,8 +30,10 @@ public:
 
     long readRows(long pos, std::list<std::string> &rowStack) override
     {
+#ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
+#endif
 
         std::string line;
         rowStack.clear();
@@ -45,19 +54,15 @@ public:
             }
         }
 
+#ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
+
         std::cout << "\n --- Duration of AllRowsStrategy=" << diff.count() << std::endl;
+#endif
 
         return pos;
     }
-
-    virtual ~AllRowsStrategy()
-    {
-        std::cout << "\n --- DESTRUCTOR ~AllRowsStrategy" << std::endl;
-    }
-
-
 };
 
 

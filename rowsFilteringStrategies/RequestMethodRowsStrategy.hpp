@@ -7,11 +7,12 @@
 
 #include "RowInterface.hpp"
 
-#include <iostream>
 #include <map>
-
-#include <chrono>
 #include <sstream>
+
+#ifndef NDEBUG
+#include <chrono>
+#endif
 
 enum RequestMethod
 {
@@ -33,6 +34,10 @@ public:
     {
     }
 
+    virtual ~RequestMethodRowsStrategy()
+    {
+    }
+
     virtual RowInterface *Clone() const override
     {
         return new RequestMethodRowsStrategy(*this);
@@ -40,8 +45,10 @@ public:
 
     long readRows(long pos, std::list<std::string> &rowStack) override
     {
+#ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
+#endif
 
         std::string line;
         rowStack.clear();
@@ -96,43 +103,15 @@ public:
         }
         while (i < rowCount);
 
+#ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
         std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
-
-        printProgBar((double) pos);
-
+#endif
         return pos;
     }
 
-    void printProgBar(double value)
-    {
-        std::string bar;
-        int percent = ((value / theEnd) * 100);
 
-        for (int i = 0; i < 50; i++)
-        {
-            if (i < (percent / 2))
-            {
-                bar.replace(i, 1, "=");
-            }
-            else if (i == (percent / 2))
-            {
-                bar.replace(i, 1, ">");
-            }
-            else
-            {
-                bar.replace(i, 1, " ");
-            }
-        }
-
-        std::cout << "\r  [" << bar << "] " << percent << "%    " << std::flush;
-    }
-
-    virtual ~RequestMethodRowsStrategy()
-    {
-        std::cout << "\n --- DESTRUCTOR ~RequestMethodRowsStrategy" << std::endl;
-    }
 
 private:
     RequestMethod requestedMethod;

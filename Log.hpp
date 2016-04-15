@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "rowsFilteringStrategies/RowInterface.hpp"
+#include "Viewer.hpp"
 
 class Log
 {
@@ -26,8 +27,6 @@ public:
 
     virtual ~Log()
     {
-        std::cout << "Joining threads" << std::endl;
-
         {
             std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
             work = true;
@@ -49,8 +48,6 @@ public:
 
         if (subThread != nullptr)
         {
-            std::cout << "Joining the SUB-THREAD for change of strategy" << std::endl;
-
             {
                 std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
                 work = true;
@@ -73,7 +70,6 @@ public:
         data.push_back(currRows);
 
         // Creating sub-thread
-        std::cout << "\n --- Creating SUB-THREAD --- \n";
         subThread = strategy->Clone()->createSubThread(positionAtLadder, nextRows, work, running, m_mutex, m_alarm);
     }
 
@@ -85,7 +81,7 @@ public:
             std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
             while (work)
             {
-                std::cout << "\n Main-Waitting showNextRows... \n";
+                v.animation();
                 m_alarm.wait(lock);
             }
 
@@ -107,12 +103,10 @@ public:
         // Boundary check for not over jump the begin of the file
         if (positionAtLadder.end()[-2] != 0)
         {
-            std::cout << "\nPRE-showPrevRows = " << positionAtLadder.back() << "\n";
-
             std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
             while (work)
             {
-                std::cout << "\n Main-Waitting showPrevRows... \n";
+                v.animation();
                 m_alarm.wait(lock);
             }
 
@@ -136,14 +130,12 @@ public:
 
     void showCurrRows()
     {
-        std::cout << "\nPRE-showCurrRows = " << positionAtLadder.back() << "\n";
-
         printRows();
 
         std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
         while (work)
         {
-            std::cout << "\n Main-Waitting showCurrRows... \n";
+            v.animation();
             m_alarm.wait(lock);
         }
 
@@ -151,14 +143,14 @@ public:
 
         lock.unlock();
         m_alarm.notify_one();
-
-        std::cout << "\nPOST-showCurrRows = " << positionAtLadder.back() << "\n";
     }
 
     void printRows() const
     {
         for (auto row : data.back())
             std::cout << row << std::endl;
+
+        v.printProgBar((double) positionAtLadder.back(), theEnd);
     }
 
 private:
@@ -184,6 +176,8 @@ private:
     // [C] current - currRows
     // [N] ext     - nextRows
     std::list<std::list<std::string>> data;
+
+    Viewer v;
 };
 
 
