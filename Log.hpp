@@ -5,10 +5,11 @@
 #ifndef PROCESSINGLOGS_THELOG_HPP
 #define PROCESSINGLOGS_THELOG_HPP
 
-#include <vector>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <list>
+#include <vector>
 
 #include "rowsFilteringStrategies/RowInterface.hpp"
 
@@ -35,18 +36,18 @@ public:
         m_alarm.notify_one();
 
 
-        if (backThread->joinable())
-            backThread->join();
+        if (subThread->joinable())
+            subThread->join();
 
-        delete backThread;
-        delete currThread;
+        delete subThread;
+        delete mainThread;
     }
 
     void setDisplayRowStrategy(RowInterface *strategy)
     {
         positionAtLadder.resize(1);
 
-        if (backThread != nullptr)
+        if (subThread != nullptr)
         {
             std::cout << "Joining the SUB-THREAD for change of strategy" << std::endl;
 
@@ -57,55 +58,48 @@ public:
             }
             m_alarm.notify_one();
 
-            if (backThread->joinable())
-                backThread->join();
+            if (subThread->joinable())
+                subThread->join();
 
-            delete backThread;
+            delete subThread;
 
             running = true;
         }
 
-        // Main thread will work too
-        currThread = strategy;
-        long entryPos = currThread->readRows(positionAtLadder.back(), currRows);
+        // Main thread will do part of the work too
+        mainThread = strategy;
+        long entryPos = mainThread->readRows(positionAtLadder.back(), currRows);
         positionAtLadder.push_back(entryPos);
+        data.push_back(currRows);
 
         // Creating sub-thread
         std::cout << "\n --- Creating SUB-THREAD --- \n";
-        backThread = strategy->Clone()->threadHello(positionAtLadder, nextRows, work, running, m_mutex, m_alarm);
+        subThread = strategy->Clone()->createSubThread(positionAtLadder, nextRows, work, running, m_mutex, m_alarm);
     }
 
     void showNextRows()
     {
         // Boundary check for not over jump the end of the file
-//        if (positionAtLadder.back() != theEnd)
-//        {
-//            std::cout << "\nPRE-showNextRows = " << positionAtLadder.back() << "\n";
-//            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-//            while (work)
-//            {
-//                std::cout << "\n Main-Waitting showNextRows... \n";
-//                m_alarm.wait(lock);
-//            }
-//            work = true;
-//
-//            lock.unlock();
-//            m_alarm.notify_one();
-//
-//            std::cout << "\nPOST-showNextRows = " << positionAtLadder.back() << "\n";
-//        swapToNextRows();
-//        }
-
-        std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-        while (work)
+        if (positionAtLadder.back() != theEnd)
         {
-            std::cout << "\n Main-Waitting showNextRows... \n";
-            m_alarm.wait(lock);
-        }
-        std::swap(currRows, nextRows);
-        lock.unlock();
+            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
+            while (work)
+            {
+                std::cout << "\n Main-Waitting showNextRows... \n";
+                m_alarm.wait(lock);
+            }
 
-        showCurrRows();
+            // data list will hold only a three lists
+            if (data.size() == 3)
+                data.pop_front();
+
+            data.push_back(nextRows);
+
+            std::swap(currRows, nextRows);
+            lock.unlock();
+
+            showCurrRows();
+        }
     }
 
     void showPrevRows()
@@ -114,6 +108,7 @@ public:
         if (positionAtLadder.end()[-2] != 0)
         {
             std::cout << "\nPRE-showPrevRows = " << positionAtLadder.back() << "\n";
+
             std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
             while (work)
             {
@@ -121,35 +116,37 @@ public:
                 m_alarm.wait(lock);
             }
 
-            // Climb up one setp at the ladder
+            // Climb up three steps at the ladder
+            positionAtLadder.pop_back();
             positionAtLadder.pop_back();
             positionAtLadder.pop_back();
 
-            work = true;
+            // Also climb back three steps in the data list
+            // which means to the first element
+            data.resize(1);
 
             lock.unlock();
             m_alarm.notify_one();
 
-            std::cout << "\nPOST-showPrevRows = " << positionAtLadder.back() << "\n";
-
-//        swapToPrevRows();
+            showCurrRows();
         }
-        showCurrRows();
+        else
+            printRows();
     }
 
     void showCurrRows()
     {
         std::cout << "\nPRE-showCurrRows = " << positionAtLadder.back() << "\n";
 
-        for (auto row : currRows)
-            std::cout << row << std::endl;
+        printRows();
 
         std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-        while(work)
+        while (work)
         {
             std::cout << "\n Main-Waitting showCurrRows... \n";
             m_alarm.wait(lock);
         }
+
         work = true;
 
         lock.unlock();
@@ -157,6 +154,13 @@ public:
 
         std::cout << "\nPOST-showCurrRows = " << positionAtLadder.back() << "\n";
     }
+
+    void printRows() const
+    {
+        for (auto row : data.back())
+            std::cout << row << std::endl;
+    }
+
 private:
     std::vector<long> positionAtLadder;
     long theEnd;
@@ -167,11 +171,19 @@ private:
     std::mutex m_mutex;
     std::condition_variable m_alarm;
 
-    RowInterface * currThread = nullptr;
-    std::thread * backThread = nullptr;
+    RowInterface *mainThread = nullptr;
+    std::thread *subThread = nullptr;
 
-    std::vector<std::string> currRows;
-    std::vector<std::string> nextRows;
+    // Two lists serves as buffers for main and sub thread
+    std::list<std::string> currRows;    // main thread will allways show this buffer
+    std::list<std::string> nextRows;    // sub thread will allways write to this buffer
+
+    // List serves as data history. It holds at most three
+    // elements (due ensuring high performance)
+    // [P] revious - previously readed list of rows
+    // [C] current - currRows
+    // [N] ext     - nextRows
+    std::list<std::list<std::string>> data;
 };
 
 

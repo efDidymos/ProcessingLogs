@@ -38,13 +38,13 @@ public:
         return new RequestMethodRowsStrategy(*this);
     }
 
-    long readRows(long pos, std::vector<std::string> &rowStack) override
+    long readRows(long pos, std::list<std::string> &rowStack) override
     {
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
 
         std::string line;
-        rows.clear();
+        rowStack.clear();
 
         file->seekg(pos, std::ios_base::beg);
 
@@ -73,7 +73,7 @@ public:
                 {
                     if (c6 == type[requestedMethod])
                     {
-                        rows.push_back(line);
+                        rowStack.push_back(line);
                         i++;
                     }
                 }
@@ -83,7 +83,7 @@ public:
                     // the traditional POST, GET, HEAD
                     if ((c6 != type[POST]) && (c6 != type[GET]) && (c6 != type[HEAD]))
                     {
-                        rows.push_back(line);
+                        rowStack.push_back(line);
                         i++;
                     }
                 }
@@ -132,45 +132,6 @@ public:
     virtual ~RequestMethodRowsStrategy()
     {
         std::cout << "\n --- DESTRUCTOR ~RequestMethodRowsStrategy" << std::endl;
-    }
-
-    void hello(std::vector<long> &positionAtLadder,
-                   std::vector<std::string> &rowStack,
-                   bool &work,
-                   bool &running,
-                   std::mutex &m_mutex,
-                   std::condition_variable &m_alarm) override
-    {
-        std::cout << "\n --- Created new thread--- \n";
-
-        std::unique_lock<std::mutex> lock(m_mutex);
-        while (!work)
-        {
-            m_alarm.wait(lock);
-
-            if (!running)
-            {
-                std::cout << "\n ENDING WORK \n";
-                break;
-            }
-            else
-            {
-                std::cout << "\n READ ROWS \n";
-                work = false;
-            }
-
-//            if (show)
-//            {
-//                show = false;
-//                std::cout << "\n SHOWING RESULTS \n";
-//            }
-//            else
-//                std::cout << "\n WAITING FOR SHOWING RESULTS \n";
-
-            std::cout << "\n ----------------- HELLO FROM RequestMethodRowsStrategy -----------------\n";
-        }
-
-        std::cout << "\n ENDED \n";
     }
 
 private:

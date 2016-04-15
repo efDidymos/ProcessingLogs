@@ -13,64 +13,70 @@ public:
         file(file),
         rowCount(rowCount)
     {
-        rows.reserve(rowCount);
-
         file->seekg(0, std::ios::end);
         theEnd = file->tellg();
     }
 
     virtual ~RowInterface()
     {
-        rows.clear();
     }
 
     virtual RowInterface *Clone() const = 0;
 
-    virtual long
-        readRows(long pos, std::vector<std::string> &rowStack) = 0;
+    virtual long readRows(long pos, std::list<std::string> &rowStack) = 0;
 
-    virtual void
-        hello(std::vector<long> &positionAtLadder,
-                      std::vector<std::string> &rowStack,
-                      bool &work,
-                      bool &running,
-                      std::mutex &m_mutex,
-                      std::condition_variable &m_alarm) = 0;
+    void readRowsThreaded(std::vector<long> &positionAtLadder,
+                          std::list<std::string> &rowStack,
+                          bool &work,
+                          bool &running,
+                          std::mutex &m_mutex,
+                          std::condition_variable &m_alarm)
+    {
+        std::cout << "\n --- Created new thread :: " << work << "--- \n";
 
-    std::thread *threadHello(std::vector<long> &positionAtLadder,
-                                 std::vector<std::string> &rowStack,
+        while (running)
+        {
+            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
+            while (!work)
+            {
+                std::cout << "\n SUB-Waitting ... \n";
+                m_alarm.wait(lock);
+            }
+
+            std::cout << "\n READ ROWS \n";
+            long newPos = readRows(positionAtLadder.back(), rowStack);
+            if (newPos != theEnd)   // check for not over jumping through boundary of end file
+                positionAtLadder.push_back(newPos);
+            work = false;
+
+            lock.unlock();
+            m_alarm.notify_one();
+        }
+
+        std::cout << "\n ENDED \n";
+    }
+
+    std::thread *createSubThread(std::vector<long> &positionAtLadder,
+                                 std::list<std::string> &rowStack,
                                  bool &work,
                                  bool &running,
                                  std::mutex &m_mutex,
                                  std::condition_variable &m_alarm)
     {
-        return new std::thread(&RowInterface::hello,
-                               this,
-                               std::ref(positionAtLadder),
-                               std::ref(rowStack),
-                               std::ref(work),
-                               std::ref(running),
-                               std::ref(m_mutex),
-                               std::ref(m_alarm));
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, RowInterface *r)
-    {
-        auto elements = r->getRows();
-        for (auto row : elements)
-            os << row << std::endl;
-        return os;
-    }
-
-    const std::vector<std::string> &getRows() const
-    {
-        return rows;
+        return new std::thread([&]
+                               {
+                                   this->readRowsThreaded(positionAtLadder,
+                                                          rowStack,
+                                                          work,
+                                                          running,
+                                                          m_mutex,
+                                                          m_alarm);
+                               });
     }
 
 protected:
     std::ifstream *file;
     unsigned short int rowCount;
-    std::vector<std::string> rows;
     long theEnd;
 };
 
