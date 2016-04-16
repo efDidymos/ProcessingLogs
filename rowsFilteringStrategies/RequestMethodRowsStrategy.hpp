@@ -6,13 +6,13 @@
 #define PROCESSINGLOGS_REQUESTMETHODROWSSTRATEGY_HPP
 
 #include "RowInterface.hpp"
-
 #include <map>
-#include <sstream>
 
 #ifndef NDEBUG
 #include <chrono>
 #endif
+
+#include <sstream>
 
 enum RequestMethod
 {
@@ -25,16 +25,10 @@ enum RequestMethod
 class RequestMethodRowsStrategy: public RowInterface
 {
 public:
-    RequestMethodRowsStrategy(std::ifstream *file,
-                              unsigned short rowCount,
-                              RequestMethod requestMethod)
+    RequestMethodRowsStrategy(std::ifstream *file, unsigned short &rowCount, RequestMethod requestMethod)
         :
         RowInterface(file, rowCount),
         requestedMethod(requestMethod)
-    {
-    }
-
-    virtual ~RequestMethodRowsStrategy()
     {
     }
 
@@ -43,17 +37,16 @@ public:
         return new RequestMethodRowsStrategy(*this);
     }
 
-    long readRows(long pos, std::list<std::string> &rowStack) override
+    long read(long pos, const std::ios_base::seekdir &seekdir) override
     {
 #ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
 #endif
-
         std::string line;
-        rowStack.clear();
+        rows.clear();
 
-        file->seekg(pos, std::ios_base::beg);
+        file->seekg(pos, seekdir);
 
         int i = 0;
 
@@ -80,7 +73,7 @@ public:
                 {
                     if (c6 == type[requestedMethod])
                     {
-                        rowStack.push_back(line);
+                        rows.push_back(line);
                         i++;
                     }
                 }
@@ -90,7 +83,7 @@ public:
                     // the traditional POST, GET, HEAD
                     if ((c6 != type[POST]) && (c6 != type[GET]) && (c6 != type[HEAD]))
                     {
-                        rowStack.push_back(line);
+                        rows.push_back(line);
                         i++;
                     }
                 }
@@ -110,8 +103,6 @@ public:
 #endif
         return pos;
     }
-
-
 
 private:
     RequestMethod requestedMethod;

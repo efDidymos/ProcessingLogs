@@ -5,71 +5,48 @@
 #ifndef PROCESSINGLOGS_ROWINTERFACE_HPP
 #define PROCESSINGLOGS_ROWINTERFACE_HPP
 
+#include <fstream>
+
 class RowInterface
 {
 public:
-    RowInterface(std::ifstream *file, unsigned short rowCount)
+    RowInterface(std::ifstream *file, unsigned short &rowCount)
         :
         file(file),
         rowCount(rowCount)
     {
+        rows.reserve(rowCount);
+
         file->seekg(0, std::ios::end);
         theEnd = file->tellg();
     }
 
     virtual ~RowInterface()
     {
+        rows.clear();
     }
 
     virtual RowInterface *Clone() const = 0;
 
-    virtual long readRows(long pos, std::list<std::string> &rowStack) = 0;
+    virtual long read(long pos, const std::ios_base::seekdir &seekdir) = 0;
 
-    void readRowsThreaded(std::vector<long> &positionAtLadder,
-                          std::list<std::string> &rowStack,
-                          bool &work,
-                          bool &running,
-                          std::mutex &m_mutex,
-                          std::condition_variable &m_alarm)
+    friend std::ostream &operator<<(std::ostream &os, RowInterface *r)
     {
-
-        while (running)
-        {
-            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-            while (!work)
-                m_alarm.wait(lock);
-
-            long newPos = readRows(positionAtLadder.back(), rowStack);
-            if (newPos != theEnd)   // check for not over jumping through boundary of end file
-                positionAtLadder.push_back(newPos);
-            work = false;
-
-            lock.unlock();
-            m_alarm.notify_one();
-        }
+        auto elements = r->getRows();
+        for (auto row : elements)
+            os << row << std::endl;
+        return os;
     }
 
-    std::thread *createSubThread(std::vector<long> &positionAtLadder,
-                                 std::list<std::string> &rowStack,
-                                 bool &work,
-                                 bool &running,
-                                 std::mutex &m_mutex,
-                                 std::condition_variable &m_alarm)
+    const std::vector<std::string> &getRows() const
     {
-        return new std::thread([&]
-                               {
-                                   this->readRowsThreaded(positionAtLadder,
-                                                          rowStack,
-                                                          work,
-                                                          running,
-                                                          m_mutex,
-                                                          m_alarm);
-                               });
+        return rows;
     }
 
 protected:
     std::ifstream *file;
     unsigned short int rowCount;
+    std::vector<std::string> rows;
     long theEnd;
 };
 

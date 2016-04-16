@@ -5,19 +5,15 @@
 #ifndef PROCESSINGLOGS_THELOG_HPP
 #define PROCESSINGLOGS_THELOG_HPP
 
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <list>
+#include <fstream>
 #include <vector>
-
 #include "rowsFilteringStrategies/RowInterface.hpp"
-#include "Viewer.hpp"
 
 class Log
 {
 public:
-    Log(std::ifstream *file)
+    Log(std::ifstream *file, Viewer &view)
+        : view(view)
     {
         positionAtLadder.push_back(0);
 
@@ -27,157 +23,102 @@ public:
 
     virtual ~Log()
     {
-        {
-            std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
-            work = true;
-            running = false;
-        }
-        m_alarm.notify_one();
-
-
-        if (subThread->joinable())
-            subThread->join();
-
-        delete subThread;
-        delete mainThread;
+        delete prevRows;
+        delete currRows;
+        delete nextRows;
     }
 
     void setDisplayRowStrategy(RowInterface *strategy)
     {
         positionAtLadder.resize(1);
 
-        if (subThread != nullptr)
-        {
-            {
-                std::lock_guard<std::mutex> lock(m_mutex);                // Enter critical section
-                work = true;
-                running = false;
-            }
-            m_alarm.notify_one();
+        if (prevRows != nullptr)
+            delete prevRows;
 
-            if (subThread->joinable())
-                subThread->join();
+        if (currRows != nullptr)
+            delete currRows;
 
-            delete subThread;
+        if (nextRows != nullptr)
+            delete nextRows;
 
-            running = true;
-        }
+        prevRows = strategy;
+        currRows = strategy->Clone();
+        nextRows = strategy->Clone();
 
-        // Main thread will do part of the work too
-        mainThread = strategy;
-        long entryPos = mainThread->readRows(positionAtLadder.back(), currRows);
-        positionAtLadder.push_back(entryPos);
-        data.push_back(currRows);
+        long currPos = currRows->read(positionAtLadder.back(), std::ios_base::beg);
+        positionAtLadder.push_back(currPos);
 
-        // Creating sub-thread
-        subThread = strategy->Clone()->createSubThread(positionAtLadder, nextRows, work, running, m_mutex, m_alarm);
+        long nextPos = nextRows->read(currPos, std::ios_base::beg);
+        positionAtLadder.push_back(nextPos);
+    }
+
+    void showCurrRows() const
+    {
+        std::cout << std::endl << currRows;
+
+        view.printHorizontalLine();
+        view.printProgBar((double) positionAtLadder.back(), theEnd);
+        view.printCmdMenu();
     }
 
     void showNextRows()
     {
-        // Boundary check for not over jump the end of the file
-        if (positionAtLadder.back() != theEnd)
-        {
-            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-            while (work)
-            {
-                v.animation();
-                m_alarm.wait(lock);
-            }
-
-            // data list will hold only a three lists
-            if (data.size() == 3)
-                data.pop_front();
-
-            data.push_back(nextRows);
-
-            std::swap(currRows, nextRows);
-            lock.unlock();
-
-            showCurrRows();
-        }
+        swapToNextRows();
+        showCurrRows();
     }
 
     void showPrevRows()
     {
-        // Boundary check for not over jump the begin of the file
-        if (positionAtLadder.end()[-2] != 0)
-        {
-            std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-            while (work)
-            {
-                v.animation();
-                m_alarm.wait(lock);
-            }
-
-            // Climb up three steps at the ladder
-            positionAtLadder.pop_back();
-            positionAtLadder.pop_back();
-            positionAtLadder.pop_back();
-
-            // Also climb back three steps in the data list
-            // which means to the first element
-            data.resize(1);
-
-            lock.unlock();
-            m_alarm.notify_one();
-
-            showCurrRows();
-        }
-        else
-            printRows();
-    }
-
-    void showCurrRows()
-    {
-        printRows();
-
-        std::unique_lock<std::mutex> lock(m_mutex);                // Enter critical section
-        while (work)
-        {
-            v.animation();
-            m_alarm.wait(lock);
-        }
-
-        work = true;
-
-        lock.unlock();
-        m_alarm.notify_one();
-    }
-
-    void printRows() const
-    {
-        for (auto row : data.back())
-            std::cout << row << std::endl;
-
-        v.printProgBar((double) positionAtLadder.back(), theEnd);
+        swapToPrevRows();
+        showCurrRows();
     }
 
 private:
+
+    // Just switch the pointers.
+    void swapToNextRows()
+    {
+        // Boundary check for not over jump the end of the file
+        if (positionAtLadder.back() != theEnd)
+        {
+            auto temp = prevRows;
+            prevRows = currRows;
+            currRows = nextRows;
+            nextRows = temp;
+
+            long nextPos = nextRows->read(positionAtLadder.back(), std::ios_base::beg);
+            positionAtLadder.push_back(nextPos);
+        }
+    }
+
+    // Just switch the pointers.
+    void swapToPrevRows()
+    {
+        // Boundary check for not over jump the begin of the file
+        if (positionAtLadder.end()[-2] != 0)
+        {
+            auto temp = nextRows;
+            nextRows = currRows;
+            currRows = prevRows;
+            prevRows = temp;
+
+            // Climb up one setp at the ladder
+            positionAtLadder.pop_back();
+
+            // Climb up three setps only for looking
+            prevRows->read(positionAtLadder.end()[-3], std::ios_base::beg);
+        }
+    }
+
     std::vector<long> positionAtLadder;
     long theEnd;
 
-    bool work = false;
-    bool running = true;
+    // Three buffers
+    RowInterface *prevRows = nullptr;
+    RowInterface *currRows = nullptr;
+    RowInterface *nextRows = nullptr;
 
-    std::mutex m_mutex;
-    std::condition_variable m_alarm;
-
-    RowInterface *mainThread = nullptr;
-    std::thread *subThread = nullptr;
-
-    // Two lists serves as buffers for main and sub thread
-    std::list<std::string> currRows;    // main thread will allways show this buffer
-    std::list<std::string> nextRows;    // sub thread will allways write to this buffer
-
-    // List serves as data history. It holds at most three
-    // elements (due ensuring high performance)
-    // [P] revious - previously readed list of rows
-    // [C] current - currRows
-    // [N] ext     - nextRows
-    std::list<std::list<std::string>> data;
-
-    Viewer v;
+    Viewer &view;
 };
 
 

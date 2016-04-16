@@ -14,12 +14,8 @@
 class AllRowsStrategy: public RowInterface
 {
 public:
-    AllRowsStrategy(std::ifstream *file, unsigned short int rowCount)
+    AllRowsStrategy(std::ifstream *file, unsigned short int &rowCount)
         : RowInterface(file, rowCount)
-    {
-    }
-
-    virtual ~AllRowsStrategy()
     {
     }
 
@@ -28,7 +24,7 @@ public:
         return new AllRowsStrategy(*this);
     }
 
-    long readRows(long pos, std::list<std::string> &rowStack) override
+    long read(long pos, const std::ios_base::seekdir &seekdir) override
     {
 #ifndef NDEBUG
         using namespace std::chrono;
@@ -36,15 +32,15 @@ public:
 #endif
 
         std::string line;
-        rowStack.clear();
+        rows.clear();
 
-        file->seekg(pos, std::ios_base::beg);
+        file->seekg(pos, seekdir);
 
         for (int i = 0; i < rowCount; i++)
         {
             if (getline(*file, line))
             {
-                rowStack.push_back(line);
+                rows.push_back(line);
                 pos = file->tellg();
             }
             else
@@ -57,10 +53,8 @@ public:
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-
         std::cout << "\n --- Duration of AllRowsStrategy=" << diff.count() << std::endl;
 #endif
-
         return pos;
     }
 };
