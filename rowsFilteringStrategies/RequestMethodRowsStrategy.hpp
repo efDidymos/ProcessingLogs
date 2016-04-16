@@ -6,11 +6,12 @@
 #define PROCESSINGLOGS_REQUESTMETHODROWSSTRATEGY_HPP
 
 #include "RowInterface.hpp"
-
-#include <iostream>
 #include <map>
 
+#ifndef NDEBUG
 #include <chrono>
+#endif
+
 #include <sstream>
 
 enum RequestMethod
@@ -38,9 +39,10 @@ public:
 
     long read(long pos, const std::ios_base::seekdir &seekdir) override
     {
+#ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
-
+#endif
         std::string line;
         rows.clear();
 
@@ -94,37 +96,12 @@ public:
         }
         while (i < rowCount);
 
+#ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
         std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
-
-        printProgBar((double) pos);
-
+#endif
         return pos;
-    }
-
-    void printProgBar(double value)
-    {
-        std::string bar;
-        int percent = ((value / theEnd) * 100);
-
-        for (int i = 0; i < 50; i++)
-        {
-            if (i < (percent / 2))
-            {
-                bar.replace(i, 1, "=");
-            }
-            else if (i == (percent / 2))
-            {
-                bar.replace(i, 1, ">");
-            }
-            else
-            {
-                bar.replace(i, 1, " ");
-            }
-        }
-
-        std::cout << "\r  [" << bar << "] " << percent << "%    " << std::flush;
     }
 
 private:

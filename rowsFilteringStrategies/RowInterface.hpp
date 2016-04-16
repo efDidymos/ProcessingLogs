@@ -6,7 +6,6 @@
 #define PROCESSINGLOGS_ROWINTERFACE_HPP
 
 #include <fstream>
-#include <vector>
 
 class RowInterface
 {

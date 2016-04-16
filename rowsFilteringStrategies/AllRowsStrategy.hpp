@@ -6,7 +6,10 @@
 #define PROCESSINGLOGS_ROWS_HPP
 
 #include "RowInterface.hpp"
+
+#ifndef NDEBUG
 #include <chrono>
+#endif
 
 class AllRowsStrategy: public RowInterface
 {
@@ -23,8 +26,10 @@ public:
 
     long read(long pos, const std::ios_base::seekdir &seekdir) override
     {
+#ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
+#endif
 
         std::string line;
         rows.clear();
@@ -45,10 +50,11 @@ public:
             }
         }
 
+#ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
         std::cout << "\n --- Duration of AllRowsStrategy=" << diff.count() << std::endl;
-
+#endif
         return pos;
     }
 };

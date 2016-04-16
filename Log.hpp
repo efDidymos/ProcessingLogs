@@ -7,13 +7,13 @@
 
 #include <fstream>
 #include <vector>
-#include <iostream>
 #include "rowsFilteringStrategies/RowInterface.hpp"
 
 class Log
 {
 public:
-    Log(std::ifstream *file)
+    Log(std::ifstream *file, Viewer &view)
+        : view(view)
     {
         positionAtLadder.push_back(0);
 
@@ -44,18 +44,21 @@ public:
         prevRows = strategy;
         currRows = strategy->Clone();
         nextRows = strategy->Clone();
-    }
 
-    // Firstime print rows
-    void printRows()
-    {
         long currPos = currRows->read(positionAtLadder.back(), std::ios_base::beg);
         positionAtLadder.push_back(currPos);
 
         long nextPos = nextRows->read(currPos, std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
+    }
 
-        showCurrRows();
+    void showCurrRows() const
+    {
+        std::cout << std::endl << currRows;
+
+        view.printHorizontalLine();
+        view.printProgBar((double) positionAtLadder.back(), theEnd);
+        view.printCmdMenu();
     }
 
     void showNextRows()
@@ -71,10 +74,6 @@ public:
     }
 
 private:
-    void showCurrRows() const
-    {
-        std::cout << std::endl << currRows;
-    }
 
     // Just switch the pointers.
     void swapToNextRows()
@@ -118,6 +117,8 @@ private:
     RowInterface *prevRows = nullptr;
     RowInterface *currRows = nullptr;
     RowInterface *nextRows = nullptr;
+
+    Viewer &view;
 };
 
 

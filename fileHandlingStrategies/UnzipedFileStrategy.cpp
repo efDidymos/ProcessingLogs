@@ -5,8 +5,8 @@
 #include <termio.h>
 
 #include "UnzipedFileStrategy.h"
-#include "../Log.hpp"
 #include "../Viewer.hpp"
+#include "../Log.hpp"
 
 #include "../rowsFilteringStrategies/AllRowsStrategy.hpp"
 #include "../rowsFilteringStrategies/RequestMethodRowsStrategy.hpp"
@@ -21,15 +21,13 @@ void UnzipedFileStrategy::execute()
     {
         std::cout << "The file opened successfully" << std::endl;
 
-        Viewer w;
-        unsigned short int rowCount = w.getRowsCount();
-        rowCount = rowCount - 5;    // (rowCount - 2) - last two lines are for displaying pseudo menu
+        Viewer view;
+        unsigned short int rowCount = view.getRowsCount();
 
-        Log theLog(&file);
+        Log theLog(&file, view);
 
         theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
-        theLog.printRows();
-        w.printCmdMenu();
+        theLog.showCurrRows();
 
         // Black magic to prevent Linux from buffering keystrokes.
         // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
@@ -45,27 +43,20 @@ void UnzipedFileStrategy::execute()
         while (c != 'q')
         {
             if (c == 'j')
-            {
                 theLog.showNextRows();
-                w.printCmdMenu();
-            }
             else if (c == 'k')
-            {
                 theLog.showPrevRows();
-                w.printCmdMenu();
-            }
             else if (c == 'f')
-                w.printFilterCmdMenu();
+                view.printFilterCmdMenu();
             else if (c == '0')    // Default: Show all rows without any filter
             {
                 theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
-                theLog.printRows();
-                w.printCmdMenu();
+                theLog.showCurrRows();
             }
 //            else if (c == '1')
             else if (c == '2')  // Show rows filtered by Request method
             {
-                w.printFilterRequestMCmdMenu();
+                view.printFilterRequestMCmdMenu();
 
                 std::cin.get(c);
                 int opt = c - '0';
@@ -100,8 +91,7 @@ void UnzipedFileStrategy::execute()
                         break;
                 }
 
-                theLog.printRows();
-                w.printCmdMenu();
+                theLog.showCurrRows();
             }
 //            else if (c == '3')
 
