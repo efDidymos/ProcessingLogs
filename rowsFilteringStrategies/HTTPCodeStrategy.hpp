@@ -7,6 +7,12 @@
 
 #include "RowInterface.hpp"
 
+#ifndef NDEBUG
+#include <chrono>
+#endif
+
+#include <sstream>
+
 class HTTPCodeStrategy: public RowInterface
 {
 
@@ -22,7 +28,17 @@ public:
 
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) override
     {
-        return 0;
+#ifndef NDEBUG
+        using namespace std::chrono;
+        auto start = high_resolution_clock::now();
+#endif
+
+#ifndef NDEBUG
+        auto end = high_resolution_clock::now();
+        duration<double> diff = end - start;
+        std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
+#endif
+        return pos;
     }
 
 };

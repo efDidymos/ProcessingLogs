@@ -10,6 +10,7 @@
 
 #include "../rowsFilteringStrategies/AllRowsStrategy.hpp"
 #include "../rowsFilteringStrategies/RequestMethodRowsStrategy.hpp"
+#include "../rowsFilteringStrategies/DateStrategy.hpp"
 
 void UnzipedFileStrategy::execute()
 {
@@ -93,8 +94,16 @@ void UnzipedFileStrategy::execute()
 
                 theLog.showCurrRows();
             }
-//            else if (c == '3')
+            else if (c == '3')
+            {
+                view.printFilterDateCmdMenu();
 
+                std::string date;
+                std::cin >> date;
+
+                theLog.setDisplayRowStrategy(new DateStrategy(&file, rowCount, date));
+                theLog.showCurrRows();
+            }
             std::cin.get(c);
         }
         std::cout << std::endl;

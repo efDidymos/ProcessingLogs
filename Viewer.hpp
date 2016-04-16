@@ -95,10 +95,14 @@ public:
         return terminalRows - 5;    // (rowCount - 5) - last lines are for displaying pseudo menu
     }
 
+    void printFilterDateCmdMenu()
+    {
+        std::cout << "\r Please enter day [01-31] from which you want list rows:          ";
+    }
+
 private:
     unsigned short int terminalRows;
     unsigned short int terminalColumns;
 };
-
 
 #endif //PROCESSINGLOGS_VIEWER_HPP
