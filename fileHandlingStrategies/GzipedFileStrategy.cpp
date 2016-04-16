@@ -20,20 +20,27 @@ void GzipedFileStrategy::execute()
 
     // Prepare name of the new unzipped file
     // by trimming the .gz extension from filename
-    std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
+    try
+    {
+        std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
 
-    bio::filtering_istream out;
-    out.push(bio::gzip_decompressor());
-    out.push(file);
+        bio::filtering_istream out;
+        out.push(bio::gzip_decompressor());
+        out.push(file);
 
-    std::ofstream outStream(unzipedFile, std::ios_base::out);
-    bio::copy(out, outStream);
+        std::ofstream outStream(unzipedFile, std::ios_base::out);
+        bio::copy(out, outStream);
 
-    std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
-    // Just for the case that user do not see the results
-    sleep(5);
+        std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
+        // Just for the case that user has not saw the results
+        sleep(5);
 
-    // Call the appropriate strategy
-    UnzipedFileStrategy us(unzipedFile);
-    us.execute();
+        // Call the appropriate strategy
+        UnzipedFileStrategy us(unzipedFile);
+        us.execute();
+    }
+    catch (const bio::gzip_error &exception)
+    {
+        std::cout << "\nBoost Description of Error: " << exception.what() << std::endl;
+    }
 }
