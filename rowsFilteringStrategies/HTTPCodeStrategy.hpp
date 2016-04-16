@@ -17,8 +17,10 @@ class HTTPCodeStrategy: public RowInterface
 {
 
 public:
-    HTTPCodeStrategy(std::ifstream *file, unsigned short &rowCount)
-        : RowInterface(file, rowCount)
+    HTTPCodeStrategy(std::ifstream *file, unsigned short &rowCount, std::string code)
+        :
+        RowInterface(file, rowCount),
+        code(code)
     { }
 
     virtual RowInterface *Clone() const override
@@ -33,6 +35,42 @@ public:
         auto start = high_resolution_clock::now();
 #endif
 
+        std::string line;
+        rows.clear();
+
+        file->seekg(pos, seekdir);
+
+        int i = 0;
+
+        std::string c1, c2, c3, c4, c5, c6, c7, c8, c9;
+        std::stringstream ss;
+
+        do
+        {
+            if (getline(*file, line))
+            {
+                pos = file->tellg();
+
+                ss << line;
+
+                ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6 >> c7 >> c8 >> c9;
+
+                ss.str(""); // erase the buffer
+
+                if (c9 == code)
+                {
+                    rows.push_back(line);
+                    i++;
+                }
+            }
+            else
+            {
+                pos = theEnd;
+                break;
+            }
+        }
+        while (i < rowCount);
+
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
@@ -40,7 +78,8 @@ public:
 #endif
         return pos;
     }
-
+private:
+    std::string code;
 };
 
 

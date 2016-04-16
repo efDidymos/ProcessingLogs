@@ -97,7 +97,12 @@ public:
 
     void printFilterDateCmdMenu()
     {
-        std::cout << "\r Please enter day [01-31] from which you want list rows:          ";
+        std::cout << "\r Please enter day [01-31] and press ENTER:                        ";
+    }
+
+    void printFilterHTTPCodeCmdMenu()
+    {
+        std::cout << "\r Please enter code [1xx - 5xx] and press ENTER:                   ";
     }
 
 private:

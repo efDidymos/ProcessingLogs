@@ -9,6 +9,7 @@
 #include "../Log.hpp"
 
 #include "../rowsFilteringStrategies/AllRowsStrategy.hpp"
+#include "../rowsFilteringStrategies/HTTPCodeStrategy.hpp"
 #include "../rowsFilteringStrategies/RequestMethodRowsStrategy.hpp"
 #include "../rowsFilteringStrategies/DateStrategy.hpp"
 
@@ -54,7 +55,16 @@ void UnzipedFileStrategy::execute()
                 theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
                 theLog.showCurrRows();
             }
-//            else if (c == '1')
+            else if (c == '1')
+            {
+                view.printFilterHTTPCodeCmdMenu();
+
+                std::string code;
+                std::cin >> code;
+
+                theLog.setDisplayRowStrategy(new HTTPCodeStrategy(&file, rowCount, code));
+                theLog.showCurrRows();
+            }
             else if (c == '2')  // Show rows filtered by Request method
             {
                 view.printFilterRequestMCmdMenu();
