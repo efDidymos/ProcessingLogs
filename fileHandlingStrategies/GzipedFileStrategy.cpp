@@ -41,6 +41,6 @@ void GzipedFileStrategy::execute()
     }
     catch (const bio::gzip_error &exception)
     {
-        std::cout << "\nBoost Description of Error: " << exception.what() << std::endl;
+        std::cerr << "\nBoost Description of Error: " << exception.what() << std::endl;
     }
 }

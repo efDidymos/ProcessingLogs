@@ -1,10 +1,9 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
-#include <boost/asio.hpp>
 
 #include "Context.hpp"
-#include "fileHandlingStrategies/UnzipedFileStrategy.h"
 #include "fileHandlingStrategies/UrlStrategy.h"
+#include "fileHandlingStrategies/UnzipedFileStrategy.h"
 #include "fileHandlingStrategies/GzipedFileStrategy.h"
 
 using namespace std;

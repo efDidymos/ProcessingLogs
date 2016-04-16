@@ -11,15 +11,15 @@
 class UrlStrategy: public ProcessingInterface
 {
 public:
-    UrlStrategy(const std::string fileName)
-        : file(fileName, std::ios::in)
+    UrlStrategy(const std::string arg)
+        : url(arg)
     {
     }
 
     void execute();
 
 private:
-    std::ifstream file;
+    std::string url;
 };
 
 
