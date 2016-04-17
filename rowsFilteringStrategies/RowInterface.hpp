@@ -34,7 +34,7 @@ public:
     {
         auto elements = r->getRows();
         for (auto row : elements)
-            os << row << std::endl;
+            os << row << "\n";
         return os;
     }
 
