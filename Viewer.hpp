@@ -26,22 +26,12 @@ public:
 
         terminalColumns = size.ws_col;
         if (terminalColumns == 0) terminalColumns = 30;
-
-/*
-        // Animation of counter
-        for (int j = 0; j < 5; j++)
-        {
-            std::cout.flush();
-            std::cout << "\r" << j;
-            sleep(1);
-        }
-*/
     }
 
-    void printProgBar(double value, long end)
+    void printProgBar(double value, long base)
     {
         std::string bar;
-        int percent = ((value / end) * 100);
+        int percent = ((value / base) * 100);
 
         for (int i = 0; i < 50; i++)
         {
@@ -59,7 +49,6 @@ public:
             }
         }
 
-        std::cout << "\n ";
         std::cout << "\r  [" << bar << "] " << percent << "%    " << std::flush;
     }
 

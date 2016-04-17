@@ -57,6 +57,7 @@ public:
         std::cout << std::endl << currRows;
 
         view.printHorizontalLine();
+        std::cout << "\n "; // only visual effect
         view.printProgBar((double) positionAtLadder.back(), theEnd);
         view.printCmdMenu();
     }

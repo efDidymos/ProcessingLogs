@@ -21,9 +21,7 @@ public:
 
     void execute();
 
-    std::string get_http_data(std::string server, std::string path, std::string file, std::string protocol);
-
-    void showProgress(std::ofstream *file, long length);
+    int get_http_data(std::string server, std::string path, std::string file, std::string protocol);
 
 private:
     std::string url;

@@ -6,19 +6,22 @@
 #include "../Viewer.hpp"
 
 #include <boost/asio.hpp>
-#include <future>
+#include <boost/filesystem.hpp>
 
 void UrlStrategy::execute()
 {
     // Check if the argument is some type of URL
     if (std::regex_match(url, match, expresion))
     {
-        std::string result = get_http_data(match[3],
-                                           match[4],
-                                           match[5],
-                                           match[2]);
+        int result = get_http_data(match[3],
+                                   match[4],
+                                   match[5],
+                                   match[2]);
 
-        std::cout << result << std::endl;
+        if (result == 0)
+            std::cout << "Work with downloaded file" << std::endl;
+
+        std::cout << "RESULT OF FIRST GET_HTTP " << result << std::endl;
     }
     else
     {
@@ -26,124 +29,165 @@ void UrlStrategy::execute()
     }
 }
 
-std::string UrlStrategy::get_http_data(std::string server, std::string path, std::string file, std::string protocol)
+int UrlStrategy::get_http_data(std::string server, std::string path, std::string file, std::string protocol)
 {
+    using boost::asio::ip::tcp;
+
     try
     {
-        std::cout << "SERVER: " << server << " PATH: " << path << " FILE: " << file << std::endl;
+        boost::asio::io_service io_service;
 
-        boost::asio::ip::tcp::iostream s(server, protocol);
+        // Get a list of endpoints corresponding to the server name.
+        tcp::resolver resolver(io_service);
+        tcp::resolver::query query(server, protocol);
+        tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
-        if (!s)
-            throw "Unable to connect: " + s.error().message();
+        // Try each endpoint until we successfully establish a connection.
+        tcp::socket socket(io_service);
+        boost::asio::connect(socket, endpoint_iterator);
 
-        // ask for the file
-        s << "GET " << path.append(file) << " HTTP/1.0\r\n";
-        s << "Host: " << server << "\r\n";
-        s << "Accept: */*\r\n";
-        s << "Connection: close\r\n\r\n";
+        // Form the request. We specify the "Connection: close" header so that the
+        // server will close the socket after transmitting the response. This will
+        // allow us to treat all data up until the EOF as the content.
+        boost::asio::streambuf request;
+        std::ostream request_stream(&request);
+        request_stream << "GET " << path + file << " HTTP/1.0\r\n";
+        request_stream << "Host: " << server << "\r\n";
+        request_stream << "Accept: */*\r\n";
+        request_stream << "Connection: close\r\n\r\n";
+
+        // Send the request.
+        boost::asio::write(socket, request);
+
+        // Read the response status line. The response streambuf will automatically
+        // grow to accommodate the entire line. The growth may be limited by passing
+        // a maximum size to the streambuf constructor.
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
 
         // Check that response is OK.
+        std::istream response_stream(&response);
+
         std::string http_version;
-        s >> http_version;
+        response_stream >> http_version;
 
         unsigned int status_code;
-        s >> status_code;
+        response_stream >> status_code;
 
         std::string status_message;
-        std::getline(s, status_message);
+        std::getline(response_stream, status_message);
 
-        if (!s && http_version.substr(0, 5) != "HTTP/")
-            throw "Invalid response";
-
-        if (status_code == 302)
+        if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
-            // Process the response headers, which are terminated by a blank line.
-            std::string header;
-            std::string pom;
-            while (std::getline(s, header) && header != "\r")
+            std::cout << "Invalid response\n";
+            return 1;
+        }
+
+        if (status_code != 200)
+        {
+            if (status_code == 302)
             {
-                if (header.substr(0, 9) == "Location:")
+                // Process the response headers, which are terminated by a blank line.
+                std::string header;
+                std::string pom;
+                while (std::getline(response_stream, header) && header != "\r")
                 {
-                    pom = header.substr(10);
-                    if (auto pos = pom.find("\r"))
-                        pom = pom.substr(0, pos);
-//                    break;
+//                    std::cout << header << "\n";
+                    if (header.substr(0, 9) == "Location:")
+                    {
+                        pom = header.substr(10);
+                        if (auto pos = pom.find("\r"))
+                            pom = pom.substr(0, pos);
+                        break;
+                    }
                 }
-            }
 
-            // Produce second dowload
-            if (std::regex_match(pom, match, expresion))
-            {
-                std::string result = get_http_data(match[3],
-                                                   match[4],
-                                                   match[5],
-                                                   match[2]);
-
-                std::cout << "\n returned from recursion \n";
-
-                std::cout << result << std::endl;
+                // Check if the greped URL is valid
+                if (std::regex_match(pom, match, expresion))
+                {
+                    return get_http_data(match[3],
+                                         match[4],
+                                         match[5],
+                                         match[2]);
+                }
+                else
+                {
+                    std::cerr << "Redirectoin URL is not valid!" << std::endl;
+                    return 1;
+                }
             }
             else
-                throw "NOT Valid URL in redirection";
+            {
+                std::cout << "Response returned with status code " << status_code << "\n";
+                return 1;
+            }
         }
-        else if (status_code != 200)
-            throw "Response returned with status code " + status_code;
+
+        // Read the response headers, which are terminated by a blank line.
+        boost::asio::read_until(socket, response, "\r\n\r\n");
+
+        // Process the response headers.
+        std::string header, length;
+        while (std::getline(response_stream, header) && header != "\r")
+        {
+//            std::cout << header << "\n";
+            if (header.substr(0, 15) == "Content-Length:")
+            {
+                length = header.substr(16);
+                if (auto pos = length.find("\r"))
+                    length = length.substr(0, pos);
+            }
+        }
+        std::cout << "\n";
+
+        // ---------------------------------------------------------------------
+        std::string filename = file + ".download";  // added extension to signalize working copy of file
+        std::ofstream ofs(filename, std::ios_base::app);
+        // ---------------------------------------------------------------------
+
+        std::cout << "Downloading the file " << file << std::endl;
+
+        // Write whatever content we already have to output.
+        if (response.size() > 0)
+            ofs << &response;
+
+        Viewer view;
+
+        long len = std::stol(length);
+
+        // Read until EOF, writing data to output as we go.
+        boost::system::error_code error;
+        while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
+        {
+            // Show the progress bar
+            view.printProgBar(ofs.tellp(), len);
+            ofs << &response;
+        }
+        if (error != boost::asio::error::eof)
+            throw boost::system::system_error(error);
+
+        // ---------------------------------------------------------------------
+        ofs.close();
+        // ---------------------------------------------------------------------
+
+        // After successfully download of the file check the size
+        if (boost::filesystem::file_size(filename) == len)
+        {
+            // And remove the .download extension from the name of the file
+            int rc = std::rename(filename.c_str(), file.c_str());
+            if (rc)
+                throw "Error renaming downloaded file " + filename + " to " + file;
+            else
+                return 0;
+        }
         else
         {
-            std::cout << "saving " << std::endl;
-
-            // Process the response headers, which are terminated by a blank line.
-            std::string header, length;
-            while (std::getline(s, header) && header != "\r")
-            {
-                std::cout << header << "\n";
-                if (header.substr(0, 15) == "Content-Length:")
-                {
-                    length = header.substr(16);
-                    if (auto pos = length.find("\r"))
-                        length = length.substr(0, pos);
-                }
-            }
-            std::cout << "\n";
-
-            std::cout << "writting " << std::endl;
-
-            std::ofstream ofs(file.append(".download"), std::ios_base::app);
-
-            // Run in paralel
-//            std::async(std::launch::async, [&] { showProgress(&ofs, std::stol(length)); });
-
-            ofs << s.rdbuf();
-
-            ofs.close();
-
-            auto pos = file.find(".download");
-
-            // Remove the .dowload extension from name of the file
-            int rc = std::rename(file.c_str(), file.substr(0, pos).c_str());
-            if (rc)
-                throw "Error renaming downloaded file " + file + " to " + file.substr(0, pos);
+            throw "Error downloaded file " + filename + " is not complete";
         }
     }
     catch (const std::exception &e)
     {
-        return e.what();
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return 1;
     }
 }
-
-void UrlStrategy::showProgress(std::ofstream *file, long length)
-{
-    Viewer view;
-
-    double currSize = file->tellp();
-
-    while (currSize != length)
-    {
-        view.printProgBar(currSize, length);
-        sleep(5);
-        currSize = file->tellp();
-        std::cout << "size: " << currSize << std::endl;
-    }
-}
-
