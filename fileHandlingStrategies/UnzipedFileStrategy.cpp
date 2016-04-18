@@ -29,7 +29,6 @@ void UnzipedFileStrategy::execute()
         Log theLog(&file, view);
 
         theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
-        theLog.showCurrRows();
 
         // Black magic to prevent Linux from buffering keystrokes.
         // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
@@ -51,10 +50,7 @@ void UnzipedFileStrategy::execute()
             else if (c == 'f')
                 view.printFilterCmdMenu();
             else if (c == '0')    // Default: Show all rows without any filter
-            {
                 theLog.setDisplayRowStrategy(new AllRowsStrategy(&file, rowCount));
-                theLog.showCurrRows();
-            }
             else if (c == '1')
             {
                 view.printFilterHTTPCodeCmdMenu();
@@ -63,7 +59,6 @@ void UnzipedFileStrategy::execute()
                 std::cin >> code;
 
                 theLog.setDisplayRowStrategy(new HTTPCodeStrategy(&file, rowCount, code));
-                theLog.showCurrRows();
             }
             else if (c == '2')  // Show rows filtered by Request method
             {
@@ -101,8 +96,6 @@ void UnzipedFileStrategy::execute()
                     default:
                         break;
                 }
-
-                theLog.showCurrRows();
             }
             else if (c == '3')
             {
@@ -112,7 +105,6 @@ void UnzipedFileStrategy::execute()
                 std::cin >> date;
 
                 theLog.setDisplayRowStrategy(new DateStrategy(&file, rowCount, date));
-                theLog.showCurrRows();
             }
             std::cin.get(c);
         }

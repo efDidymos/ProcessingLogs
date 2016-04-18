@@ -28,7 +28,7 @@ public:
         if (terminalColumns == 0) terminalColumns = 30;
     }
 
-    void printProgBar(double value, long base)
+    void printProgBar(std::string msg, double value, long base)
     {
         std::string bar;
         int percent = ((value / base) * 100);
@@ -49,7 +49,7 @@ public:
             }
         }
 
-        std::cout << "\r  [" << bar << "] " << percent << "%    " << std::flush;
+        std::cout << "\r " << msg << " [" << bar << "] " << percent << "%    " << std::flush;
     }
 
     void printCmdMenu() const

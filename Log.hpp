@@ -48,17 +48,18 @@ public:
         long currPos = currRows->read(positionAtLadder.back(), std::ios_base::beg);
         positionAtLadder.push_back(currPos);
 
+        showCurrRows();
+
         long nextPos = nextRows->read(currPos, std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
     }
 
     void showCurrRows() const
     {
-        std::cout << std::endl << currRows;
+        std::cout << "\n" << currRows;
 
         view.printHorizontalLine();
-        std::cout << "\n "; // only visual effect
-        view.printProgBar((double) positionAtLadder.back(), theEnd);
+        view.printProgBar("\n File read", (double) positionAtLadder.back(), theEnd);
         view.printCmdMenu();
     }
 

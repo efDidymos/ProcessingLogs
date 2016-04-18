@@ -145,22 +145,23 @@ int UrlStrategy::get_http_data(std::string server, std::string path, std::string
         std::ofstream ofs(filename, std::ios_base::app);
         // ---------------------------------------------------------------------
 
-        std::cout << "Downloading the file " << file << std::endl;
-
         // Write whatever content we already have to output.
         if (response.size() > 0)
             ofs << &response;
 
         Viewer view;
-
         long len = std::stol(length);
 
         // Read until EOF, writing data to output as we go.
         boost::system::error_code error;
+
+        view.printHorizontalLine();
+        std::cout << "\n ";         // only visual purpose
+
         while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
         {
             // Show the progress bar
-            view.printProgBar(ofs.tellp(), len);
+            view.printProgBar("Downloading the file " + file, ofs.tellp(), len);
             ofs << &response;
         }
         if (error != boost::asio::error::eof)
