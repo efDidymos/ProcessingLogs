@@ -13,17 +13,18 @@ void URL::processFile(std::string fileName)
     // Check if the argument is some type of URL
     if (std::regex_match(fileName, match, expresion))
     {
-        int result = get_http_data(match[3],
-                                   match[4],
-                                   match[5],
-                                   match[2]);
+        auto result = get_http_data(match[3],
+                                    match[4],
+                                    match[5],
+                                    match[2]);
 
-        if (result == 0)
-            std::cout << "Work with downloaded file" << std::endl;
-
-        std::cout << "RESULT OF FIRST GET_HTTP " << result << std::endl;
-
-//        successor->processFile(fileName);
+        // If the returned result performed without error
+        // get the file name in the second atribute and
+        // process it to successor
+        if (std::get<0>(result) == 0)
+            successor->processFile(std::get<1>(result));
+        else
+            std::cout << std::get<0>(result);
     }
     else
     {
@@ -33,9 +34,11 @@ void URL::processFile(std::string fileName)
     }
 }
 
-int URL::get_http_data(std::string server, std::string path, std::string file, std::string protocol)
+std::tuple<int, std::string> URL::get_http_data(std::string server,
+                                                std::string path,
+                                                std::string file,
+                                                std::string protocol)
 {
-
     namespace baio = boost::asio;
     using boost::asio::ip::tcp;
 
@@ -85,8 +88,9 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
 
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
-            std::cout << "Invalid response\n";
-            return 1;
+//            std::cout << "Invalid response\n";
+//            return 1;
+            return std::make_tuple(1, "Invalid response");
         }
 
         if (status_code != 200)
@@ -118,14 +122,16 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
                 }
                 else
                 {
-                    std::cerr << "Redirectoin URL is not valid!" << std::endl;
-                    return 1;
+//                    std::cerr << "Redirectoin URL is not valid!" << std::endl;
+//                    return 1;
+                    return std::make_tuple(1, "Redirectoin URL is not valid!");
                 }
             }
             else
             {
                 std::cout << "Response returned with status code " << status_code << "\n";
-                return 1;
+//                return 1;
+                return std::make_tuple(1, "Response returned with status code " + status_code);
             }
         }
 
@@ -185,7 +191,9 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
             if (rc)
                 throw "Error renaming downloaded file " + filename + " to " + file;
             else
-                return 0;
+            {
+                return std::make_tuple(0, file);
+            }
         }
         else
         {
@@ -194,7 +202,10 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
     }
     catch (const std::exception &e)
     {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        return 1;
+//        std::cerr << "ERROR: " << e.what() << std::endl;
+//        return 1;
+        std::string pom = "ERROR: ";
+        pom += e.what();
+        return std::make_tuple(1, pom);
     }
 }

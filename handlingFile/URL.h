@@ -7,6 +7,7 @@
 
 #include "ProcessingInterface.hpp"
 
+#include <tuple>
 #include <regex>
 
 class URL: public ProcessingInterface
@@ -21,7 +22,8 @@ public:
     void processFile(std::string fileName) override;
 
 private:
-    int get_http_data(std::string server, std::string path, std::string file, std::string protocol);
+    std::tuple<int, std::string>
+        get_http_data(std::string server, std::string path, std::string file, std::string protocol);
 
 //    std::regex e(R"delim("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*)$");
 //    std::regex e("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*)$");
