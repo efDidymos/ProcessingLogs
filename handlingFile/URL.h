@@ -14,20 +14,14 @@ class URL: public ProcessingInterface
 {
 public:
     URL()
-        :
-        expresion("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$")
-    {
-    }
+        : expresion("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$")
+    { }
 
     void processFile(std::string fileName) override;
 
 private:
     std::tuple<int, std::string>
         get_http_data(std::string server, std::string path, std::string file, std::string protocol);
-
-//    std::regex e(R"delim("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*)$");
-//    std::regex e("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*)$");
-// ^((http[s]?|ftp):\/?\/?)([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$
     std::regex expresion;
     std::smatch match;
 };
