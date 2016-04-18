@@ -35,6 +35,8 @@ void URL::processFile(std::string fileName)
 
 int URL::get_http_data(std::string server, std::string path, std::string file, std::string protocol)
 {
+
+    namespace baio = boost::asio;
     using boost::asio::ip::tcp;
 
     try
@@ -48,12 +50,12 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
 
         // Try each endpoint until we successfully establish a connection.
         tcp::socket socket(io_service);
-        boost::asio::connect(socket, endpoint_iterator);
+        baio::connect(socket, endpoint_iterator);
 
         // Form the request. We specify the "Connection: close" header so that the
         // server will close the socket after transmitting the response. This will
         // allow us to treat all data up until the EOF as the content.
-        boost::asio::streambuf request;
+        baio::streambuf request;
         std::ostream request_stream(&request);
         request_stream << "GET " << path + file << " HTTP/1.0\r\n";
         request_stream << "Host: " << server << "\r\n";
@@ -61,13 +63,13 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
         request_stream << "Connection: close\r\n\r\n";
 
         // Send the request.
-        boost::asio::write(socket, request);
+        baio::write(socket, request);
 
         // Read the response status line. The response streambuf will automatically
         // grow to accommodate the entire line. The growth may be limited by passing
         // a maximum size to the streambuf constructor.
-        boost::asio::streambuf response;
-        boost::asio::read_until(socket, response, "\r\n");
+        baio::streambuf response;
+        baio::read_until(socket, response, "\r\n");
 
         // Check that response is OK.
         std::istream response_stream(&response);
@@ -128,7 +130,7 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
         }
 
         // Read the response headers, which are terminated by a blank line.
-        boost::asio::read_until(socket, response, "\r\n\r\n");
+        baio::read_until(socket, response, "\r\n\r\n");
 
         // Process the response headers.
         std::string header, length;
@@ -162,13 +164,13 @@ int URL::get_http_data(std::string server, std::string path, std::string file, s
         view.printHorizontalLine();
         std::cout << "\n ";         // only visual purpose
 
-        while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
+        while (baio::read(socket, response, baio::transfer_at_least(1), error))
         {
             // Show the progress bar
             view.printProgBar("Downloading the file " + file, ofs.tellp(), len);
             ofs << &response;
         }
-        if (error != boost::asio::error::eof)
+        if (error != baio::error::eof)
             throw boost::system::system_error(error);
 
         // ---------------------------------------------------------------------
