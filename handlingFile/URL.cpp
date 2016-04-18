@@ -22,7 +22,13 @@ void URL::processFile(std::string fileName)
         // get the file name in the second atribute and
         // process it to successor
         if (std::get<0>(result) == 0)
+        {
+            std::cout << "The file " << std::get<1>(result) << " downloaded successfully." << std::endl;
+
+            // Just for the case that user has not saw the results
+            sleep(5);
             successor->processFile(std::get<1>(result));
+        }
         else
             std::cout << std::get<0>(result);
     }
@@ -87,11 +93,7 @@ std::tuple<int, std::string> URL::get_http_data(std::string server,
         std::getline(response_stream, status_message);
 
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
-        {
-//            std::cout << "Invalid response\n";
-//            return 1;
-            return std::make_tuple(1, "Invalid response");
-        }
+            return std::make_tuple(1, "Invalid response.");
 
         if (status_code != 200)
         {
@@ -121,18 +123,10 @@ std::tuple<int, std::string> URL::get_http_data(std::string server,
                                          match[2]);
                 }
                 else
-                {
-//                    std::cerr << "Redirectoin URL is not valid!" << std::endl;
-//                    return 1;
                     return std::make_tuple(1, "Redirectoin URL is not valid!");
-                }
             }
             else
-            {
-                std::cout << "Response returned with status code " << status_code << "\n";
-//                return 1;
                 return std::make_tuple(1, "Response returned with status code " + status_code);
-            }
         }
 
         // Read the response headers, which are terminated by a blank line.
@@ -191,19 +185,13 @@ std::tuple<int, std::string> URL::get_http_data(std::string server,
             if (rc)
                 throw "Error renaming downloaded file " + filename + " to " + file;
             else
-            {
                 return std::make_tuple(0, file);
-            }
         }
         else
-        {
-            throw "Error downloaded file " + filename + " is not complete";
-        }
+            throw "Error downloaded file " + filename + " is not complete!";
     }
     catch (const std::exception &e)
     {
-//        std::cerr << "ERROR: " << e.what() << std::endl;
-//        return 1;
         std::string pom = "ERROR: ";
         pom += e.what();
         return std::make_tuple(1, pom);

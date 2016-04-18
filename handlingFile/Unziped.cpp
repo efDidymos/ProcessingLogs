@@ -25,11 +25,11 @@ void Unziped::processFile(std::string fileName)
 
         if (!file.is_open())
         {
-            std::cout << "Can not open the file!" << std::endl;
+            std::cout << "File " << fileName << " can not open!" << std::endl;
         }
         else
         {
-            std::cout << "The file opened successfully" << std::endl;
+            std::cout << "The " << fileName << " opened successfully." << std::endl;
 
             Viewer view;
             unsigned short int rowCount = view.getRowsCount();
@@ -120,5 +120,5 @@ void Unziped::processFile(std::string fileName)
         }
     }
     else
-        std::cout << "No successor for handling " << fileName << "... ignore" << std::endl;
+        std::cout << "No successor for handling " << fileName << "... ignore." << std::endl;
 }

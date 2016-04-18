@@ -17,8 +17,8 @@ void Gziped::processFile(std::string fileName)
     {
         std::ifstream file(fileName, std::ios::in);
 
-        std::cout << "The file opened successfully" << std::endl;
-        std::cout << "Starting decompressing the " << fileName << std::endl;
+        std::cout << "Please be patient while decompressing the file." << std::endl;
+        std::cout << "Starting decompressing " << fileName << std::endl;
 
         namespace bio = boost::iostreams;
 
