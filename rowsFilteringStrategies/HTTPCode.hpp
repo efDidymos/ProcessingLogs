@@ -2,8 +2,8 @@
 // Created by tomas on 16.4.2016.
 //
 
-#ifndef PROCESSINGLOGS_DATESTRATEGY_HPP
-#define PROCESSINGLOGS_DATESTRATEGY_HPP
+#ifndef PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
+#define PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
 
 #include "RowInterface.hpp"
 
@@ -13,19 +13,19 @@
 
 #include <sstream>
 
-class DateStrategy: public RowInterface
+class HTTPCode: public RowInterface
 {
 
 public:
-    DateStrategy(std::ifstream *file, unsigned short &rowCount, std::string date)
+    HTTPCode(std::ifstream *file, unsigned short &rowCount, std::string code)
         :
         RowInterface(file, rowCount),
-        date(date)
+        code(code)
     { }
 
     virtual RowInterface *Clone() const override
     {
-        return new DateStrategy(*this);
+        return new HTTPCode(*this);
     }
 
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) override
@@ -42,7 +42,7 @@ public:
 
         int i = 0;
 
-        std::string c1, c2, c3, c4;
+        std::string c1, c2, c3, c4, c5, c6, c7, c8, c9;
         std::stringstream ss;
 
         do
@@ -53,13 +53,11 @@ public:
 
                 ss << line;
 
-                ss >> c1 >> c2 >> c3 >> c4;
+                ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6 >> c7 >> c8 >> c9;
 
                 ss.str(""); // erase the buffer
 
-                c4 = c4.substr(1, 2);  // Trim the date in read line
-
-                if (c4 == date)
+                if (c9 == code)
                 {
                     rows.push_back(line);
                     i++;
@@ -76,14 +74,13 @@ public:
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-        std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
+        std::cout << "\n --- Duration of RequestMethod=" << diff.count() << " --- " << std::endl;
 #endif
         return pos;
     }
-
 private:
-    std::string date;
+    std::string code;
 };
 
 
-#endif //PROCESSINGLOGS_DATESTRATEGY_HPP
+#endif //PROCESSINGLOGS_HTTPCODESTRATEGY_HPP

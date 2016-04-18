@@ -14,7 +14,7 @@
 
 #include <sstream>
 
-enum RequestMethod
+enum RequestCode
 {
     POST,
     GET,
@@ -22,10 +22,10 @@ enum RequestMethod
     UNKNOWN
 };
 
-class RequestMethodRowsStrategy: public RowInterface
+class RequestMethod: public RowInterface
 {
 public:
-    RequestMethodRowsStrategy(std::ifstream *file, unsigned short &rowCount, RequestMethod requestMethod)
+    RequestMethod(std::ifstream *file, unsigned short &rowCount, RequestCode requestMethod)
         :
         RowInterface(file, rowCount),
         requestedMethod(requestMethod)
@@ -34,7 +34,7 @@ public:
 
     virtual RowInterface *Clone() const override
     {
-        return new RequestMethodRowsStrategy(*this);
+        return new RequestMethod(*this);
     }
 
     long read(long pos, const std::ios_base::seekdir &seekdir) override
@@ -99,15 +99,15 @@ public:
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-        std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
+        std::cout << "\n --- Duration of RequestMethod=" << diff.count() << " --- " << std::endl;
 #endif
         return pos;
     }
 
 private:
-    RequestMethod requestedMethod;
+    RequestCode requestedMethod;
 
-    std::map<RequestMethod, std::string> type{
+    std::map<RequestCode, std::string> type{
         {POST, "POST"},
         {GET, "GET"},
         {HEAD, "HEAD"},

@@ -5,10 +5,20 @@
 #ifndef PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 #define PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 
+#include <iostream>
+
 class ProcessingInterface
 {
 public:
-    virtual void execute() = 0;
+    virtual void processFile(std::string fileName) = 0;
+
+    void setSuccessor(ProcessingInterface *next)
+    {
+        successor = next;
+    }
+
+protected:
+    ProcessingInterface *successor;
 };
 
 

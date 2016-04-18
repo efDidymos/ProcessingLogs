@@ -1,10 +1,7 @@
 #include <iostream>
-#include <boost/filesystem.hpp>
-
-#include "Context.hpp"
-#include "fileHandlingStrategies/UrlStrategy.h"
-#include "fileHandlingStrategies/UnzipedFileStrategy.h"
-#include "fileHandlingStrategies/GzipedFileStrategy.h"
+#include "handlingFile/URL.h"
+#include "handlingFile/Unziped.h"
+#include "handlingFile/Gziped.h"
 
 using namespace std;
 
@@ -20,26 +17,21 @@ int main(int argc, char *argv[])
     }
     else
     {
-        Context processing;
-        string argument = argv[1];
-        string ext = boost::filesystem::extension(argument);
+        // Create instances for processing objects
+        URL *url = new URL();
+        Gziped *gzip = new Gziped();
+        Unziped *unziped = new Unziped();
 
-        if (boost::filesystem::exists(argument) && ((ext == ".log") || (ext == ".gz")))
-        {
-            if (ext == ".log")
-                processing.setStrategy(new UnzipedFileStrategy(argument));
-            else if (ext == ".gz")
-                processing.setStrategy(new GzipedFileStrategy(argument));
-            else
-            {
-                cerr << "ERROR opening the file! Please check the path correctness or extension [.log, .gz]." << endl;
-                return 0;
-            }
-        }
-        else
-            processing.setStrategy(new UrlStrategy(argument));
+        // Create the chain of responsibility
+        url->setSuccessor(gzip);
+        gzip->setSuccessor(unziped);
 
-        processing.performAction();
+        // Issue argument
+        url->processFile(argv[1]);
+
+        delete url;
+        delete gzip;
+        delete unziped;
     }
     return 0;
 }

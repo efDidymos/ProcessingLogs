@@ -2,16 +2,16 @@
 // Created by tomas on 28.3.2016.
 //
 
-#include "UrlStrategy.h"
+#include "URL.h"
 #include "../Viewer.hpp"
 
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 
-void UrlStrategy::execute()
+void URL::processFile(std::string fileName)
 {
     // Check if the argument is some type of URL
-    if (std::regex_match(url, match, expresion))
+    if (std::regex_match(fileName, match, expresion))
     {
         int result = get_http_data(match[3],
                                    match[4],
@@ -22,14 +22,18 @@ void UrlStrategy::execute()
             std::cout << "Work with downloaded file" << std::endl;
 
         std::cout << "RESULT OF FIRST GET_HTTP " << result << std::endl;
+
+//        successor->processFile(fileName);
     }
     else
     {
-        std::cerr << "!NOT Valid URL" << std::endl;
+        // If the argument is not valid URL, try if the successor
+        // can handle it
+        successor->processFile(fileName);
     }
 }
 
-int UrlStrategy::get_http_data(std::string server, std::string path, std::string file, std::string protocol)
+int URL::get_http_data(std::string server, std::string path, std::string file, std::string protocol)
 {
     using boost::asio::ip::tcp;
 

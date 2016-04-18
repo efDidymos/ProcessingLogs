@@ -11,17 +11,17 @@
 #include <chrono>
 #endif
 
-class AllRowsStrategy: public RowInterface
+class AllRows: public RowInterface
 {
 public:
-    AllRowsStrategy(std::ifstream *file, unsigned short int &rowCount)
+    AllRows(std::ifstream *file, unsigned short int &rowCount)
         : RowInterface(file, rowCount)
     {
     }
 
     virtual RowInterface *Clone() const override
     {
-        return new AllRowsStrategy(*this);
+        return new AllRows(*this);
     }
 
     long read(long pos, const std::ios_base::seekdir &seekdir) override
@@ -53,7 +53,7 @@ public:
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-        std::cout << "\n --- Duration of AllRowsStrategy=" << diff.count() << std::endl;
+        std::cout << "\n --- Duration of AllRows=" << diff.count() << std::endl;
 #endif
         return pos;
     }

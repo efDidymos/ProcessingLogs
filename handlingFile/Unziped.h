@@ -5,21 +5,15 @@
 #ifndef PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 #define PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 
-#include <fstream>
 #include "ProcessingInterface.hpp"
 
-class UnzipedFileStrategy: public ProcessingInterface
+class Unziped: public ProcessingInterface
 {
 public:
-    UnzipedFileStrategy(const std::string fileName)
-        : file(fileName, std::ios::in)
-    {
-    }
+    Unziped()
+    { }
 
-    void execute();
-
-private:
-    std::ifstream file;
+    void processFile(std::string fileName) override;
 };
 
 

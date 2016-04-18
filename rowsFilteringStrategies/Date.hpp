@@ -2,8 +2,8 @@
 // Created by tomas on 16.4.2016.
 //
 
-#ifndef PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
-#define PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
+#ifndef PROCESSINGLOGS_DATESTRATEGY_HPP
+#define PROCESSINGLOGS_DATESTRATEGY_HPP
 
 #include "RowInterface.hpp"
 
@@ -13,19 +13,19 @@
 
 #include <sstream>
 
-class HTTPCodeStrategy: public RowInterface
+class Date: public RowInterface
 {
 
 public:
-    HTTPCodeStrategy(std::ifstream *file, unsigned short &rowCount, std::string code)
+    Date(std::ifstream *file, unsigned short &rowCount, std::string date)
         :
         RowInterface(file, rowCount),
-        code(code)
+        date(date)
     { }
 
     virtual RowInterface *Clone() const override
     {
-        return new HTTPCodeStrategy(*this);
+        return new Date(*this);
     }
 
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) override
@@ -42,7 +42,7 @@ public:
 
         int i = 0;
 
-        std::string c1, c2, c3, c4, c5, c6, c7, c8, c9;
+        std::string c1, c2, c3, c4;
         std::stringstream ss;
 
         do
@@ -53,11 +53,13 @@ public:
 
                 ss << line;
 
-                ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6 >> c7 >> c8 >> c9;
+                ss >> c1 >> c2 >> c3 >> c4;
 
                 ss.str(""); // erase the buffer
 
-                if (c9 == code)
+                c4 = c4.substr(1, 2);  // Trim the date in read line
+
+                if (c4 == date)
                 {
                     rows.push_back(line);
                     i++;
@@ -74,13 +76,14 @@ public:
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-        std::cout << "\n --- Duration of RequestMethodRowsStrategy=" << diff.count() << " --- " << std::endl;
+        std::cout << "\n --- Duration of RequestMethod=" << diff.count() << " --- " << std::endl;
 #endif
         return pos;
     }
+
 private:
-    std::string code;
+    std::string date;
 };
 
 
-#endif //PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
+#endif //PROCESSINGLOGS_DATESTRATEGY_HPP
