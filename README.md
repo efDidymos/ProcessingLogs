@@ -9,6 +9,8 @@ It reads and filter logs that are stored in format:
 More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_config.html
 
 
+![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/Diagram-ProcessingLogs.png)
+
 #Ubuntu 14.04 instructions
 
 First step is to install packages for successfully compiling the Boost library:
