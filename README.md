@@ -8,7 +8,7 @@ It reads and filter logs that are stored in format:
 
 More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_config.html
 
-
+## Structure of the application
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
 #Ubuntu 14.04 instructions
@@ -47,10 +47,13 @@ $ ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 $ sudo ./b2 install -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 ```
 
-#Compiling sources
+##Compiling sources
 ```
 $ cmake CMakeLists.txt
 $ make
+```
+##Run
+```
 $ ./ProcessingLogs <file>
 ```
 Or
