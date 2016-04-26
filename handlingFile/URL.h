@@ -5,12 +5,12 @@
 #ifndef PROCESSINGLOGS_URLSTRATEGY_H
 #define PROCESSINGLOGS_URLSTRATEGY_H
 
-#include "ProcessingInterface.hpp"
+#include "IProcessing.hpp"
 
 #include <tuple>
 #include <regex>
 
-class URL: public ProcessingInterface
+class URL: public IProcessing
 {
 public:
     URL()

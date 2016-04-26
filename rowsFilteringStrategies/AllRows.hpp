@@ -5,21 +5,21 @@
 #ifndef PROCESSINGLOGS_ROWS_HPP
 #define PROCESSINGLOGS_ROWS_HPP
 
-#include "RowInterface.hpp"
+#include "IRow.hpp"
 
 #ifndef NDEBUG
 #include <chrono>
 #endif
 
-class AllRows: public RowInterface
+class AllRows: public IRow
 {
 public:
     AllRows(std::ifstream *file, unsigned short int &rowCount)
-        : RowInterface(file, rowCount)
+        : IRow(file, rowCount)
     {
     }
 
-    virtual RowInterface *Clone() const override
+    virtual IRow *Clone() const override
     {
         return new AllRows(*this);
     }

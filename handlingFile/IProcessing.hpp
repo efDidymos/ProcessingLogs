@@ -7,18 +7,18 @@
 
 #include <iostream>
 
-class ProcessingInterface
+class IProcessing
 {
 public:
     virtual void processFile(std::string fileName) = 0;
 
-    void setSuccessor(ProcessingInterface *next)
+    void setSuccessor(IProcessing *next)
     {
         successor = next;
     }
 
 protected:
-    ProcessingInterface *successor;
+    IProcessing *successor;
 };
 
 

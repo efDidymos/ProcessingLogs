@@ -7,7 +7,7 @@
 
 #include <fstream>
 #include <vector>
-#include "rowsFilteringStrategies/RowInterface.hpp"
+#include "rowsFilteringStrategies/IRow.hpp"
 
 class Log
 {
@@ -28,7 +28,7 @@ public:
         delete nextRows;
     }
 
-    void setDisplayRowStrategy(RowInterface *strategy)
+    void setDisplayRowStrategy(IRow *strategy)
     {
         positionAtLadder.resize(1);
 
@@ -116,9 +116,9 @@ private:
     long theEnd;
 
     // Three buffers
-    RowInterface *prevRows = nullptr;
-    RowInterface *currRows = nullptr;
-    RowInterface *nextRows = nullptr;
+    IRow *prevRows = nullptr;
+    IRow *currRows = nullptr;
+    IRow *nextRows = nullptr;
 
     Viewer &view;
 };

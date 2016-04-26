@@ -5,9 +5,9 @@
 #ifndef PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 #define PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 
-#include "ProcessingInterface.hpp"
+#include "IProcessing.hpp"
 
-class Unziped: public ProcessingInterface
+class Unziped: public IProcessing
 {
 public:
     Unziped()

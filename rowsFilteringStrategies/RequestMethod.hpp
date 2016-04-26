@@ -5,7 +5,7 @@
 #ifndef PROCESSINGLOGS_REQUESTMETHODROWSSTRATEGY_HPP
 #define PROCESSINGLOGS_REQUESTMETHODROWSSTRATEGY_HPP
 
-#include "RowInterface.hpp"
+#include "IRow.hpp"
 #include <map>
 
 #ifndef NDEBUG
@@ -22,17 +22,17 @@ enum RequestCode
     UNKNOWN
 };
 
-class RequestMethod: public RowInterface
+class RequestMethod: public IRow
 {
 public:
     RequestMethod(std::ifstream *file, unsigned short &rowCount, RequestCode requestMethod)
         :
-        RowInterface(file, rowCount),
+        IRow(file, rowCount),
         requestedMethod(requestMethod)
     {
     }
 
-    virtual RowInterface *Clone() const override
+    virtual IRow *Clone() const override
     {
         return new RequestMethod(*this);
     }

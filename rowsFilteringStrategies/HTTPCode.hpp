@@ -5,7 +5,7 @@
 #ifndef PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
 #define PROCESSINGLOGS_HTTPCODESTRATEGY_HPP
 
-#include "RowInterface.hpp"
+#include "IRow.hpp"
 
 #ifndef NDEBUG
 #include <chrono>
@@ -13,17 +13,17 @@
 
 #include <sstream>
 
-class HTTPCode: public RowInterface
+class HTTPCode: public IRow
 {
 
 public:
     HTTPCode(std::ifstream *file, unsigned short &rowCount, std::string code)
         :
-        RowInterface(file, rowCount),
+        IRow(file, rowCount),
         code(code)
     { }
 
-    virtual RowInterface *Clone() const override
+    virtual IRow *Clone() const override
     {
         return new HTTPCode(*this);
     }

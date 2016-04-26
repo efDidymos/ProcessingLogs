@@ -6,7 +6,7 @@ set(SOURCE_FILES
         main.cpp
         Log.hpp
         Viewer.hpp
-        handlingFile/ProcessingInterface.hpp
+        handlingFile/IProcessing.hpp
         handlingFile/Unziped.cpp
         handlingFile/Unziped.h
         handlingFile/Gziped.cpp
@@ -14,7 +14,7 @@ set(SOURCE_FILES
         handlingFile/URL.cpp
         handlingFile/URL.h
         rowsFilteringStrategies/AllRows.hpp
-        rowsFilteringStrategies/RowInterface.hpp
+        rowsFilteringStrategies/IRow.hpp
         rowsFilteringStrategies/RequestMethod.hpp
         rowsFilteringStrategies/HTTPCode.hpp
         rowsFilteringStrategies/Date.hpp)

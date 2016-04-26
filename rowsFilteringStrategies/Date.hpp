@@ -5,7 +5,7 @@
 #ifndef PROCESSINGLOGS_DATESTRATEGY_HPP
 #define PROCESSINGLOGS_DATESTRATEGY_HPP
 
-#include "RowInterface.hpp"
+#include "IRow.hpp"
 
 #ifndef NDEBUG
 #include <chrono>
@@ -13,17 +13,17 @@
 
 #include <sstream>
 
-class Date: public RowInterface
+class Date: public IRow
 {
 
 public:
     Date(std::ifstream *file, unsigned short &rowCount, std::string date)
         :
-        RowInterface(file, rowCount),
+        IRow(file, rowCount),
         date(date)
     { }
 
-    virtual RowInterface *Clone() const override
+    virtual IRow *Clone() const override
     {
         return new Date(*this);
     }

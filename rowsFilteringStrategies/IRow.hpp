@@ -7,10 +7,10 @@
 
 #include <fstream>
 
-class RowInterface
+class IRow
 {
 public:
-    RowInterface(std::ifstream *file, unsigned short &rowCount)
+    IRow(std::ifstream *file, unsigned short &rowCount)
         :
         file(file),
         rowCount(rowCount)
@@ -21,16 +21,16 @@ public:
         theEnd = file->tellg();
     }
 
-    virtual ~RowInterface()
+    virtual ~IRow()
     {
         rows.clear();
     }
 
-    virtual RowInterface *Clone() const = 0;
+    virtual IRow *Clone() const = 0;
 
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) = 0;
 
-    friend std::ostream &operator<<(std::ostream &os, RowInterface *r)
+    friend std::ostream &operator<<(std::ostream &os, IRow *r)
     {
         auto elements = r->getRows();
         for (auto row : elements)

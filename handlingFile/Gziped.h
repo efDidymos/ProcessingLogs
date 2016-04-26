@@ -5,9 +5,9 @@
 #ifndef PROCESSINGLOGS_GZIPEDFILESTRATEGY_H
 #define PROCESSINGLOGS_GZIPEDFILESTRATEGY_H
 
-#include "ProcessingInterface.hpp"
+#include "IProcessing.hpp"
 
-class Gziped: public ProcessingInterface
+class Gziped: public IProcessing
 {
 public:
     Gziped()
