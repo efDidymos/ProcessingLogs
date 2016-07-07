@@ -188,7 +188,7 @@ std::tuple<int, std::string> URL::get_http_data(std::string server,
                 return std::make_tuple(0, file);
         }
         else
-            throw "Error downloaded file " + filename + " is not complete!";
+            throw "Error downloading the file " + filename + ". The file is not complete!";
     }
     catch (const std::exception &e)
     {
