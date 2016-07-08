@@ -21,9 +21,14 @@ public:
 
 private:
     std::tuple<int, std::string>
-        get_http_data(std::string server, std::string path, std::string file, std::string protocol);
+    get_http_data(std::string server,
+                  std::string path,
+                  std::string file,
+                  std::string protocol,
+                  short redirectCnt);
     std::regex expresion;
     std::smatch match;
+    short maxRedirectCnt = 3;   // maximum redirection
 };
 
 #endif //PROCESSINGLOGS_URLSTRATEGY_H
