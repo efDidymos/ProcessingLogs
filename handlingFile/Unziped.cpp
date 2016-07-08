@@ -77,28 +77,28 @@ void Unziped::processFile(std::string fileName)
 
                     switch (opt)
                     {
-                        case RequestCode::POST: // POST
+                        case Request::POST: // POST
                             theLog.setDisplayRowStrategy(new RequestMethod(&file,
                                                                            rowCount,
-                                                                           RequestCode::POST));
+                                                                           Request::POST));
                             break;
 
-                        case RequestCode::GET: // GET
+                        case Request::GET: // GET
                             theLog.setDisplayRowStrategy(new RequestMethod(&file,
                                                                            rowCount,
-                                                                           RequestCode::GET));
+                                                                           Request::GET));
                             break;
 
-                        case RequestCode::HEAD: // HEAD
+                        case Request::HEAD: // HEAD
                             theLog.setDisplayRowStrategy(new RequestMethod(&file,
                                                                            rowCount,
-                                                                           RequestCode::HEAD));
+                                                                           Request::HEAD));
                             break;
 
-                        case RequestCode::UNKNOWN: // Unknown
+                        case Request::UNKNOWN: // Unknown
                             theLog.setDisplayRowStrategy(new RequestMethod(&file,
                                                                            rowCount,
-                                                                           RequestCode::UNKNOWN));
+                                                                           Request::UNKNOWN));
                             break;
 
                         default:

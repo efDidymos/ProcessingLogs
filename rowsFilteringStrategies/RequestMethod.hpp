@@ -7,6 +7,7 @@
 
 #include "IRow.hpp"
 #include <map>
+#include <algorithm>
 
 #ifndef NDEBUG
 #include <chrono>
@@ -14,7 +15,7 @@
 
 #include <sstream>
 
-enum RequestCode
+enum Request
 {
     POST,
     GET,
@@ -22,14 +23,42 @@ enum RequestCode
     UNKNOWN
 };
 
-class RequestMethod: public IRow
+class RequestMethod : public IRow
 {
 public:
-    RequestMethod(std::ifstream *file, unsigned short &rowCount, RequestCode requestMethod)
-        :
-        IRow(file, rowCount),
-        requestedMethod(requestMethod)
+    RequestMethod(std::ifstream *file, unsigned short &rowCount, Request requestMethod)
+            :
+            IRow(file, rowCount),
+            requestedMethod(requestMethod)
     {
+        // Cycle through member atribute "type" of all requests
+        // and unite elements from each category to fill up the last array
+//        type{
+//                {POST,    {"POST"}},
+//                {GET,     {"GET"}},
+//                {HEAD,    {"HEAD", "Head"}},
+//                {UNKNOWN, {}},                                // BEFORE
+//        };
+//        type{
+//                {POST,    {"POST"}},
+//                {GET,     {"GET"}},
+//                {HEAD,    {"HEAD", "Head"}},
+//                {UNKNOWN, {"POST", "GET", "HEAD", "Head"}},   // AFTER [1]
+//        };
+//
+//        [1] The aim of this is to provide some kind of mask which will be used
+//            in the COMPARISON OF REQUESTS METHOD in do while cycle part
+//
+        int i = 0;
+        for (auto const &k: type)
+        {
+            if (i < type.size() - 1)
+            {
+                for (auto const &v : k.second)
+                    type[UNKNOWN].push_back(v);
+                ++i;
+            }
+        }
     }
 
     virtual IRow *Clone() const override
@@ -67,25 +96,37 @@ public:
 
                 c6 = c6.substr(1);  // Trim the Request method in read line
 
-                // If in the specific founded group by regex
-                // is the same string as desired and not UNKNOWN
-                if (requestedMethod != UNKNOWN)
+                // COMPARISON OF REQUESTS
+                switch (requestedMethod)
                 {
-                    if (c6 == type[requestedMethod])
-                    {
-                        rows.push_back(line);
-                        i++;
-                    }
-                }
-                else
-                {
-                    // If we want to find non different Request methods than
-                    // the traditional POST, GET, HEAD
-                    if ((c6 != type[POST]) && (c6 != type[GET]) && (c6 != type[HEAD]))
-                    {
-                        rows.push_back(line);
-                        i++;
-                    }
+                    case UNKNOWN:
+                        // If we want to find non different Request methods than
+                        // the traditional POST, GET, HEAD
+                        if (std::find(
+                                type[UNKNOWN].begin(),
+                                type[UNKNOWN].end(),
+                                c6)
+                            ==
+                            type[UNKNOWN].end())
+                        {
+                            rows.push_back(line);
+                            i++;
+                        }
+                        break;
+
+                    default:
+                        // If in the specific founded group by regex
+                        // is the same string as desired and not UNKNOWN
+                        if (std::find(
+                                type[requestedMethod].begin(),
+                                type[requestedMethod].end(),
+                                c6)
+                            !=
+                            type[requestedMethod].end())
+                        {
+                            rows.push_back(line);
+                            ++i;
+                        }
                 }
             }
             else
@@ -105,13 +146,13 @@ public:
     }
 
 private:
-    RequestCode requestedMethod;
+    Request requestedMethod;
 
-    std::map<RequestCode, std::string> type{
-        {POST, "POST"},
-        {GET, "GET"},
-        {HEAD, "HEAD"},
-        {UNKNOWN, "UNKNOWN"},
+    std::map<Request, std::vector<std::string>> type{
+            {POST,    {"POST"}},
+            {GET,     {"GET"}},
+            {HEAD,    {"HEAD", "Head"}},
+            {UNKNOWN, {}},
     };
 };
 
