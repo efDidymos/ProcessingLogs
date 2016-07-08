@@ -28,6 +28,27 @@ public:
         if (terminalColumns == 0) terminalColumns = 30;
     }
 
+    static void waitAnim(bool &work)
+    {
+        std::cout << "\n";
+        std::string anim[] = {"- working                                                ",
+                              "\\ working                                                ",
+                              "| working                                                ",
+                              "/ working                                                "};
+
+        int i = 0;
+
+        while (work)
+        {
+            std::cout << "\r " << anim[i] << std::flush;
+            if (i == 3)
+                i = 0;
+            else
+                ++i;
+            sleep(1);
+        }
+    }
+
     void printProgBar(std::string msg, double value, long base)
     {
         std::string bar;

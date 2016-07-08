@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <vector>
+#include <thread>
 #include "rowsFilteringStrategies/IRow.hpp"
 
 class Log
@@ -32,6 +33,10 @@ public:
     {
         positionAtLadder.resize(1);
 
+        // Starting thread and show animation of cycling cursor
+        bool work = true;
+        std::thread thread(Viewer::waitAnim, std::ref(work));
+
         if (prevRows != nullptr)
             delete prevRows;
 
@@ -52,6 +57,11 @@ public:
 
         long nextPos = nextRows->read(currPos, std::ios_base::beg);
         positionAtLadder.push_back(nextPos);
+
+        // Turn off animation
+        work = false;
+        if (thread.joinable())
+            thread.join();
     }
 
     void showCurrRows() const
@@ -65,13 +75,33 @@ public:
 
     void showNextRows()
     {
+        // Starting thread and show animation of cycling cursor
+        bool work = true;
+        std::thread thread(Viewer::waitAnim, std::ref(work));
+
         swapToNextRows();
+
+        // Turn off animation
+        work = false;
+        if (thread.joinable())
+            thread.join();
+
         showCurrRows();
     }
 
     void showPrevRows()
     {
+        // Starting thread and show animation of cycling cursor
+        bool work = true;
+        std::thread thread(Viewer::waitAnim, std::ref(work));
+
         swapToPrevRows();
+
+        // Turn off animation
+        work = false;
+        if (thread.joinable())
+            thread.join();
+
         showCurrRows();
     }
 
