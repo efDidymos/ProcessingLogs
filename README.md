@@ -61,6 +61,7 @@ Or
 $ ./ProcessingLogs <url_address>
 ```
 ##Usage
+```
 [q]-quit  [f]-filter options  [j]-move down  [k]-move up
            |
            +-- FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date
@@ -70,3 +71,4 @@ $ ./ProcessingLogs <url_address>
                                     |               +-- FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown
                                     |
                                     +-- Please enter code [1xx - 5xx] and press ENTER:
+```
