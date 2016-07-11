@@ -7,9 +7,18 @@
 
 #include <fstream>
 
+/**
+ * Interface for displaying different rows strategies
+ */
 class IRow
 {
 public:
+    /**
+     * Opens file and reserve container for reading n rows
+     * @param file.log
+     * @param rowCount
+     * @return
+     */
     IRow(std::ifstream *file, unsigned short &rowCount)
         :
         file(file),
@@ -26,10 +35,26 @@ public:
         rows.clear();
     }
 
+    /**
+     * Implementation of the prototype design pattern
+     * @return
+     */
     virtual IRow *Clone() const = 0;
 
+    /**
+     * Read n rows from specific position of the file
+     * @param pos
+     * @param seekdir
+     * @return
+     */
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) = 0;
 
+    /**
+     * Friend function for easier printing of the rows
+     * @param os
+     * @param r
+     * @return
+     */
     friend std::ostream &operator<<(std::ostream &os, IRow *r)
     {
         auto elements = r->getRows();
@@ -38,6 +63,10 @@ public:
         return os;
     }
 
+    /**
+     * Getter
+     * @return number of rows
+     */
     const std::vector<std::string> &getRows() const
     {
         return rows;

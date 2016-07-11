@@ -13,6 +13,9 @@
 
 #include <sstream>
 
+/**
+ * Class display only rows for specific HTTP Code
+ */
 class HTTPCode: public IRow
 {
 

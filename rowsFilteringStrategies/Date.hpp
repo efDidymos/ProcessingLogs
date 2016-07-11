@@ -13,6 +13,9 @@
 
 #include <sstream>
 
+/**
+ * Class display only rows for specific day
+ */
 class Date: public IRow
 {
 

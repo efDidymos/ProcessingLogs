@@ -23,6 +23,9 @@ enum Request
     UNKNOWN
 };
 
+/**
+ * Class display only rows for specific request method
+ */
 class RequestMethod : public IRow
 {
 public:

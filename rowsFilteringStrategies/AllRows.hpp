@@ -11,6 +11,9 @@
 #include <chrono>
 #endif
 
+/**
+ * Class display all rows from file
+ */
 class AllRows: public IRow
 {
 public:

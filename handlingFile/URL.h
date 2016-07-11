@@ -10,6 +10,9 @@
 #include <tuple>
 #include <regex>
 
+/**
+ * Class checks and downloads a file from URL
+ */
 class URL: public IProcessing
 {
 public:
@@ -17,6 +20,11 @@ public:
         : expresion("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$")
     { }
 
+    /**
+     * Download a file from URL. Also checks if the URL is valid
+     * and if it does not contain redirection
+     * @param fileName as URL
+     */
     void processFile(std::string fileName) override;
 
 private:

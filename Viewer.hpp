@@ -9,9 +9,16 @@
 #include <sys/ioctl.h>
 #include <unistd.h>     // because of first argument <STDOUT_FILENO> ioctl
 
+/**
+ * Class intended as view
+ */
 class Viewer
 {
 public:
+    /**
+     * Constructor checks if it is possible to adjust size of the printed rows
+     * @return
+     */
     Viewer()
     {
         struct winsize size;
@@ -28,6 +35,10 @@ public:
         if (terminalColumns == 0) terminalColumns = 30;
     }
 
+    /**
+     * Just fajncy animation
+     * @param work
+     */
     static void waitAnim(bool &work)
     {
         std::cout << "\n";
@@ -49,6 +60,15 @@ public:
         }
     }
 
+    /**
+     * Displays progress bar for long-lasting operations with percentages
+     *
+     * [=====>    ]
+     *
+     * @param msg
+     * @param value
+     * @param base
+     */
     void printProgBar(std::string msg, double value, long base)
     {
         std::string bar;
@@ -73,6 +93,9 @@ public:
         std::cout << "\r " << msg << " [" << bar << "] " << percent << "%    " << std::flush;
     }
 
+    /**
+     * Print the main menu
+     */
     void printCmdMenu() const
     {
         std::cout << "\n ";
@@ -81,12 +104,18 @@ public:
         std::cout << "\n [q]-quit  [f]-filter options  [j]-move down  [k]-move up";
     }
 
+    /**
+     * Print the separator
+     */
     void printHorizontalLine() const
     {
         std::cout.width(terminalColumns);
         std::cout.fill('-');
     }
 
+    /**
+     * Print the sub menu for filtering
+     */
     void printFilterCmdMenu() const
     {
         std::cout.flush();
@@ -95,21 +124,34 @@ public:
         std::cout << "\r FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
     }
 
+    /**
+     * Print the sub sub menu for filtering by Request Method
+     */
     void printFilterRequestMCmdMenu() const
     {
         std::cout << "\r FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown";
     }
 
+    /**
+     * Returning the size of the terminal without the size of menu
+     * @return
+     */
     const unsigned short int getRowsCount() const
     {
         return terminalRows - 5;    // (rowCount - 5) - last lines are for displaying pseudo menu
     }
 
+    /**
+     * Print the sub sub menu for filtering by Date
+     */
     void printFilterDateCmdMenu()
     {
         std::cout << "\r Please enter day [01-31] and press ENTER:                        ";
     }
 
+    /**
+     * Print the sub sub menu for filtering by HTTP Code
+     */
     void printFilterHTTPCodeCmdMenu()
     {
         std::cout << "\r Please enter code [1xx - 5xx] and press ENTER:                   ";

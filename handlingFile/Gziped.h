@@ -7,12 +7,19 @@
 
 #include "IProcessing.hpp"
 
+/**
+ * Class unpacks supplied file
+ */
 class Gziped: public IProcessing
 {
 public:
     Gziped()
     { }
 
+    /**
+     * Unpack file
+     * @param fileName.gz
+     */
     void processFile(std::string fileName) override;
 };
 
