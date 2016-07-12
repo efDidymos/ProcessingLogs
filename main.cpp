@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include "handlingFile/URL.h"
 #include "handlingFile/Unziped.h"
 #include "handlingFile/Gziped.h"
@@ -18,9 +19,9 @@ int main(int argc, char *argv[])
     else
     {
         // Create instances for processing objects
-        URL *url = new URL();
-        Gziped *gzip = new Gziped();
-        Unziped *unziped = new Unziped();
+        shared_ptr<IProcessing> url(new URL);
+        shared_ptr<IProcessing> gzip(new Gziped);
+        shared_ptr<IProcessing> unziped(new Unziped);
 
         // Create the chain of responsibility
         url->setSuccessor(gzip);
@@ -28,10 +29,6 @@ int main(int argc, char *argv[])
 
         // Issue argument
         url->processFile(argv[1]);
-
-        delete url;
-        delete gzip;
-        delete unziped;
     }
     return 0;
 }

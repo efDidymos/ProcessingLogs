@@ -6,6 +6,7 @@
 #define PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 
 #include <iostream>
+#include <memory>
 
 /**
  * Interface for handling arguments
@@ -23,13 +24,13 @@ public:
      * Setting the next one in a chain
      * @param IProcessing * next
      */
-    void setSuccessor(IProcessing *next)
+    void setSuccessor(std::shared_ptr<IProcessing> next)
     {
         successor = next;
     }
 
 protected:
-    IProcessing *successor;
+    std::shared_ptr<IProcessing> successor;
 };
 
 
