@@ -26,9 +26,9 @@ public:
         date(date)
     { }
 
-    virtual IRow *Clone() const override
+    virtual std::shared_ptr<IRow> Clone() const override
     {
-        return new Date(*this);
+        return std::make_shared<Date>(*this);
     }
 
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) override

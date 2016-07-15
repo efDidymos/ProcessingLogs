@@ -39,7 +39,7 @@ public:
      * Implementation of the prototype design pattern
      * @return
      */
-    virtual IRow *Clone() const = 0;
+    virtual std::shared_ptr<IRow> Clone() const = 0;
 
     /**
      * Read n rows from specific position of the file

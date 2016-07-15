@@ -36,7 +36,7 @@ void Unziped::processFile(std::string fileName)
 
             Log theLog(&file, view);
 
-            theLog.setDisplayRowStrategy(new AllRows(&file, rowCount));
+            theLog.setDisplayRowStrategy(std::make_shared<AllRows>(&file, rowCount));
 
             // Black magic to prevent Linux from buffering keystrokes.
             // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
@@ -58,7 +58,7 @@ void Unziped::processFile(std::string fileName)
                 else if (c == 'f')
                     view.printFilterCmdMenu();
                 else if (c == '0')    // Default: Show all rows without any filter
-                    theLog.setDisplayRowStrategy(new AllRows(&file, rowCount));
+                    theLog.setDisplayRowStrategy(std::make_shared<AllRows>(&file, rowCount));
                 else if (c == '1')
                 {
                     view.printFilterHTTPCodeCmdMenu();
@@ -66,7 +66,7 @@ void Unziped::processFile(std::string fileName)
                     std::string code;
                     std::cin >> code;
 
-                    theLog.setDisplayRowStrategy(new HTTPCode(&file, rowCount, code));
+                    theLog.setDisplayRowStrategy(std::make_shared<HTTPCode>(&file, rowCount, code));
                 }
                 else if (c == '2')  // Show rows filtered by Request method
                 {
@@ -78,27 +78,27 @@ void Unziped::processFile(std::string fileName)
                     switch (opt)
                     {
                         case Request::POST: // POST
-                            theLog.setDisplayRowStrategy(new RequestMethod(&file,
-                                                                           rowCount,
-                                                                           Request::POST));
+                            theLog.setDisplayRowStrategy(std::make_shared<RequestMethod>(&file,
+                                                                                         rowCount,
+                                                                                         Request::POST));
                             break;
 
                         case Request::GET: // GET
-                            theLog.setDisplayRowStrategy(new RequestMethod(&file,
-                                                                           rowCount,
-                                                                           Request::GET));
+                            theLog.setDisplayRowStrategy(std::make_shared<RequestMethod>(&file,
+                                                                                         rowCount,
+                                                                                         Request::GET));
                             break;
 
                         case Request::HEAD: // HEAD
-                            theLog.setDisplayRowStrategy(new RequestMethod(&file,
-                                                                           rowCount,
-                                                                           Request::HEAD));
+                            theLog.setDisplayRowStrategy(std::make_shared<RequestMethod>(&file,
+                                                                                         rowCount,
+                                                                                         Request::HEAD));
                             break;
 
                         case Request::UNKNOWN: // Unknown
-                            theLog.setDisplayRowStrategy(new RequestMethod(&file,
-                                                                           rowCount,
-                                                                           Request::UNKNOWN));
+                            theLog.setDisplayRowStrategy(std::make_shared<RequestMethod>(&file,
+                                                                                         rowCount,
+                                                                                         Request::UNKNOWN));
                             break;
 
                         default:
@@ -112,7 +112,7 @@ void Unziped::processFile(std::string fileName)
                     std::string date;
                     std::cin >> date;
 
-                    theLog.setDisplayRowStrategy(new Date(&file, rowCount, date));
+                    theLog.setDisplayRowStrategy(std::make_shared<Date>(&file, rowCount, date));
                 }
                 std::cin.get(c);
             }

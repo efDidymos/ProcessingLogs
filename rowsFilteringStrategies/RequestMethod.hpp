@@ -64,9 +64,9 @@ public:
         }
     }
 
-    virtual IRow *Clone() const override
+    virtual std::shared_ptr<IRow> Clone() const override
     {
-        return new RequestMethod(*this);
+        return std::make_shared<RequestMethod>(*this);
     }
 
     long read(long pos, const std::ios_base::seekdir &seekdir) override

@@ -22,29 +22,13 @@ public:
         theEnd = file->tellg();
     }
 
-    virtual ~Log()
-    {
-        delete prevRows;
-        delete currRows;
-        delete nextRows;
-    }
-
-    void setDisplayRowStrategy(IRow *strategy)
+    void setDisplayRowStrategy(std::shared_ptr<IRow> strategy)
     {
         positionAtLadder.resize(1);
 
         // Starting thread and show animation of cycling cursor
         bool work = true;
         std::thread thread(Viewer::waitAnim, std::ref(work));
-
-        if (prevRows != nullptr)
-            delete prevRows;
-
-        if (currRows != nullptr)
-            delete currRows;
-
-        if (nextRows != nullptr)
-            delete nextRows;
 
         prevRows = strategy;
         currRows = strategy->Clone();
@@ -106,7 +90,6 @@ public:
     }
 
 private:
-
     // Just switch the pointers.
     void swapToNextRows()
     {
@@ -146,9 +129,9 @@ private:
     long theEnd;
 
     // Three buffers
-    IRow *prevRows = nullptr;
-    IRow *currRows = nullptr;
-    IRow *nextRows = nullptr;
+    std::shared_ptr<IRow> prevRows;
+    std::shared_ptr<IRow> currRows;
+    std::shared_ptr<IRow> nextRows;
 
     Viewer &view;
 };

@@ -26,9 +26,9 @@ public:
         code(code)
     { }
 
-    virtual IRow *Clone() const override
+    virtual std::shared_ptr<IRow> Clone() const override
     {
-        return new HTTPCode(*this);
+        return std::make_shared<HTTPCode>(*this);
     }
 
     virtual long read(long pos, const std::ios_base::seekdir &seekdir) override

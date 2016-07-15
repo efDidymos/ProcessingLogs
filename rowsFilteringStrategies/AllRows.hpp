@@ -22,9 +22,9 @@ public:
     {
     }
 
-    virtual IRow *Clone() const override
+    virtual std::shared_ptr<IRow> Clone() const override
     {
-        return new AllRows(*this);
+        return std::make_shared<AllRows>(*this);
     }
 
     long read(long pos, const std::ios_base::seekdir &seekdir) override
