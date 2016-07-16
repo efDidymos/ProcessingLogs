@@ -39,12 +39,10 @@ void Unziped::processFile(std::string fileName)
             theLog.setDisplayRowStrategy(std::make_shared<AllRows>(&file, rowCount));
 
             // Black magic to prevent Linux from buffering keystrokes.
-            // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
-            // http://stackoverflow.com/a/912796
-            struct termios t;
-            tcgetattr(STDIN_FILENO, &t);
-            t.c_lflag &= ~ICANON;
-            tcsetattr(STDIN_FILENO, TCSANOW, &t);
+	    // http://stackoverflow.com/a/912184
+	    // ----------------------------------------------------
+            // Set terminal to raw mode 
+            system("stty raw");
 
             char c = ' ';
             std::cin.get(c);
@@ -117,6 +115,9 @@ void Unziped::processFile(std::string fileName)
                 std::cin.get(c);
             }
             std::cout << std::endl;
+
+	    // Reset terminal to normal "cooked" mode 
+	    system("stty cooked"); 
         }
     }
     else
