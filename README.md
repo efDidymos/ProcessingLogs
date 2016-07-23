@@ -17,7 +17,7 @@ std::map<Request, std::vector<std::string>> type;
 
 #Ubuntu 14.04 instructions
 
-First step is to install packages for successfully compiling the Boost library:
+First step is to install additional packages for successfully compiling the Boost library which some parts depends on the third-party libraries:
 ```
 sudo apt-get install python-dev libbz2-dev
 ```
@@ -29,8 +29,8 @@ Please remember the path to uncompressed zlib library because it will be used wh
 
 Last step is to download latest version of the Boost library (for the time of writting it is 1.60) and install it via
 ```
-$ tar -xf /path/to/boost_1_60_0.tar.gz
-$ cd /path/to/boost_1_60_0
+$ tar -xf /path/to/boost_1_61_0.tar.gz
+$ cd /path/to/boost_1_61_0
 $ ./bootstrap.sh
 
 # This step is optional, but usefull for you. 
@@ -47,7 +47,7 @@ $ ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 # /usr/local/lib
 # NOTICE: in the -s flag we use the path 
 #         to uncompressed zlib library
-# http://www.boost.org/doc/libs/1_60_0/libs/iostreams/doc/installation.html
+# http://www.boost.org/doc/libs/1_61_0/libs/iostreams/doc/installation.html
 $ sudo ./b2 install -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 ```
 
