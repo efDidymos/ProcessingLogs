@@ -17,17 +17,14 @@
 class AllRows: public IRow
 {
 public:
-    AllRows(std::ifstream *file, unsigned short int &rowCount)
-        : IRow(file, rowCount)
+    AllRows(std::ifstream *file, unsigned short rowCount) :
+            IRow(file, rowCount)
     {
     }
 
-    virtual std::shared_ptr<IRow> Clone() const override
-    {
-        return std::make_shared<AllRows>(*this);
-    }
-
-    long read(long pos, const std::ios_base::seekdir &seekdir) override
+    void read(long *inPos,
+              long *outPos,
+              std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
         using namespace std::chrono;
@@ -35,20 +32,20 @@ public:
 #endif
 
         std::string line;
-        rows.clear();
+        rows->clear();
 
-        file->seekg(pos, seekdir);
+        file->seekg(*inPos, std::ios_base::beg);
 
-        for (int i = 0; i < rowCount; i++)
+        for (int i = 0; i < rowCount; ++i)
         {
             if (getline(*file, line))
             {
-                rows.push_back(line);
-                pos = file->tellg();
+                rows->push_back(line);
+                *outPos = file->tellg();
             }
             else
             {
-                pos = theEnd;
+                *outPos = theEnd;
                 break;
             }
         }
@@ -58,7 +55,6 @@ public:
         duration<double> diff = end - start;
         std::cout << "\n --- Duration of AllRows=" << diff.count() << "\n";
 #endif
-        return pos;
     }
 };
 

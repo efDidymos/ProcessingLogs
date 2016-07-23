@@ -3,7 +3,6 @@
 //
 
 #include "URL.h"
-#include "../Viewer.hpp"
 
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
@@ -92,8 +91,10 @@ URL::get_http_data(std::string server, std::string path, std::string file, std::
             if (!response_stream || http_version.substr(0, 5) != "HTTP/")
                 return std::make_tuple(1, "Invalid response.");
 
+            // If status code inform us about some untrivial way of communication
             if (status_code != 200)
             {
+                // If it means jumping to other location
                 if (status_code == 302)
                 {
                     // Process the response headers, which are terminated by a blank line.
@@ -101,7 +102,7 @@ URL::get_http_data(std::string server, std::string path, std::string file, std::
                     std::string pom;
                     while (std::getline(response_stream, header) && header != "\r")
                     {
-                        //                    std::cout << header << "\n";
+//                        std::cout << header << "\n";
                         if (header.substr(0, 9) == "Location:")
                         {
                             pom = header.substr(10);
@@ -150,7 +151,6 @@ URL::get_http_data(std::string server, std::string path, std::string file, std::
             if (response.size() > 0)
                 ofs << &response;
 
-            Viewer view;
             long len = std::stol(length);
 
             // Read until EOF, writing data to output as we go.

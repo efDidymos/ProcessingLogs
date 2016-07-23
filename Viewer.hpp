@@ -36,31 +36,6 @@ public:
     }
 
     /**
-     * Just fajncy animation
-     * @param work
-     */
-    static void waitAnim(bool &work)
-    {
-        std::cout << "\n";
-        std::string anim[] = {"- working                                                ",
-                              "\\ working                                                ",
-                              "| working                                                ",
-                              "/ working                                                "};
-
-        int i = 0;
-
-        while (work)
-        {
-            std::cout << "\r " << anim[i] << std::flush;
-            if (i == 3)
-                i = 0;
-            else
-                ++i;
-            sleep(1);
-        }
-    }
-
-    /**
      * Displays progress bar for long-lasting operations with percentages
      *
      * [=====>    ]
@@ -74,7 +49,7 @@ public:
         std::string bar;
         int percent = ((value / base) * 100);
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 50; ++i)
         {
             if (i < (percent / 2))
             {
@@ -119,8 +94,8 @@ public:
     void printFilterCmdMenu() const
     {
         std::cout.flush();
-        // Appended four white spaces due to completly overwrite the showPrevRows line
-        // without leaving a text fragments from showPrevRows message
+        // Appended four white spaces due to completly overwrite the getPrevRows line
+        // without leaving a text fragments from getPrevRows message
         std::cout << "\r FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
     }
 

@@ -20,18 +20,13 @@ class HTTPCode: public IRow
 {
 
 public:
-    HTTPCode(std::ifstream *file, unsigned short &rowCount, std::string code)
-        :
-        IRow(file, rowCount),
-        code(code)
+    HTTPCode(std::ifstream *file, unsigned short rowCount, std::string code) :
+            IRow(file, rowCount), code(code)
     { }
 
-    virtual std::shared_ptr<IRow> Clone() const override
-    {
-        return std::make_shared<HTTPCode>(*this);
-    }
-
-    virtual long read(long pos, const std::ios_base::seekdir &seekdir) override
+    virtual void read(long *inPos,
+                      long *outPos,
+                      std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
         using namespace std::chrono;
@@ -39,9 +34,9 @@ public:
 #endif
 
         std::string line;
-        rows.clear();
+        rows->clear();
 
-        file->seekg(pos, seekdir);
+        file->seekg(*inPos, std::ios_base::beg);
 
         int i = 0;
 
@@ -52,7 +47,7 @@ public:
         {
             if (getline(*file, line))
             {
-                pos = file->tellg();
+                *outPos = file->tellg();
 
                 ss << line;
 
@@ -62,13 +57,13 @@ public:
 
                 if (c9 == code)
                 {
-                    rows.push_back(line);
-                    i++;
+                    rows->push_back(line);
+                    ++i;
                 }
             }
             else
             {
-                pos = theEnd;
+                *outPos = theEnd;
                 break;
             }
         }
@@ -79,7 +74,6 @@ public:
         duration<double> diff = end - start;
         std::cout << "\n --- Duration of RequestMethod=" << diff.count() << "\n";
 #endif
-        return pos;
     }
 private:
     std::string code;

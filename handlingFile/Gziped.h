@@ -17,7 +17,7 @@ public:
     { }
 
     /**
-     * Unpack file
+     * Unpack the file
      * @param fileName.gz
      */
     void processFile(std::string fileName) override;

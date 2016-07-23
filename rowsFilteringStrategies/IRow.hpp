@@ -19,63 +19,26 @@ public:
      * @param rowCount
      * @return
      */
-    IRow(std::ifstream *file, unsigned short &rowCount)
-        :
-        file(file),
-        rowCount(rowCount)
+    IRow(std::ifstream *file, unsigned short rowCount) :
+            file(file), rowCount(rowCount)
     {
-        rows.reserve(rowCount);
-
         file->seekg(0, std::ios::end);
         theEnd = file->tellg();
     }
 
-    virtual ~IRow()
-    {
-        rows.clear();
-    }
-
-    /**
-     * Implementation of the prototype design pattern
-     * @return
-     */
-    virtual std::shared_ptr<IRow> Clone() const = 0;
-
     /**
      * Read n rows from specific position of the file
-     * @param pos
-     * @param seekdir
-     * @return
+     * @param inPos
+     * @param outPos
+     * @param rows
      */
-    virtual long read(long pos, const std::ios_base::seekdir &seekdir) = 0;
-
-    /**
-     * Friend function for easier printing of the rows
-     * @param os
-     * @param r
-     * @return
-     */
-    friend std::ostream &operator<<(std::ostream &os, IRow *r)
-    {
-        auto elements = r->getRows();
-        for (auto row : elements)
-            os << row << "\n";
-        return os;
-    }
-
-    /**
-     * Getter
-     * @return number of rows
-     */
-    const std::vector<std::string> &getRows() const
-    {
-        return rows;
-    }
+    virtual void read(long *inPos,
+                      long *outPos,
+                      std::vector<std::string> *rows) = 0;
 
 protected:
     std::ifstream *file;
-    unsigned short int rowCount;
-    std::vector<std::string> rows;
+    unsigned short rowCount;
     long theEnd;
 };
 

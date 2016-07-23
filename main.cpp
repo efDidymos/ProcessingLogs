@@ -18,16 +18,18 @@ int main(int argc, char *argv[])
     }
     else
     {
+        Viewer view;
+
         // Create instances for processing objects
-        shared_ptr<IProcessing> url(new URL);
+        shared_ptr<IProcessing> url(new URL(view));
         shared_ptr<IProcessing> gzip(new Gziped);
-        shared_ptr<IProcessing> unziped(new Unziped);
+        shared_ptr<IProcessing> unziped(new Unziped(view));
 
         // Create the chain of responsibility
         url->setSuccessor(gzip);
         gzip->setSuccessor(unziped);
 
-        // Issue argument
+        // Issue the argument
         url->processFile(argv[1]);
     }
     return 0;

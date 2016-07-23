@@ -6,6 +6,7 @@
 #define PROCESSINGLOGS_UNZIPEDFILESTRATEGY_H
 
 #include "IProcessing.hpp"
+#include "../Viewer.hpp"
 
 /**
  * Class calls strategies for manipulating with the file
@@ -13,15 +14,18 @@
 class Unziped: public IProcessing
 {
 public:
-    Unziped()
+    Unziped(Viewer & view) : view(view)
     { }
 
     /**
-     * Validate file and call actions that
+     * Validate the file and call actions that
      * can be performed on the file
      * @param fileName.log
      */
     void processFile(std::string fileName) override;
+
+private:
+    Viewer & view;
 };
 
 

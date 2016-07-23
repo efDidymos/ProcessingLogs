@@ -13,6 +13,7 @@ void Gziped::processFile(std::string fileName)
 {
     std::string ext = boost::filesystem::extension(fileName);
 
+    // Check if the file exist and if it can be handled with this object
     if (boost::filesystem::exists(fileName) && (ext == ".gz"))
     {
         std::ifstream file(fileName, std::ios::in);
@@ -39,7 +40,7 @@ void Gziped::processFile(std::string fileName)
             // Just for the case that user has not saw the results
             sleep(5);
 
-            // Call the appropriate handling in the chain
+            // Call the appropriate obj in the chain for next processing
             successor->processFile(unzipedFile);
         }
         catch (const bio::gzip_error &exception)
@@ -48,5 +49,6 @@ void Gziped::processFile(std::string fileName)
         }
     }
     else
+        // Hand over to successor obj
         successor->processFile(fileName);
 }

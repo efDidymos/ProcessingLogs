@@ -7,7 +7,6 @@
 
 #include "IRow.hpp"
 #include <map>
-#include <algorithm>
 
 #ifndef NDEBUG
 #include <chrono>
@@ -29,56 +28,22 @@ enum Request
 class RequestMethod : public IRow
 {
 public:
-    RequestMethod(std::ifstream *file, unsigned short &rowCount, Request requestMethod)
-            :
-            IRow(file, rowCount),
-            requestedMethod(requestMethod)
-    {
-        // Cycle through member atribute "type" of all requests
-        // and unite elements from each category to fill up the last array
-//        type{
-//                {POST,    {"POST"}},
-//                {GET,     {"GET"}},
-//                {HEAD,    {"HEAD", "Head"}},
-//                {UNKNOWN, {}},                                // BEFORE
-//        };
-//        type{
-//                {POST,    {"POST"}},
-//                {GET,     {"GET"}},
-//                {HEAD,    {"HEAD", "Head"}},
-//                {UNKNOWN, {"POST", "GET", "HEAD", "Head"}},   // AFTER [1]
-//        };
-//
-//        [1] The aim of this is to provide some kind of mask which will be used
-//            in the COMPARISON OF REQUESTS METHOD in do while cycle part
-//
-        int i = 0;
-        for (auto const &k: type)
-        {
-            if (i < type.size() - 1)
-            {
-                for (auto const &v : k.second)
-                    type[UNKNOWN].push_back(v);
-                ++i;
-            }
-        }
-    }
+    RequestMethod(std::ifstream *file, unsigned short rowCount, Request requestMethod) :
+            IRow(file, rowCount), requestedMethod(requestMethod)
+    { }
 
-    virtual std::shared_ptr<IRow> Clone() const override
-    {
-        return std::make_shared<RequestMethod>(*this);
-    }
-
-    long read(long pos, const std::ios_base::seekdir &seekdir) override
+    void read(long *inPos,
+              long *outPos,
+              std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
 #endif
         std::string line;
-        rows.clear();
+        rows->clear();
 
-        file->seekg(pos, seekdir);
+        file->seekg(*inPos, std::ios_base::beg);
 
         int i = 0;
 
@@ -89,7 +54,7 @@ public:
         {
             if (getline(*file, line))
             {
-                pos = file->tellg();
+                *outPos = file->tellg();
 
                 ss << line;
 
@@ -99,7 +64,9 @@ public:
 
                 c6 = c6.substr(1);  // Trim the Request method in read line
 
+                // ========================================================
                 // COMPARISON OF REQUESTS
+                // ========================================================
                 switch (requestedMethod)
                 {
                     case UNKNOWN:
@@ -112,8 +79,8 @@ public:
                             ==
                             type[UNKNOWN].end())
                         {
-                            rows.push_back(line);
-                            i++;
+                            rows->push_back(line);
+                            ++i;
                         }
                         break;
 
@@ -127,14 +94,14 @@ public:
                             !=
                             type[requestedMethod].end())
                         {
-                            rows.push_back(line);
+                            rows->push_back(line);
                             ++i;
                         }
                 }
             }
             else
             {
-                pos = theEnd;
+                *outPos = theEnd;
                 break;
             }
         }
@@ -145,7 +112,6 @@ public:
         duration<double> diff = end - start;
         std::cout << "\n --- Duration of RequestMethod=" << diff.count() << "\n";
 #endif
-        return pos;
     }
 
 private:
@@ -155,7 +121,9 @@ private:
             {POST,    {"POST"}},
             {GET,     {"GET"}},
             {HEAD,    {"HEAD", "Head"}},
-            {UNKNOWN, {}},
+            {UNKNOWN, {"POST", "GET", "HEAD", "Head"}}  // The aim of this is to provide some kind of mask
+                                                        // which will be used in the COMPARISON OF REQUESTS METHOD
+                                                        // in do while cycle part
     };
 };
 

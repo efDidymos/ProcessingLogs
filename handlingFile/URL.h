@@ -6,6 +6,7 @@
 #define PROCESSINGLOGS_URLSTRATEGY_H
 
 #include "IProcessing.hpp"
+#include "../Viewer.hpp"
 
 #include <tuple>
 #include <regex>
@@ -16,18 +17,20 @@
 class URL: public IProcessing
 {
 public:
-    URL()
-        : expresion("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$")
+    URL(Viewer & view)
+        : view(view), expresion("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$")
     { }
 
     /**
-     * Download a file from URL. Also checks if the URL is valid
-     * and if it does not contain redirection
+     * Download a file from URL. Also checks if the URL is valid.
+     * Also check if it contain a redirection if so then recursively
+     * atempt to download a file from new location
      * @param fileName as URL
      */
     void processFile(std::string fileName) override;
 
 private:
+    Viewer & view;
     std::tuple<int, std::string>
     get_http_data(std::string server,
                   std::string path,

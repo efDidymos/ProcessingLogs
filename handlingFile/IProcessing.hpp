@@ -9,24 +9,24 @@
 #include <memory>
 
 /**
- * Interface for handling arguments
+ * Interface for handling argument
  */
 class IProcessing
 {
 public:
     /**
-     * Processing the arguments
+     * Processing the argument
      * @param fileName
      */
     virtual void processFile(std::string fileName) = 0;
 
     /**
-     * Setting the next one in a chain
-     * @param IProcessing * next
+     * Setting the next object which should take over performing if this object can not handle it
+     * @param IProcessing * nextObject
      */
-    void setSuccessor(std::shared_ptr<IProcessing> next)
+    void setSuccessor(std::shared_ptr<IProcessing> nextObj)
     {
-        successor = next;
+        successor = nextObj;
     }
 
 protected:
