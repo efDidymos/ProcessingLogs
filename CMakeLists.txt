@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 2.8)   # Uncomment this for Ubuntu 14.04 and comment the line beneath
-#cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 2.8)
 project(ProcessingLogs)
 
 set(CMAKE_BUILD_TYPE Release)   # Possible types: Release, Debug, MinSizeRel and RelWithDebInfo
