@@ -27,7 +27,7 @@ $ tar -xf /path/to/zlib-1.2.8.tar.gz
 ```
 Please remember the path to uncompressed zlib library because it will be used when compiling the Boost library.
 
-Last step is to download latest version of the Boost library (for the time of writting it is 1.60) and install it via
+Last step is to download latest version of the Boost library (for the time of writting it is 1.61) and install it via
 ```
 $ tar -xf /path/to/boost_1_61_0.tar.gz
 $ cd /path/to/boost_1_61_0
@@ -38,7 +38,7 @@ $ ./bootstrap.sh
 # and you could find and install missing parts
 # NOTICE: in the -s flag we use the path 
 #         to locate uncompressed zlib library
-# http://www.boost.org/doc/libs/1_60_0/libs/iostreams/doc/installation.html
+# http://www.boost.org/doc/libs/1_61_0/libs/iostreams/doc/installation.html
 $ ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 
 # Last step is installation of the Boost library.
