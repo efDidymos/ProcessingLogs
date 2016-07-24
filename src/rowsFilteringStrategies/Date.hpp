@@ -74,7 +74,7 @@ public:
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();
         duration<double> diff = end - start;
-        std::cout << "\n --- Duration of RequestMethod=" << diff.count() << "\n";
+        std::cout << "\n --- Duration of Date=" << diff.count() << "\n";
 #endif
     }
 
