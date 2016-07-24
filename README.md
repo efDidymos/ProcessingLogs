@@ -1,5 +1,19 @@
 #ProcessingLogs
-Lightweight adaptation of log manager.
+
+[Info](#info)<br />
+&nbsp;[Structure of the application](#structure-of-the-application)<br />
+[Ubuntu 14.04 instructions](#ubuntu-1404-instructions)<br />
+&nbsp;[Getting the sources](#getting-the-sources)<br />
+&nbsp;[Compilation](#compilation)<br />
+&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
+&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
+&nbsp;[Run](#run)<br />
+&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
+&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
+&nbsp;&nbsp;[Running tests](#running-tests)<br />
+
+#Info
+Lightweight adaptation of apache log viewer.
 It reads and filter logs that are stored in format:
 
 `
@@ -7,27 +21,6 @@ It reads and filter logs that are stored in format:
 `
 
 More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_config.html
-
-#Table of content
-[Structure of the application](#structure-of-the-application)
-
-[Ubuntu 14.04 instructions](#ubuntu-1404-instructions)
-
-[Getting the sources](#getting-the-sources)
-
-[Compilation](#compilation)
-
-[Compiling only the sources](#compiling-only-the-sources)
-
-[Compiling the whole application src + test](#compiling-the-whole-application-src--test)
-
-[Run](#run)
-
-[Running only sources](#running-only-sources)
-
-[Usage](#usage)
-
-[Running tests](#running-tests)
 
 ##Structure of the application
 The application was designed to be modular. It can be extended for example to add an another chain for manipulating with the input argument (dir handlingFile) or add another strategy for displaying contents (dir rowsFilteringStrategies). Also the class RequestMethod was designed in such manner that one can be more specific for selecting names of the request method by adjusting the enum Request and define its explicit version in 
