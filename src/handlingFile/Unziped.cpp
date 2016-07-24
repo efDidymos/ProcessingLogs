@@ -38,17 +38,7 @@ void Unziped::processFile(std::string fileName)
             Log theLog(&file, view, std::make_shared<AllRows>(&file, rowCount));
             theLog.showCurrRows();
 
-            // ==============================================================================
-            // For comfortableness application incorporate little hack
-            // ==============================================================================
-            // Black magic to prevent Linux from buffering keystrokes.
-            // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
-            // http://stackoverflow.com/a/912796
-            struct termios t;
-            tcgetattr(STDIN_FILENO, &t);
-            t.c_lflag &= ~ICANON;
-            tcsetattr(STDIN_FILENO, TCSANOW, &t);
-            // ==============================================================================
+            view.toggleBufferOff();
 
             char c = ' ';
             std::cin.get(c);

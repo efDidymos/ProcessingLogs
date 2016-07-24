@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sys/ioctl.h>
 #include <unistd.h>     // because of first argument <STDOUT_FILENO> ioctl
+#include <termio.h>
 
 /**
  * Class intended as view
@@ -132,9 +133,40 @@ public:
         std::cout << "\r Please enter code [1xx - 5xx] and press ENTER:                   ";
     }
 
+    // ==============================================================================
+    // For comfortableness application incorporate little hack
+    // ==============================================================================
+    // Black magic to prevent Linux from buffering keystrokes.
+    // http://www.doctort.org/adam/nerd-notes/reading-single-keystroke-on-linux.html
+    // http://stackoverflow.com/a/912796
+    // ==============================================================================
+
+    /**
+     * Disables buffered input
+     */
+    void toggleBufferOff()
+    {
+        struct termios t;
+        tcgetattr(STDIN_FILENO, &t);
+        t.c_lflag &= ~ICANON;
+        tcsetattr(STDIN_FILENO, TCSANOW, &t);
+    }
+
+    /**
+     * Enables buffered input
+     */
+    void toggleBufferOn()
+    {
+        struct termios t;
+        tcgetattr(STDIN_FILENO, &t);
+        t.c_lflag |= ICANON;
+        tcsetattr(STDIN_FILENO, TCSANOW, &t);
+    }
+
 private:
     unsigned short int terminalRows;
     unsigned short int terminalColumns;
+    struct termios t;
 };
 
 #endif //PROCESSINGLOGS_VIEWER_HPP
