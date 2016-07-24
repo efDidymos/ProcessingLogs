@@ -41,7 +41,7 @@ $ tar -xf /path/to/zlib-1.2.8.tar.gz
 ```
 Please remember the above **/path/to/uncompressed-zlib** library because it will be later used when compiling the Boost library.
 
-Last step is to download latest version of the Boost library (for the time of writting it is **1.61**) and install it via
+Last step is to download latest version of the Boost library from http://www.boost.org/ (for the time of writting it is **1.61**) and install it via
 ```
 $ tar -xf /path/to/boost_1_61_0.tar.gz
 $ cd /path/to/boost_1_61_0
