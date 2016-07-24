@@ -2,8 +2,6 @@
 // Created by tomas on 28.3.2016.
 //
 
-#include <termio.h>
-
 #include "Unziped.h"
 #include "../Log.hpp"
 
@@ -59,6 +57,9 @@ void Unziped::processFile(std::string fileName)
                 {
                     view.printFilterCmdMenu();
 
+                    // Ignore what is buffered and after that read single char
+                    // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
+                    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cin.get(c);
 
                     if (c == '0')  // Default: Remove filter and show all rows
@@ -80,6 +81,9 @@ void Unziped::processFile(std::string fileName)
                     {
                         view.printFilterRequestMCmdMenu();
 
+                        // Ignore what is buffered and after that read single char
+                        // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
+                        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         std::cin.get(c);
                         int opt = c - '0';  // convert char to int
 
@@ -120,6 +124,9 @@ void Unziped::processFile(std::string fileName)
                         theLog.showCurrRows();
                     }
                 }
+                // Ignore what is buffered and after that read single char
+                // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
+                //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cin.get(c);
             }
             std::cout << std::endl;
