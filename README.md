@@ -1,16 +1,16 @@
 #ProcessingLogs
 
 [Info](#info)<br />
-&nbsp;[Structure of the application](#structure-of-the-application)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Structure of the application](#structure-of-the-application)<br />
 [Ubuntu 14.04 instructions](#ubuntu-1404-instructions)<br />
-&nbsp;[Getting the sources](#getting-the-sources)<br />
-&nbsp;[Compilation](#compilation)<br />
-&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
-&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
-&nbsp;[Run](#run)<br />
-&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
-&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
-&nbsp;&nbsp;[Running tests](#running-tests)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources](#getting-the-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Compilation](#compilation)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Run](#run)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running tests](#running-tests)<br />
 
 #Info
 Lightweight adaptation of apache log viewer.
