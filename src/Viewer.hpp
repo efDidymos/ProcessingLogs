@@ -94,10 +94,10 @@ public:
      */
     void printFilterCmdMenu() const
     {
-        std::cout.flush();
         // Appended four white spaces due to completly overwrite the getPrevRows line
         // without leaving a text fragments from getPrevRows message
         std::cout << "\r FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
+        std::cout.flush();
     }
 
     /**
@@ -106,6 +106,7 @@ public:
     void printFilterRequestMCmdMenu() const
     {
         std::cout << "\r FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown";
+        std::cout.flush();
     }
 
     /**
@@ -123,6 +124,7 @@ public:
     void printFilterDateCmdMenu()
     {
         std::cout << "\r Please enter day [01-31] and press ENTER:                        ";
+        std::cout.flush();
     }
 
     /**
@@ -131,6 +133,7 @@ public:
     void printFilterHTTPCodeCmdMenu()
     {
         std::cout << "\r Please enter code [1xx - 5xx] and press ENTER:                   ";
+        std::cout.flush();
     }
 
     // ==============================================================================
