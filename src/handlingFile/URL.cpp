@@ -5,7 +5,6 @@
 #include "URL.h"
 
 #include <boost/asio.hpp>
-#include <boost/filesystem.hpp>
 
 void URL::processFile(std::string fileName)
 {
@@ -26,7 +25,7 @@ void URL::processFile(std::string fileName)
             successor->processFile(std::get<1>(result));
         }
         else
-            std::cout << std::get<0>(result);
+            std::cout << std::get<1>(result);
     }
     else
     {
@@ -152,6 +151,9 @@ URL::get_http_data(std::string server, std::string path, std::string file, std::
                 ofs << &response;
 
             long len = std::stol(length);
+
+            if (checkAvailableSpace(len))
+                return std::make_tuple(1, "File is too large to be downloaded!");
 
             // Read until EOF, writing data to output as we go.
             boost::system::error_code error;

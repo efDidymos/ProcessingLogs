@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <memory>
+#include <boost/filesystem.hpp>
 
 /**
  * Interface for handling argument
@@ -31,6 +32,19 @@ public:
 
 protected:
     std::shared_ptr<IProcessing> successor;
+
+    /**
+     * Check if the size of a file is not bigger than available space
+     * @param size
+     * @return bool true if the file is too big
+     */
+    bool checkAvailableSpace(const long size)
+    {
+        // Get available space of the current directory
+        boost::filesystem::space_info si = boost::filesystem::space(".");
+
+        return size > si.available;
+    }
 };
 
 
