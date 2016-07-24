@@ -11,7 +11,7 @@ More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_conf
 #Table of content
 [Structure of the application](#structure-of-the-application)
 
-[Ubuntu 14.04 instructions](#ubuntu-14.04-instructions)
+[Ubuntu 14.04 instructions](#ubuntu-1404-instructions)
 
 [Getting the sources](#getting-the-sources)
 
@@ -19,7 +19,7 @@ More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_conf
 
 [Compiling only the sources](#compiling-only-the-sources)
 
-[Compiling the whole application src + test](#compiling-the-whole-application-src-+-test)
+[Compiling the whole application src + test](#compiling-the-whole-application-src--test)
 
 [Run](#run)
 
@@ -129,7 +129,7 @@ $ ./path/to/ProcessingLogs/src/ProcessingLogs <url_address>
                                     +-- Please enter code [1xx - 5xx] and press ENTER:
 ```
 ###Running tests
-For this step is required that the application was compiled with the unit tests. If not jump to [compile src + tests](#compiling-the-whole-application-src-+-test) section.
+For this step is required that the application was compiled with the unit tests. If not jump to [compile src + tests](#compiling-the-whole-application-src--test) section.
 ```
 $ ./path/to/ProcessingLogs/test/<file>
 ```
