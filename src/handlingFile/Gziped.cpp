@@ -4,7 +4,6 @@
 
 #include "Gziped.h"
 
-#include <boost/filesystem.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
@@ -29,14 +28,8 @@ void Gziped::processFile(std::string fileName)
         {
             std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
 
-            bio::filtering_istream out;
-            out.push(bio::gzip_decompressor());
-            out.push(file);
+            zlib_decompress(file, unzipedFile);
 
-            std::ofstream outStream(unzipedFile, std::ios_base::out);
-            bio::copy(out, outStream);
-
-            std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
             // Just for the case that user has not saw the results
             sleep(5);
 
@@ -51,4 +44,18 @@ void Gziped::processFile(std::string fileName)
     else
         // Hand over to successor obj
         successor->processFile(fileName);
+}
+
+void Gziped::zlib_decompress(std::ifstream &file, const std::string &unzipedFile) const
+{
+    namespace bio = boost::iostreams;
+
+    boost::iostreams::filtering_istream out;
+    out.push(boost::iostreams::gzip_decompressor());
+    out.push(file);
+
+    std::ofstream outStream(unzipedFile, std::ios_base::out);
+    copy(out, outStream);
+
+    std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
 }

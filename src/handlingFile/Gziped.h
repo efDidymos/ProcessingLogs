@@ -21,6 +21,14 @@ public:
      * @param fileName.gz
      */
     void processFile(std::string fileName) override;
+
+private:
+    /**
+     * Unpack the file
+     * @param file          - name of input file
+     * @param unzipedFile   - name of output file
+     */
+    void zlib_decompress(std::ifstream &file, const std::string &unzipedFile) const;
 };
 
 
