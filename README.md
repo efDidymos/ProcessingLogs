@@ -32,7 +32,7 @@ std::map<Request, std::vector<std::string>> type;
 
 #Ubuntu 14.04 instructions
 Before I wrote this manual I tried various distribution versions of toolchain and libraries for use the latest technologies.
-Therefore I decide to use new compiler (of version greater then Ubuntu's default g++-4.8) which can handle C++14 standard and contains appropriate STL library without linkage issues.
+Therefore I decide to use new compiler (of version greater then Ubuntu's default g++-4.8) which can handle C++14 standard and contains appropriate STL library without linkage issues. Additionally this can be viewed as preparing to the future.
 
 So, firstly we need to prepare our toolchain.
 Add external repository with:
@@ -43,7 +43,7 @@ and after that update and upgrade current packages:
 ```
 sudo apt-get update && apt-get -y upgrade
 ```
-finally install toolchain packages:
+finally install toolchain packages (currently the latest version of the compiler in the external repository is g++-6):
 ```
 sudo apt-get install g++-6 gcc-6 cmake libbz2-dev
 ```
