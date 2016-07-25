@@ -14,7 +14,8 @@
 
 #Info
 Lightweight adaptation of apache log viewer.
-It reads and filter logs that are stored in format:
+While reading a log it creates and holds positions as indexes, in the RAM, to the appropriate chunk of the file that can be later displayed.
+Logs are stored in the format:
 
 `
 "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\""
