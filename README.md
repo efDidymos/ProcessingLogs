@@ -31,11 +31,11 @@ std::map<Request, std::vector<std::string>> type;
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
 #Ubuntu 14.04 instructions
-Before I wrote this manual I tried various distribution versions of toolchain and libraries to be able use latest technologies as easy as possible.
-I decide to use new compiler (of version greater then Ubuntu's default g++-4.8) which can handle C++14 standard and contains appropriate STL library without linkage issues.
+Before I wrote this manual I tried various distribution versions of toolchain and libraries for use the latest technologies.
+Therefore I decide to use new compiler (of version greater then Ubuntu's default g++-4.8) which can handle C++14 standard and contains appropriate STL library without linkage issues.
 
 So, firstly we need to prepare our toolchain.
-Therefore add external repository with:
+Add external repository with:
 ```
 sudo add-apt-repository pp:ubuntu-toolchain-r/test
 ```
