@@ -31,8 +31,8 @@ std::map<Request, std::vector<std::string>> type;
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
 #Ubuntu 14.04 instructions
-Before I wrote this manual I tried various distribution versions of toolchain and libraries to make use latest C++14 and Boost easy as possible.
-After spending hours and days I manage it to get working by installing the new compiler (of version > g++-4.9) which can handle C++14 standard and contains appropriate STL without linkage issues.
+Before I wrote this manual I tried various distribution versions of toolchain and libraries to be able use latest technologies as easy as possible.
+I decide to use new compiler (of version greater then Ubuntu's default g++-4.8) which can handle C++14 standard and contains appropriate STL library without linkage issues.
 
 So, firstly we need to prepare our toolchain.
 Therefore add external repository with:
