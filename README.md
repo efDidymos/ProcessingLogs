@@ -31,22 +31,42 @@ std::map<Request, std::vector<std::string>> type;
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
 #Ubuntu 14.04 instructions
+Before I wrote this manual I tried various distribution versions of toolchain and libraries to make use latest C++14 and Boost easy as possible.
+After spending hours and days I manage it to get working by installing the new compiler (of version > g++-4.9) which can handle C++14 standard and contains appropriate STL without linkage issues.
 
-First step is to install additional packages for successfully compiling the Boost library which some parts depends on the third-party libraries:
+So, firstly we need to prepare our toolchain.
+Therefore add external repository with:
 ```
-sudo apt-get install build-essential cmake python-dev libbz2-dev
+sudo add-apt-repository pp:ubuntu-toolchain-r/test
 ```
-Second step is to download latest sources of zlib library from http://www.zlib.net (for the time of writting it is **1.2.8**):
+and after that update and upgrade current packages:
+```
+sudo apt-get update && apt-get -y upgrade
+```
+finally install toolchain packages:
+```
+sudo apt-get install g++-6 gcc-6 cmake libbz2-dev
+```
+For effectively use of the new compiler we need to add symlinks (you can use TAB to autocomplete):
+```
+sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-6 100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-6 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
+```
+Second step is to prepare libraries on which our application depends on.
+Download the latest sources of zlib library from http://www.zlib.net (for the time of writting it is **1.2.8**) because Boost iostreams depends on it and unpack it:
 ```
 $ tar -xf /path/to/zlib-1.2.8.tar.gz
 ```
-Please remember the above **/path/to/uncompressed-zlib** library because it will be later used when compiling the Boost library.
-
-Last step is to download latest version of the Boost library from http://www.boost.org/ (for the time of writting it is **1.61**) and install it via
+Please remember the above **/path/to/uncompressed-zlib** because it will be later used while compiling the Boost library.
+After that download latest version of the Boost library from http://www.boost.org/ (for the time of writting it is **1.61**) and unpack it:
 ```
 $ tar -xf /path/to/boost_1_61_0.tar.gz
+```
+then configure it and install via:
+```
 $ cd /path/to/boost_1_61_0
-$ ./bootstrap.sh
+$ ./bootstrap.sh --with-libraries=filesystem,system,iostreams,regex
 
 # This step is optional, but usefull for you. 
 # It stops building on first occured error 
@@ -54,15 +74,11 @@ $ ./bootstrap.sh
 # NOTICE: in the -s flag we use the path 
 #         to locate uncompressed zlib library
 # http://www.boost.org/doc/libs/1_61_0/libs/iostreams/doc/installation.html
-$ ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
+$ sudo ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 
-# Last step is installation of the Boost library.
-# The sources and headers are copied to
+# Last step is to copy sources and headers of the Boost library to
 # /usr/local/include/
 # /usr/local/lib
-# NOTICE: in the -s flag we use the path 
-#         to uncompressed zlib library
-# http://www.boost.org/doc/libs/1_61_0/libs/iostreams/doc/installation.html
 $ sudo ./b2 install -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 ```
 
