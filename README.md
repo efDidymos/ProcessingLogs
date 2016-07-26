@@ -2,7 +2,7 @@
 
 [Info](#info)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Structure of the application](#structure-of-the-application)<br />
-[Ubuntu 14.04 instructions](#ubuntu-1404-instructions)<br />
+[Ubuntu 14.04.4 LTS instructions](#ubuntu-1404-instructions)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources](#getting-the-sources)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compilation](#compilation)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
