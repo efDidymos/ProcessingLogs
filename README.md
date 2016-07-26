@@ -24,15 +24,16 @@ Logs are stored in the format:
 More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_config.html
 
 ##Structure of the application
-The application was designed to be modular. It can be extended for example to add an another chain for manipulating with the input argument (dir handlingFile) or add another strategy for displaying contents (dir rowsFilteringStrategies). Also the class RequestMethod was designed in such manner that one can be more specific for selecting names of the request method by adjusting the enum Request and define its explicit version in 
+The application was designed to be modular. It can be extended for example to add an another chain for manipulating with the input argument (dir handlingFile) or add another strategy for displaying contents (dir rowsFilteringStrategies).
+Also the class RequestMethod was designed in such manner that one can be more specific for selecting names of the request method by adjusting the enum Request and define its explicit version in
 ```
 std::map<Request, std::vector<std::string>> type;
 ```
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
-#Ubuntu 14.04 instructions
-Before I wrote this manual I tried various distribution versions of toolchain and libraries for use the latest technologies.
-Therefore I decide to use new compiler (of version greater then Ubuntu's default g++-4.8) which can handle **C++14** standard and contains appropriate STL library without linkage issues. Additionally this can be viewed as preparing to the future.
+#Ubuntu 14.04.4 LTS instructions
+I decided to use the latest **C++14** standard.
+Therefore compiler the compiler needs to be newer (than Ubuntu's default g++-4.8) which can handle the standard and contains appropriate STL library without linkage issues.
 
 So, firstly we need to prepare our toolchain.
 Add external repository with:
