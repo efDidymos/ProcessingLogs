@@ -50,12 +50,12 @@ void Gziped::zlib_decompress(std::ifstream &file, const std::string &unzipedFile
 {
     namespace bio = boost::iostreams;
 
-    boost::iostreams::filtering_istream out;
+    bio::filtering_istream out;
     out.push(boost::iostreams::gzip_decompressor());
     out.push(file);
 
     std::ofstream outStream(unzipedFile, std::ios_base::out);
-    copy(out, outStream);
+    bio::copy(out, outStream);
 
     std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
 }
