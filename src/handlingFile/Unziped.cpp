@@ -130,6 +130,7 @@ void Unziped::processFile(std::string fileName)
                 std::cin.get(c);
             }
             std::cout << std::endl;
+            file.close();
         }
     }
     else
