@@ -33,7 +33,7 @@ std::map<Request, std::vector<std::string>> type;
 
 #Ubuntu 14.04.4 LTS instructions
 I decided to use the latest **C++14** standard.
-Therefore compiler the compiler needs to be newer (than Ubuntu's default g++-4.8) which can handle the standard and contains appropriate STL library without linkage issues.
+Therefore the compiler needs to be newer than Ubuntu's default g++-4.8, which can handle the standard and contains appropriate STL library without linkage issues.
 
 So, firstly we need to prepare our toolchain.
 Add external repository with:
