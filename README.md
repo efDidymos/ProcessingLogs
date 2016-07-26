@@ -3,7 +3,7 @@
 [Info](#info)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Structure of the application](#structure-of-the-application)<br />
 [Ubuntu 14.04.4 LTS instructions](#ubuntu-14044-lts-instructions)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources](#getting-the-sources-of-application)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources of application](#getting-the-sources-of-application)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compilation](#compilation)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
