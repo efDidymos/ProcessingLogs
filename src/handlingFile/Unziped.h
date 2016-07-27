@@ -25,6 +25,7 @@ public:
     void processFile(std::string fileName) override;
 
 private:
+    inline void clearBuffer() { std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); }
     Viewer & view;
 };
 

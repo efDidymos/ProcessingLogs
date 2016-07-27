@@ -10,8 +10,6 @@
 #include "../rowsFilteringStrategies/RequestMethod.hpp"
 #include "../rowsFilteringStrategies/Date.hpp"
 
-#include <boost/filesystem.hpp>
-
 void Unziped::processFile(std::string fileName)
 {
     std::string ext = boost::filesystem::extension(fileName);
@@ -59,7 +57,7 @@ void Unziped::processFile(std::string fileName)
 
                     // Ignore what is buffered and after that read single char
                     // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
-                    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//                    clearBuffer();
                     std::cin.get(c);
 
                     if (c == '0')  // Default: Remove filter and show all rows
@@ -83,7 +81,7 @@ void Unziped::processFile(std::string fileName)
 
                         // Ignore what is buffered and after that read single char
                         // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
-                        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//                        clearBuffer();
                         std::cin.get(c);
                         int opt = c - '0';  // convert char to int
 
@@ -126,7 +124,7 @@ void Unziped::processFile(std::string fileName)
                 }
                 // Ignore what is buffered and after that read single char
                 // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
-                //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//                clearBuffer();
                 std::cin.get(c);
             }
             std::cout << std::endl;
