@@ -22,6 +22,7 @@ public:
     IRow(std::ifstream *file, unsigned short rowCount) :
             file(file), rowCount(rowCount)
     {
+        file->clear();
         file->seekg(0, std::ios::end);
         theEnd = file->tellg();
     }
