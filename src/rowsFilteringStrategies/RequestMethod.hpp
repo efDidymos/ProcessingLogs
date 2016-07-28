@@ -32,36 +32,35 @@ public:
             IRow(file, rowCount), requestedMethod(requestMethod)
     { }
 
-    void read(unsigned long *inPos,
-              unsigned long *outPos,
+    void read(long *inPos,
+              long *outPos,
               std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
         using namespace std::chrono;
         auto start = high_resolution_clock::now();
 #endif
-        std::string line;
         rows->clear();
 
+        // If we previously hit EOF clear flags failbit
+        // to be able start working with the file again
+        file->clear();
         file->seekg(*inPos, std::ios_base::beg);
 
         int i = 0;
-
         std::string c1, c2, c3, c4, c5, c6;
         std::stringstream ss;
+        std::string line;
 
-        do
+        try
         {
-            if (getline(*file, line))
+            while (getline(*file, line))
             {
                 *outPos = file->tellg();
 
                 ss << line;
-
                 ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6;
-
                 ss.str(""); // erase the buffer
-
                 c6 = c6.substr(1);  // Trim the Request method in read line
 
                 // ========================================================
@@ -99,13 +98,15 @@ public:
                         }
                 }
             }
-            else
-            {
-                *outPos = theEnd;
-                break;
-            }
         }
-        while (i < rowCount);
+        catch (std::ifstream::failure exception)
+        {
+            std::cerr << "In RequestMethod Exception happened: " << exception.what() << "\n"
+                      << "Error bits are: "
+                      << "\nfailbit: " << file->fail()
+                      << "\neofbit: " << file->eof()
+                      << "\nbadbit: " << file->bad() << std::endl;
+        }
 
 #ifndef NDEBUG
         auto end = high_resolution_clock::now();

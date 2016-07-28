@@ -72,7 +72,9 @@ public:
         strategy    = std::move(st);
         startPos    = 0;
 
-        strategy->setTheEnd(theEnd);
+        // Clear previous recorded results to begin new filtering
+        prevRows.clear();
+        index.clear();
 
         // Perform the first time reading chunk of the file
         firstTimeRead();
@@ -150,7 +152,7 @@ private:
             while (!work)
                 m_alarm.wait(lock);
 
-            unsigned long outPos = 0;
+            long outPos = 0;
             strategy->read(&startPos, &outPos, &cacheRows);
 
             // Decide where to assign results
@@ -183,7 +185,7 @@ private:
      */
     void firstTimeRead()
     {
-        unsigned long outPos = 0;
+        long outPos = 0;
         strategy->read(&startPos, &outPos, &currRows);
         index.push_back(outPos);
     }
@@ -217,8 +219,8 @@ private:
 
     // Definition of the starting position for reading into the cacheRows from the sub-thread. It can hold
     // position value from the index vector to start reading before the prevRows or after nextRows
-    unsigned long startPos  = 0;
-    unsigned long theEnd    = 0;    // The last position of the log file. Var intended only to boundary check.
+    long startPos  = 0;
+    long theEnd    = 0;    // The last position of the log file. Var intended only to boundary check.
     bool work               = true; // Switch indicates for the sub-thread if it have to do something new now
     bool running            = true; // Switch indicates for the sub-thread if it have to run
     bool forward            = true; // Switch indicates that the cached rows have to be added to the nextRows vector

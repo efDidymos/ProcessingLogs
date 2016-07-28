@@ -22,8 +22,8 @@ public:
     {
     }
 
-    void read(unsigned long *inPos,
-              unsigned long *outPos,
+    void read(long *inPos,
+              long *outPos,
               std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
@@ -31,23 +31,37 @@ public:
         auto start = high_resolution_clock::now();
 #endif
 
-        std::string line;
         rows->clear();
 
+        // If we previously hit EOF clear flags failbit
+        // to be able start working with the file again
+        file->clear();
         file->seekg(*inPos, std::ios_base::beg);
 
-        for (int i = 0; i < rowCount; ++i)
+        int i = 0;
+        std::string line;
+
+        try
         {
-            if (getline(*file, line))
+            while (getline(*file, line))
             {
-                rows->push_back(line);
-                *outPos = file->tellg();
+                if (i < rowCount)
+                {
+                    *outPos = file->tellg();
+                    rows->push_back(line);
+                    ++i;
+                }
+                else
+                    break;
             }
-            else
-            {
-                *outPos = theEnd;
-                break;
-            }
+        }
+        catch (std::ifstream::failure exception)
+        {
+            std::cerr << "In AllRows strategy exception happened: " << exception.what() << "\n"
+                      << "Error bits are: "
+                      << "\nfailbit: " << file->fail()
+                      << "\neofbit: " << file->eof()
+                      << "\nbadbit: " << file->bad() << std::endl;
         }
 
 #ifndef NDEBUG

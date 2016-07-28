@@ -33,19 +33,13 @@ public:
      * @param outPos
      * @param rows
      */
-    virtual void read(unsigned long *inPos,
-                      unsigned long *outPos,
+    virtual void read(long *inPos,
+                      long *outPos,
                       std::vector<std::string> *rows) = 0;
-
-    /*
-     * Setting the boundary for checking
-     */
-    void setTheEnd(unsigned long end) { theEnd = end; }
 
 protected:
     std::ifstream *file;
     unsigned short rowCount;
-    unsigned long theEnd;
 };
 
 
