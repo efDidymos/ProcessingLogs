@@ -13,7 +13,27 @@
 #include "rowsFilteringStrategies/IRow.hpp"
 
 /**
- * Class intended as model representation of the log file
+ * Class intended as model representation of the log file.
+ * There are various scenarious of reading
+ * Legend:
+ *  p - prevRow
+ *  c - currRow
+ *  n - nextRow
+ *                  +---+
+ *                  | p | <-- at the beginning it is empty
+ * BEGIN OF FILE ---+---+--+---+------------------------------
+ *                  | c |  | p |
+ *                  +---+  +---+  +---+
+ *                  | n |  | c |  | p |
+ *                  +---+  +---+  +---+  +---+
+ *                         | n |  | c |  | p |
+ *                         +---+  +---+  +---+  +---+
+ *                                | n |  | c |  | p |
+ *                                +---+  +---+  +---+
+ *                                       | n |  | c | <-----+
+ * END OF FILE --------------------------+---+--+---+----   |
+ *                                              | n | ------+ at the end of readling it holds the same data as
+ *                                              +---+
  */
 class Log
 {
@@ -89,12 +109,13 @@ public:
         if (index.back() != theEnd)
         {
             startPos = index.back();
+            prevRows = currRows;
             currRows = nextRows;
             work     = true;
             forward  = true;
             m_alarm.notify_one();
         }
-        else
+        else if (nextRows.size() > 0)
             currRows = nextRows;
     }
 
@@ -103,16 +124,17 @@ public:
         std::lock_guard<std::mutex> lock(m_mutex);  // Enter critical section
 
         // Boundary check to not overjump the beginning of the file
-        if (startPos != 0)
+        if ((startPos != 0) && (prevRows.size() > 0))
         {
             index.pop_back();
             startPos = index.rbegin()[3];
+            nextRows = currRows;
             currRows = prevRows;
             work     = true;
             backward = true;
             m_alarm.notify_one();
         }
-        else
+        else if (prevRows.size() > 0)
             currRows = prevRows;
     }
 
@@ -128,19 +150,17 @@ private:
             while (!work)
                 m_alarm.wait(lock);
 
-            long outPos = 0;
+            unsigned long outPos = 0;
             strategy->read(&startPos, &outPos, &cacheRows);
 
             // Decide where to assign results
             if (forward)
             {
-                prevRows = currRows;
                 nextRows = cacheRows;
                 forward  = false;
             }
             else if (backward)
             {
-                nextRows = currRows;
                 prevRows = cacheRows;
                 backward = false;
             }
@@ -163,7 +183,7 @@ private:
      */
     void firstTimeRead()
     {
-        long outPos = 0;
+        unsigned long outPos = 0;
         strategy->read(&startPos, &outPos, &currRows);
         index.push_back(outPos);
     }
@@ -197,8 +217,8 @@ private:
 
     // Definition of the starting position for reading into the cacheRows from the sub-thread. It can hold
     // position value from the index vector to start reading before the prevRows or after nextRows
-    long startPos  = 0;
-    long theEnd             = 0;    // The last position of the log file. Var intended only to boundary check.
+    unsigned long startPos  = 0;
+    unsigned long theEnd    = 0;    // The last position of the log file. Var intended only to boundary check.
     bool work               = true; // Switch indicates for the sub-thread if it have to do something new now
     bool running            = true; // Switch indicates for the sub-thread if it have to run
     bool forward            = true; // Switch indicates that the cached rows have to be added to the nextRows vector

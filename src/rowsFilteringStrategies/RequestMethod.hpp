@@ -32,8 +32,8 @@ public:
             IRow(file, rowCount), requestedMethod(requestMethod)
     { }
 
-    void read(long *inPos,
-              long *outPos,
+    void read(unsigned long *inPos,
+              unsigned long *outPos,
               std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG

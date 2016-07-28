@@ -24,8 +24,8 @@ public:
             IRow(file, rowCount), code(code)
     { }
 
-    virtual void read(long *inPos,
-                      long *outPos,
+    virtual void read(unsigned long *inPos,
+                      unsigned long *outPos,
                       std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
