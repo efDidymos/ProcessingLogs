@@ -52,6 +52,8 @@ public:
         strategy    = std::move(st);
         startPos    = 0;
 
+        strategy->setTheEnd(theEnd);
+
         // Perform the first time reading chunk of the file
         firstTimeRead();
 

@@ -22,9 +22,9 @@ public:
     IRow(std::ifstream *file, unsigned short rowCount) :
             file(file), rowCount(rowCount)
     {
+        // Before use repeated working with file by changing strategy
+        // reset the EOF and failbit
         file->clear();
-        file->seekg(0, std::ios::end);
-        theEnd = file->tellg();
     }
 
     /**
@@ -36,6 +36,11 @@ public:
     virtual void read(long *inPos,
                       long *outPos,
                       std::vector<std::string> *rows) = 0;
+
+    /*
+     * Setting the boundary for checking
+     */
+    void setTheEnd(long end) { theEnd = end; }
 
 protected:
     std::ifstream *file;
