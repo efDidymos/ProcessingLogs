@@ -31,7 +31,7 @@ void Unziped::processFile(std::string fileName)
 
             // Create the log representation of the file
             // Firstly we define to read and display all rows
-            Log theLog(&file, view, std::make_shared<AllRows>(&file, rowCount));
+            Log theLog(&file, view, std::make_unique<AllRows>(&file, rowCount));
             theLog.showCurrRows();
 
             view.toggleBufferOff();
@@ -62,7 +62,7 @@ void Unziped::processFile(std::string fileName)
 
                     if (c == '0')  // Default: Remove filter and show all rows
                     {
-                        theLog.changeDisplayRowStrategy(std::make_shared<AllRows>(&file, rowCount));
+                        theLog.changeDisplayRowStrategy(std::make_unique<AllRows>(&file, rowCount));
                         theLog.showCurrRows();
                     }
                     else if (c == '1')  // filter rows by HTTP Code
@@ -72,7 +72,7 @@ void Unziped::processFile(std::string fileName)
                         std::string code;
                         std::cin >> code;
 
-                        theLog.changeDisplayRowStrategy(std::make_shared<HTTPCode>(&file, rowCount, code));
+                        theLog.changeDisplayRowStrategy(std::make_unique<HTTPCode>(&file, rowCount, code));
                         theLog.showCurrRows();
                     }
                     else if (c == '2')  // filter rows by Request method
@@ -88,22 +88,22 @@ void Unziped::processFile(std::string fileName)
                         switch (opt)
                         {
                             case Request::POST: // POST
-                                theLog.changeDisplayRowStrategy(std::make_shared<RequestMethod>(&file, rowCount, Request::POST));
+                                theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::POST));
                                 theLog.showCurrRows();
                                 break;
 
                             case Request::GET: // GET
-                                theLog.changeDisplayRowStrategy(std::make_shared<RequestMethod>(&file, rowCount, Request::GET));
+                                theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::GET));
                                 theLog.showCurrRows();
                                 break;
 
                             case Request::HEAD: // HEAD
-                                theLog.changeDisplayRowStrategy(std::make_shared<RequestMethod>(&file, rowCount, Request::HEAD));
+                                theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::HEAD));
                                 theLog.showCurrRows();
                                 break;
 
                             case Request::UNKNOWN: // Unknown
-                                theLog.changeDisplayRowStrategy(std::make_shared<RequestMethod>(&file, rowCount, Request::UNKNOWN));
+                                theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::UNKNOWN));
                                 theLog.showCurrRows();
                                 break;
 
@@ -118,7 +118,7 @@ void Unziped::processFile(std::string fileName)
                         std::string date;
                         std::cin >> date;
 
-                        theLog.changeDisplayRowStrategy(std::make_shared<Date>(&file, rowCount, date));
+                        theLog.changeDisplayRowStrategy(std::make_unique<Date>(&file, rowCount, date));
                         theLog.showCurrRows();
                     }
                 }

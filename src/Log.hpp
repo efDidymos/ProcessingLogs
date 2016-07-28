@@ -20,8 +20,8 @@ class Log
 public:
     Log(std::ifstream *file,
         Viewer &view,
-        std::shared_ptr<IRow> strategy)
-        : view(view), strategy(strategy)
+        std::unique_ptr<IRow> strategy)
+        : view(view), strategy(std::move(strategy))
     {
         // Firstly find the last position of the file
         // to get end of the file for later boundary checking
@@ -47,9 +47,9 @@ public:
      * Changes the way of reading file
      * @param st
      */
-    void changeDisplayRowStrategy(std::shared_ptr<IRow> st)
+    void changeDisplayRowStrategy(std::unique_ptr<IRow> st)
     {
-        strategy    = st;
+        strategy    = std::move(st);
         startPos    = 0;
 
         // Perform the first time reading chunk of the file
@@ -213,7 +213,7 @@ private:
     // It's content always copy to prevRows or nextRows
     std::vector<std::string> cacheRows;
 
-    std::shared_ptr<IRow> strategy;     // Type of strategy that will be used for manipulating with the file
+    std::unique_ptr<IRow> strategy;     // Type of strategy that will be used for manipulating with the file
 
     // for multi-threading
     std::thread             subThread;
