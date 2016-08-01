@@ -1,5 +1,2 @@
 # JetBrains CLion IDE files
 .idea/
-
-# Google test framework
-gtest/
