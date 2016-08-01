@@ -84,13 +84,20 @@ $ sudo ./b2 install -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 ```
 
 ##Getting the sources of application
+If you want to start using the application without (unit) tests, get the sources executing command:
 ```
 $ git clone git@github.com:efDidymos/ProcessingLogs.git
 ```
-If you want to start using the application without (unit) tests continue to [compiling only the sources section](#compiling-only-the-sources). At its end it will point you to [run section](#running-only-sources) for start using the application.
+and continue to [compiling only the sources section](#compiling-only-the-sources). At its end it will point you to [run section](#running-only-sources) for start using the application.
+
+If you are interested to get deeply insights of the whole application, you can download the sources also with the (google) unit test framework. It is available at https://github.com/google/googletest (for the time of writting, the latest stable version is **1.7.0**). So run the command which downloads sources also from google repository:
+```
+$ git clone --recursive git@github.com:efDidymos/ProcessingLogs.git
+```
+and continue to [complete compilation](#compiling-the-whole-application-src--test).
 
 ##Compilation
-If you are interested to get deeply insights, recommended process is jump over the compile of source to [compile src + tests](#compiling-the-whole-application-src-+-test).
+For interested person in deeply insights, recommended process is jump over the compile of source to [compile src + tests](#compiling-the-whole-application-src-+-test).
 
 ###Compiling only the sources
 ```
@@ -101,17 +108,6 @@ $ make
 And now, if you want you can [execute the application](#running-only-sources).
 
 ###Compiling the whole application src + test
-If you are interested to get deeply insights for next step you need to download (google) unit test framework. It is available at https://github.com/google/googletest/releases as zip or tar.gz (for the time of writting it is **1.7.0**). After downloading unpack **.tar.gz** with command:
-```
-$ mkdir /path/to/ProcessingLogs/gtest
-$ tar xf /path/to/googletest-release-1.7.0.tar.gz -C /path/to/ProcessingLogs/gtest --strip-components=1
-```
-or **.zip** with command:
-```
-$ unzip /path/to/googletest-release-1.7.0.zip -d /path/to/ProcessingLogs/
-$ mv /path/to/ProcessingLogs/googletest-release-1.7.0 /path/to/ProcessingLogs/gtest
-```
-After unpacking and renaming in two arbitrary two foregoing commands, you can begin with compiling the whole:
 ```
 $ cd /path/to/ProcessingLogs/
 $ cmake CMakeLists.txt
