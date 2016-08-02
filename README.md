@@ -2,7 +2,7 @@
 
 [Info](#info)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Structure of the application](#structure-of-the-application)<br />
-[Ubuntu 14.04.4 LTS instructions](#ubuntu-14044-lts-instructions)<br />
+[Ubuntu 14.04.5 LTS instructions](#ubuntu-14045-lts-instructions)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources of application](#getting-the-sources-of-application)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compilation](#compilation)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
@@ -31,7 +31,7 @@ std::map<Request, std::vector<std::string>> type;
 ```
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
-#Ubuntu 14.04.4 LTS instructions
+#Ubuntu 14.04.5 LTS instructions
 I decided to use the latest **C++14** standard.
 Therefore the compiler needs to be newer than Ubuntu's default g++-4.8, which can handle the standard and contains appropriate STL library without linkage issues.
 
