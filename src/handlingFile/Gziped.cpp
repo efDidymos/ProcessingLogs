@@ -17,28 +17,40 @@ void Gziped::processFile(std::string fileName)
     {
         std::ifstream file(fileName, std::ios::in);
 
-        std::cout << "Please be patient while decompressing the file." << std::endl;
-        std::cout << "Starting decompressing " << fileName << std::endl;
+        std::cout << "Do you want to decompress " << fileName << std::endl;
+        std::cout << "[y - decompress and display / n - quit application]" << std::endl;
+        std::string response;
+        std::cin >> response;
 
-        namespace bio = boost::iostreams;
-
-        // Prepare name of the new unzipped file
-        // by trimming the .gz extension from filename
-        try
+        if ((response == "y") || (response == "Y"))
         {
-            std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
-
-            zlib_decompress(file, unzipedFile);
-
-            // Just for the case that user has not saw the results
-            sleep(5);
-
-            // Call the appropriate obj in the chain for next processing
-            successor->processFile(unzipedFile);
+            std::cout << "Quitting" << std::endl;
+            return;
         }
-        catch (const bio::gzip_error &exception)
+        else if ((response == "y") || (response == "Y"))
         {
-            std::cerr << "\nBoost Description of Error: " << exception.what() << std::endl;
+            std::cout << "Decompression of " << fileName << " has been started. Please be patient." << std::endl;
+
+            namespace bio = boost::iostreams;
+
+            // Prepare name of the new unzipped file
+            // by trimming the .gz extension from filename
+            try
+            {
+                std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
+
+                zlib_decompress(file, unzipedFile);
+
+                // Just for the case that user has not saw the results
+                sleep(5);
+
+                // Call the appropriate obj in the chain for next processing
+                successor->processFile(unzipedFile);
+            }
+            catch (const bio::gzip_error &exception)
+            {
+                std::cerr << "\nBoost Description of Error: " << exception.what() << std::endl;
+            }
         }
     }
     else
