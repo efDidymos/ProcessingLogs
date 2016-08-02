@@ -7,7 +7,6 @@
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
-#include <stdlib.h>
 
 void Gziped::processFile(std::string fileName)
 {
@@ -62,7 +61,7 @@ void Gziped::zlib_decompress(std::ifstream &file, const std::string &unzipedFile
 
         std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
     }
-    catch(const bio::gzip_error& exception)
+    catch (const bio::gzip_error& exception)
     {
         std::cerr << "ERROR while decompressing the file. " << std::endl;
 
