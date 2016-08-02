@@ -69,22 +69,21 @@ public:
      */
     void changeDisplayRowStrategy(std::unique_ptr<IRow> st)
     {
+        prevRows.clear();           // Clear previous recorded results to begin a new filtering
+        index.resize(1);            // Also resize the index to hold beginning position of the file -> zero 0
+        startPos    = index.back(); // Prepare for activation of read in main-thread
         strategy    = std::move(st);
-        startPos    = 0;
-
-        // Clear previous recorded results to begin new filtering
-        prevRows.clear();
-        index.clear();
 
         // Perform the first time reading chunk of the file
         firstTimeRead();
 
         shutdownThread();
 
-        // Prepare for activation of sub-thread
-        work    = true;
-        running = true;
-        forward = true;
+        // Prepare for activation of read in sub-thread
+        work        = true;
+        running     = true;
+        forward     = true;
+        startPos    = index.back();
 
         // Creating sub-thread
         subThread = std::thread(&Log::read2cache, this);
@@ -146,11 +145,14 @@ private:
      */
     void read2cache()
     {
-        while (running)
+        while (1)
         {
             std::unique_lock<std::mutex> lock(m_mutex); // Enter critical section
             while (!work)
                 m_alarm.wait(lock);
+
+            if (!running)
+                return;
 
             long outPos = 0;
             strategy->read(&startPos, &outPos, &cacheRows);
@@ -219,8 +221,8 @@ private:
 
     // Definition of the starting position for reading into the cacheRows from the sub-thread. It can hold
     // position value from the index vector to start reading before the prevRows or after nextRows
-    long startPos  = 0;
-    long theEnd    = 0;    // The last position of the log file. Var intended only to boundary check.
+    long startPos           = 0;
+    long theEnd             = 0;    // The last position of the log file. Var intended only to boundary check.
     bool work               = true; // Switch indicates for the sub-thread if it have to do something new now
     bool running            = true; // Switch indicates for the sub-thread if it have to run
     bool forward            = true; // Switch indicates that the cached rows have to be added to the nextRows vector
