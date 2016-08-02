@@ -11,21 +11,34 @@ void URL::processFile(std::string fileName)
     // Check if the argument is some type of URL
     if (std::regex_match(fileName, match, expresion))
     {
-        auto result = get_http_data(match[3], match[4], match[5], match[2], 0);
+        std::cout << "Do you want to download the file?" << std::endl;
+        std::cout << "[y - download / n - quit application]" << std::endl;
+        std::string response;
+        std::cin >> response;
 
-        // If the returned result performed without error
-        // get the file name in the second atribute and
-        // process it to successor
-        if (std::get<0>(result) == 0)
+        if ((response == "n") || (response == "N"))
         {
-            std::cout << "The file " << std::get<1>(result) << " downloaded successfully." << std::endl;
-
-            // Just for the case that user has not saw the results
-            sleep(5);
-            successor->processFile(std::get<1>(result));
+            std::cout << "Quitting. Bye..." << std::endl;
+            return;
         }
-        else
-            std::cout << std::get<1>(result);
+        else if ((response == "y") || (response == "Y"))
+        {
+            auto result = get_http_data(match[3], match[4], match[5], match[2], 0);
+
+            // If the returned result performed without error
+            // get the file name in the second atribute and
+            // process it to successor
+            if (std::get<0>(result) == 0)
+            {
+                std::cout << "The file " << std::get<1>(result) << " downloaded successfully." << std::endl;
+
+                // Just for the case that user has not saw the results
+                sleep(5);
+                successor->processFile(std::get<1>(result));
+            }
+            else
+                std::cout << std::get<1>(result);
+        }
     }
     else
     {

@@ -17,14 +17,14 @@ void Gziped::processFile(std::string fileName)
     {
         std::ifstream file(fileName, std::ios::in);
 
-        std::cout << "Do you want to decompress " << fileName << std::endl;
-        std::cout << "[y - decompress and display / n - quit application]" << std::endl;
+        std::cout << "Do you want to decompress " << fileName << "?" << std::endl;
+        std::cout << "[y - decompress / n - quit application]" << std::endl;
         std::string response;
         std::cin >> response;
 
-        if ((response == "y") || (response == "Y"))
+        if ((response == "n") || (response == "N"))
         {
-            std::cout << "Quitting" << std::endl;
+            std::cout << "Quitting. Bye..." << std::endl;
             return;
         }
         else if ((response == "y") || (response == "Y"))
@@ -41,11 +41,18 @@ void Gziped::processFile(std::string fileName)
 
                 zlib_decompress(file, unzipedFile);
 
-                // Just for the case that user has not saw the results
-                sleep(5);
+                std::cout << "Do you want to display the uncompressed log?" << std::endl;
+                std::cout << "[y - display / n - quit application]" << std::endl;
+                std::cin >> response;
 
-                // Call the appropriate obj in the chain for next processing
-                successor->processFile(unzipedFile);
+                if ((response == "n") || (response == "N"))
+                {
+                    std::cout << "Quitting. Bye..." << std::endl;
+                    return;
+                }
+                else if ((response == "y") || (response == "Y"))
+                    // Call the appropriate obj in the chain for next processing
+                    successor->processFile(unzipedFile);
             }
             catch (const bio::gzip_error &exception)
             {
@@ -99,6 +106,10 @@ void Gziped::zlib_decompress(std::ifstream &file, const std::string &unzipedFile
 
             case boost::iostreams::gzip::bad_footer:
                 std::cerr << "Portion of file following compressed data is malformed!" << std::endl;
+                break;
+
+            default:
+                std::cerr << exception.what() << std::endl;
                 break;
         }
     }

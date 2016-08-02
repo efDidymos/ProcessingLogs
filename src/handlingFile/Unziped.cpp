@@ -127,7 +127,7 @@ void Unziped::processFile(std::string fileName)
 //                clearBuffer();
                 std::cin.get(c);
             }
-            std::cout << std::endl;
+            std::cout << "Qutting. Bye..." << std::endl;
             file.close();
         }
     }
