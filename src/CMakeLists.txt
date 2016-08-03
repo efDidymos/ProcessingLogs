@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(ProcessingLogs)
 
-set(CMAKE_BUILD_TYPE Release)   # Possible types: Release, Debug, MinSizeRel and RelWithDebInfo
+set(CMAKE_BUILD_TYPE Debug)   # Possible types: Release, Debug, MinSizeRel and RelWithDebInfo
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread")
 set(SOURCE_FILES
@@ -13,8 +13,7 @@ set(SOURCE_FILES
         handlingFile/Unziped.h
         handlingFile/Gziped.cpp
         handlingFile/Gziped.h
-        handlingFile/URL.cpp
-        handlingFile/URL.h
+        handlingFile/URL.hpp
         rowsFilteringStrategies/AllRows.hpp
         rowsFilteringStrategies/IRow.hpp
         rowsFilteringStrategies/RequestMethod.hpp
