@@ -23,10 +23,7 @@ void Gziped::processFile(std::string fileName)
         std::cin >> response;
 
         if ((response == "n") || (response == "N"))
-        {
             std::cout << "Quitting. Bye..." << std::endl;
-            return;
-        }
         else if ((response == "y") || (response == "Y"))
         {
             std::cout << "Decompression of " << fileName << " has been started. Please be patient." << std::endl;
@@ -59,6 +56,8 @@ void Gziped::processFile(std::string fileName)
                 std::cerr << "\nBoost Description of Error: " << exception.what() << std::endl;
             }
         }
+        else
+            std::cout << "Bad response. Quitting. Bye..." << std::endl;
     }
     else
         // Hand over to successor obj
