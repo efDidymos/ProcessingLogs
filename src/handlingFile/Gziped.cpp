@@ -64,18 +64,53 @@ void Gziped::processFile(std::string fileName)
         successor->processFile(fileName);
 }
 
-void Gziped::zlib_decompress(std::ifstream &file, const std::string &unzipedFile) const
+void Gziped::zlib_decompress(std::ifstream &ifs, const std::string &unzipedFile) const
 {
     namespace bio = boost::iostreams;
 
-    bio::filtering_istream in;
+    // ==============================================================================
+    // Solution for detecting issues and handling it for example due to small disk space
+    // while writing can be found documented here:
+    // http://stackoverflow.com/a/20471593
+    // ==============================================================================
+    struct safe_ofstream_sink
+    {
+        typedef char char_type;
+        typedef bio::sink_tag category;
+
+        std::ofstream& ofs;
+
+        safe_ofstream_sink(std::ofstream& ofs) : ofs(ofs)
+        { }
+
+        std::streamsize write(const char* s, std::streamsize n)
+        {
+            ofs.write(s, n);
+            if (!ofs)
+                throw std::runtime_error("Failed writing to fstream");
+
+            return n;
+        }
+    };
+
     try
     {
-        in.push(bio::gzip_decompressor());
-        in.push(file);
+        // ==============================================================================
+        // The solution fix was tested on the /dev/full
+        // ==============================================================================
+        // open output stream to the "full" device
+        // full device is a "utility-device" to check how applications handle ENOSPC
+        // more details in "man full"
+//        std::ofstream ofs("/dev/full");
+        std::ofstream ofs(unzipedFile, std::ios_base::out);
 
-        std::ofstream out(unzipedFile, std::ios_base::out);
-        bio::copy(in, out);
+        // Setup the iostreams filter
+        bio::filtering_streambuf<bio::output> filters;
+        filters.push(bio::gzip_decompressor());
+        filters.push(safe_ofstream_sink(ofs));
+
+        // "run" the filter
+        bio::copy(ifs, filters);
 
         std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
     }
