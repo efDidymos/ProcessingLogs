@@ -15,40 +15,6 @@
 namespace baio = boost::asio;
 using boost::asio::ip::tcp;
 
-//#include <tuple>
-//#include <regex>
-//
-///**
-// * Class checks and downloads a file from URL
-// */
-//class URL: public IProcessing
-//{
-//public:
-//    URL(Viewer & view)
-//        : view(view), expresion("^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$")
-//    { }
-//
-//    /**
-//     * Download a file from URL. Also checks if the URL is valid.
-//     * Also check if it contain a redirection if so then recursively
-//     * atempt to download a file from new location
-//     * @param fileName as URL
-//     */
-//    void processFile(std::string fileName) override;
-//
-//private:
-//    Viewer & view;
-//    std::tuple<int, std::string>
-//    get_http_data(std::string server,
-//                  std::string path,
-//                  std::string file,
-//                  std::string protocol,
-//                  short redirectCnt);
-//    std::regex expresion;
-//    std::smatch match;
-//    short maxRedirectCnt = 3;   // maximum redirection
-//};
-
 class URL: public IProcessing
 {
 public:
@@ -154,36 +120,6 @@ private:
         }
     }
 
-    /*
-    HTTP/1.1 302 Found
-    Date: Wed, 03 Aug 2016 15:16:37 GMT
-    Server: Apache
-    Location: http://download.abc.com/special/joinabc/access.log.gz
-    Vary: Accept-Encoding
-    Content-Length: 239
-    Connection: close
-    Content-Type: text/html; charset=iso-8859-1
-
-    <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-    <html><head>
-    <title>302 Found</title>
-    </head><body>
-    <h1>Found</h1>
-    <p>The document has moved <a href="http://download.abc.com/special/joinabc/access.log.gz">here</a>.</p>
-    </body></html>
-
-    --------------------------------------
-
-    HTTP/1.1 200 OK
-    Date: Wed, 03 Aug 2016 16:15:36 GMT
-    Server: Apache
-    Last-Modified: Mon, 02 Mar 2015 12:21:13 GMT
-    ETag: "1db14634-5104d410c1a47"
-    Accept-Ranges: bytes
-    Content-Length: 498157108
-    Connection: close
-    Content-Type: text/plain; charset=ISO-8859-1
-    */
     void handle_read_status_line(const boost::system::error_code& err)
     {
         if (!err)
@@ -203,14 +139,19 @@ private:
             }
 
             // If status code inform us about redirection to other location
-            if (status_code == 302 || status_code == 301)
+            // and we have not reached the maximum redirections
+            if ((status_code == 302 || status_code == 301) && (redirectCnt < maxRedirectCnt))
             {
-                std::cout << "idem precitat preskok\n";
-
                 // Read the response headers, which are terminated by a blank line.
                 baio::async_read_until(socket_, response_, "\r\n\r\n",
                                               boost::bind(&URL::handle_read_headers_redirection, this,
                                                           baio::placeholders::error));
+            }
+            // If we reached the maximum redirections
+            else if (redirectCnt = maxRedirectCnt)
+            {
+                std::cout << maxRedirectCnt + " max redirection count attained!" << std::endl;
+                return;
             }
             // If status code inform us about some untrivial way of communication
             else if (status_code != 200 && (status_code != 301 || status_code != 302))
@@ -221,8 +162,6 @@ private:
             }
             else
             {
-                std::cout << "idem precitat standardne\n";
-
                 // Read the response headers, which are terminated by a blank line.
                 baio::async_read_until(socket_, response_, "\r\n\r\n",
                                               boost::bind(&URL::handle_read_headers, this,
@@ -239,8 +178,6 @@ private:
     {
         if (!err)
         {
-            std::cout << "citam preskok\n";
-
             // Process the response headers, which are terminated by a blank line.
             std::istream response_stream(&response_);
             std::string header, location;
@@ -271,6 +208,9 @@ private:
                 protocol    = match[2];
                 form_request(server, path, file);
 
+                // Note that we performed redirection
+                ++redirectCnt;
+
                 // Start an asynchronous resolve to translate the server and service names
                 // into a list of endpoints.
                 tcp::resolver::query query(server, protocol);
@@ -296,8 +236,6 @@ private:
     {
         if (!err)
         {
-            std::cout << "citam normalne\n";
-
             // Process the response headers.
             std::istream response_stream(&response_);
             std::string header, contentLght;
@@ -325,7 +263,7 @@ private:
             // ---------------------------------------------------------------------
             // Added extension to name of the file signalize working copy of file
             tmpFile = file + fileExtension;
-            ofs = std::ofstream(tmpFile, std::ios_base::app);
+            ofs     = std::ofstream(tmpFile, std::ios_base::app);
             // ---------------------------------------------------------------------
 
             if (response_.size() > 0)
@@ -387,8 +325,6 @@ private:
 //            throw
             std::cout << "Error renaming downloaded file " + tmpFile + " to " + file << std::endl;
 
-        std::cout << "Finished\n";
-
         // Send to process downloaded file to successor
         successor->processFile(file);
 
@@ -399,26 +335,23 @@ private:
             std::cout << "Error downloading the file " + tmpFile + ". The file is not complete!" << std::endl;
     }
 
-    Viewer & view;
+    Viewer &            view;
 
-    const std::string       fileExtension   = ".download";
-    const short             maxRedirectCnt  = 3;   // maximum redirection
-    static short            redirectCnt;
-    std::regex              expresion;
-    std::smatch             match;
+    const std::string   fileExtension   = ".download";
+    const short         maxRedirectCnt  = 3; // maximum redirection
+    short               redirectCnt     = 0; // counter of total redirections
+    long                len;                 // Length of the file provided by server
+    std::regex          expresion;
+    std::smatch         match;
 
-    baio::io_service        io_service;
-    tcp::resolver           resolver_{io_service};
-    tcp::socket             socket_{io_service};
-    baio::streambuf  request_;
-    baio::streambuf  response_;
+    baio::io_service    io_service;
+    tcp::resolver       resolver_{io_service};
+    tcp::socket         socket_{io_service};
+    baio::streambuf     request_;
+    baio::streambuf     response_;
 
-    std::string server, path, file, tmpFile, protocol;
-    std::ofstream ofs;
-
-    long len;
+    std::string         server, path, file, tmpFile, protocol;
+    std::ofstream       ofs;
 };
-
-short URL::redirectCnt = 0;
 
 #endif //PROCESSINGLOGS_URLSTRATEGY_H
