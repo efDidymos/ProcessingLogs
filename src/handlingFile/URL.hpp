@@ -68,7 +68,10 @@ public:
         // Check if the argument is some type of URL
         if (std::regex_match(fileName, match, expresion))
         {
-            std::string server(match[3]), path(match[4]), file(match[5]), protocol(match[2]);
+            server      = match[3];
+            path        = match[4];
+            file        = match[5];
+            protocol    = match[2];
             form_request(server, path, file);
 
             // Start an asynchronous resolve to translate the server and service names
@@ -76,8 +79,8 @@ public:
             tcp::resolver::query query(server, protocol);
             resolver_.async_resolve(query,
                                     boost::bind(&URL::handle_resolve, this,
-                                                boost::asio::placeholders::error,
-                                                boost::asio::placeholders::iterator));
+                                                baio::placeholders::error,
+                                                baio::placeholders::iterator));
             // Fire the connection
             io_service.run();
         }
@@ -109,9 +112,9 @@ private:
         {
             // Attempt a connection to each endpoint in the list until we
             // successfully establish a connection.
-            boost::asio::async_connect(socket_, endpoint_iterator,
+            baio::async_connect(socket_, endpoint_iterator,
                                        boost::bind(&URL::handle_connect, this,
-                                                   boost::asio::placeholders::error));
+                                                   baio::placeholders::error));
         }
         else
         {
@@ -124,9 +127,9 @@ private:
         if (!err)
         {
             // The connection was successful. Send the request.
-            boost::asio::async_write(socket_, request_,
+            baio::async_write(socket_, request_,
                                      boost::bind(&URL::handle_write_request, this,
-                                                 boost::asio::placeholders::error));
+                                                 baio::placeholders::error));
         }
         else
         {
@@ -141,9 +144,9 @@ private:
             // Read the response status line. The response_ streambuf will
             // automatically grow to accommodate the entire line. The growth may be
             // limited by passing a maximum size to the streambuf constructor.
-            boost::asio::async_read_until(socket_, response_, "\r\n",
+            baio::async_read_until(socket_, response_, "\r\n",
                                           boost::bind(&URL::handle_read_status_line, this,
-                                                      boost::asio::placeholders::error));
+                                                      baio::placeholders::error));
         }
         else
         {
@@ -205,9 +208,9 @@ private:
                 std::cout << "idem precitat preskok\n";
 
                 // Read the response headers, which are terminated by a blank line.
-                boost::asio::async_read_until(socket_, response_, "\r\n\r\n",
+                baio::async_read_until(socket_, response_, "\r\n\r\n",
                                               boost::bind(&URL::handle_read_headers_redirection, this,
-                                                          boost::asio::placeholders::error));
+                                                          baio::placeholders::error));
             }
             // If status code inform us about some untrivial way of communication
             else if (status_code != 200 && (status_code != 301 || status_code != 302))
@@ -221,9 +224,9 @@ private:
                 std::cout << "idem precitat standardne\n";
 
                 // Read the response headers, which are terminated by a blank line.
-                boost::asio::async_read_until(socket_, response_, "\r\n\r\n",
+                baio::async_read_until(socket_, response_, "\r\n\r\n",
                                               boost::bind(&URL::handle_read_headers, this,
-                                                          boost::asio::placeholders::error));
+                                                          baio::placeholders::error));
             }
         }
         else
@@ -240,22 +243,21 @@ private:
 
             // Process the response headers, which are terminated by a blank line.
             std::istream response_stream(&response_);
-            std::string header;
-            std::string pom;
+            std::string header, location;
             while (std::getline(response_stream, header) && header != "\r")
             {
 //                        std::cout << header << "\n";
                 if (header.substr(0, 9) == "Location:")
                 {
-                    pom = header.substr(10);
-                    if (auto pos = pom.find("\r"))
-                        pom = pom.substr(0, pos);
+                    location = header.substr(10);
+                    if (auto pos = location.find("\r"))
+                        location = location.substr(0, pos);
                     break;
                 }
             }
 
             // Check if the greped URL is valid
-            if (std::regex_match(pom, match, expresion))
+            if (std::regex_match(location, match, expresion))
             {
                 // !!! VERY ESSENTIAL STEP !!!
                 // Remove any remaining extra data in the response buffer that we will not need.
@@ -263,12 +265,10 @@ private:
                 // new request ends up in message: Invalid response
                 response_.consume(response_.size());
 
-                std::cout << "Going to redirect to "
-                          << match[3] << " - "
-                          << match[4] << " - "
-                          << match[5] << " - "
-                          << match[2] << std::endl;
-                std::string server(match[3]), path(match[4]), file(match[5]), protocol(match[2]);
+                server      = match[3];
+                path        = match[4];
+                file        = match[5];
+                protocol    = match[2];
                 form_request(server, path, file);
 
                 // Start an asynchronous resolve to translate the server and service names
@@ -276,8 +276,8 @@ private:
                 tcp::resolver::query query(server, protocol);
                 resolver_.async_resolve(query,
                                         boost::bind(&URL::handle_resolve, this,
-                                                    boost::asio::placeholders::error,
-                                                    boost::asio::placeholders::iterator));
+                                                    baio::placeholders::error,
+                                                    baio::placeholders::iterator));
             }
             else
             {
@@ -300,21 +300,42 @@ private:
 
             // Process the response headers.
             std::istream response_stream(&response_);
-            std::string header;
+            std::string header, contentLght;
 
             while (std::getline(response_stream, header) && header != "\r")
+            {
                 std::cout << header << "\n";
+                if (header.substr(0, 15) == "Content-Length:")
+                {
+                    contentLght = header.substr(16);
+                    if (auto pos = contentLght.find("\r"))
+                        len = std::stol(contentLght.substr(0, pos));
+                }
+            }
             std::cout << "\n";
 
-            // Write whatever content we already have to output.
-            if (response_.size() > 0)
-                std::cout << &response_;
+            if (checkAvailableSpace(len))
+            {
+//                return std::make_tuple(1, "File is too large to be downloaded!");
+                std::cout << "File is too large to be downloaded!" << std::endl;
+                return;
+            }
 
-            // Start reading remaining data until EOF.
-            /*boost::asio::async_read(socket_, response_,
-                                    boost::asio::transfer_at_least(1),
-                                    boost::bind(&URL::handle_read_content, this,
-                                                boost::asio::placeholders::error));*/
+            // Create the temporary file
+            // ---------------------------------------------------------------------
+            // Added extension to name of the file signalize working copy of file
+            tmpFile = file + fileExtension;
+            ofs = std::ofstream(tmpFile, std::ios_base::app);
+            // ---------------------------------------------------------------------
+
+            if (response_.size() > 0)
+            {
+                // Start reading remaining data until EOF.
+                baio::async_read(socket_, response_,
+                                        baio::transfer_at_least(1),
+                                        boost::bind(&URL::handle_read_content, this,
+                                                    baio::placeholders::error));
+            }
         }
         else
         {
@@ -327,23 +348,61 @@ private:
         if (!err)
         {
             // Write all of the data that has been read so far.
-            std::cout << &response_;
+            ofs << &response_;
+
+            // Show the progress bar
+            view.printProgBar("Downloading the file " + file, ofs.tellp(), len);
 
             // Continue reading remaining data until EOF.
-            boost::asio::async_read(socket_, response_,
-                                    boost::asio::transfer_at_least(1),
+            baio::async_read(socket_, response_,
+                                    baio::transfer_at_least(1),
                                     boost::bind(&URL::handle_read_content, this,
-                                                boost::asio::placeholders::error));
+                                                baio::placeholders::error));
         }
-        else if (err != boost::asio::error::eof)
+        // After successfully download of the content
+//        else if ((baio::error::eof == err) ||
+//            (baio::error::connection_reset == err))
+        else if (baio::error::eof == err)
+        {
+            downloading_finished();
+        }
+        else if (err != baio::error::eof)
         {
             std::cout << "Error: " << err << "\n";
         }
     }
 
+    void downloading_finished()
+    {
+        // ---------------------------------------------------------------------
+        ofs.close();
+        // ---------------------------------------------------------------------
+
+        if (boost::filesystem::file_size(tmpFile) == len)
+        {
+
+        // Rename the temporary file with .download extension to the name of the original file
+        int rc = std::rename(tmpFile.c_str(), file.c_str());
+        if (rc)
+//            throw
+            std::cout << "Error renaming downloaded file " + tmpFile + " to " + file << std::endl;
+
+        std::cout << "Finished\n";
+
+        // Send to process downloaded file to successor
+        successor->processFile(file);
+
+//        else
+//            return std::make_tuple(0, file);
+        }
+        else
+            std::cout << "Error downloading the file " + tmpFile + ". The file is not complete!" << std::endl;
+    }
+
     Viewer & view;
 
-    short                   maxRedirectCnt  = 3;   // maximum redirection
+    const std::string       fileExtension   = ".download";
+    const short             maxRedirectCnt  = 3;   // maximum redirection
     static short            redirectCnt;
     std::regex              expresion;
     std::smatch             match;
@@ -351,8 +410,13 @@ private:
     baio::io_service        io_service;
     tcp::resolver           resolver_{io_service};
     tcp::socket             socket_{io_service};
-    boost::asio::streambuf  request_;
-    boost::asio::streambuf  response_;
+    baio::streambuf  request_;
+    baio::streambuf  response_;
+
+    std::string server, path, file, tmpFile, protocol;
+    std::ofstream ofs;
+
+    long len;
 };
 
 short URL::redirectCnt = 0;
