@@ -148,7 +148,7 @@ private:
                                                           baio::placeholders::error));
             }
             // If we reached the maximum redirections
-            else if (redirectCnt = maxRedirectCnt)
+            else if (redirectCnt == maxRedirectCnt)
             {
                 std::cout << maxRedirectCnt + " max redirection count attained!" << std::endl;
                 return;
