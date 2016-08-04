@@ -29,17 +29,17 @@ public:
      */
     void processFile(std::string fileName) override
     {
-        std::cout << "Do you want to download a file from URL link?" << std::endl;
-        std::cout << "[y - download / n - quit application]" << std::endl;
-        std::string response;
-        std::cin >> response;
-
-        if ((response == "n") || (response == "N"))
-            std::cout << "Quitting. Bye..." << std::endl;
-        else if ((response == "y") || (response == "Y"))
+        // Check if the argument is some type of URL
+        if (std::regex_match(fileName, match, expresion))
         {
-            // Check if the argument is some type of URL
-            if (std::regex_match(fileName, match, expresion))
+            std::cout << "Do you want to download a file from URL link?" << std::endl;
+            std::cout << "[y - download / n - quit application]" << std::endl;
+            std::string response;
+            std::cin >> response;
+
+            if ((response == "n") || (response == "N"))
+                std::cout << "Quitting. Bye..." << std::endl;
+            else if ((response == "y") || (response == "Y"))
             {
                 server      = match[3];
                 path        = match[4];
@@ -58,12 +58,12 @@ public:
                 io_service.run();
             }
             else
-                // If the argument is not valid URL, try if the successor
-                // can handle it
-                successor->processFile(fileName);
+                std::cout << "Bad response. Quitting. Bye..." << std::endl;
         }
         else
-            std::cout << "Bad response. Quitting. Bye..." << std::endl;
+            // If the argument is not valid URL, try if the successor
+            // can handle it
+            successor->processFile(fileName);
     }
 
 private:
