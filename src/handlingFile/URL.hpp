@@ -21,6 +21,11 @@ public:
     URL(Viewer & view) : view(view)
     { }
 
+    virtual ~URL()
+    {
+        clear_unfinished();
+    }
+
     /**
      * Download a file from URL. Also checks if the URL is valid.
      * Also check if it contain a redirection if so then recursively
@@ -42,6 +47,11 @@ public:
             else if ((response == "y") || (response == "Y"))
             {
                 establishConnection();
+
+                // Start the deadline actor. You will note that we're not setting any
+                // particular deadline here. Instead, the connect and input actors will
+                // update the deadline prior to each asynchronous operation.
+                deadline_.async_wait(boost::bind(&URL::check_deadline, this));
 
                 // Fire the connection
                 io_service.run();
@@ -73,6 +83,23 @@ private:
                                             baio::placeholders::iterator));
     }
 
+    // This function terminates all the actors to shut down the connection. It
+    // may be called by the user of the client class, or by the class itself in
+    // response to graceful termination or an unrecoverable error.
+    void stopConnection()
+    {
+        connStopped_ = true;
+        boost::system::error_code ignored_ec;
+        socket_.shutdown(tcp::socket::shutdown_both, ignored_ec);
+        socket_.close(ignored_ec);
+        deadline_.cancel();
+
+        if (clear_unfinished() != 0)
+            std::cerr << "Error while removing temporary file " << tmpFile << std::endl;
+
+        std::cout << "Quitting. Bye..." << std::endl;
+    }
+
     void form_request(const std::string &server, const std::string &path, const std::string &file)
     {
         // Form the request. We specify the "Connection: close" header so that the
@@ -90,6 +117,11 @@ private:
     {
         if (!err)
         {
+            std::cout << "Attempting connect to the server." << std::endl;
+
+            // Set a deadline for the connect operation.
+            deadline_.expires_from_now(boost::posix_time::seconds(60));
+
             // Attempt a connection to each endpoint in the list until we
             // successfully establish a connection.
             baio::async_connect(socket_, endpoint_iterator,
@@ -97,24 +129,48 @@ private:
                                                    baio::placeholders::error));
         }
         else
-            std::cerr << "Error: " << err.message() << std::endl;
+        {
+            std::cerr << "Error in handle resolve: " << err.message() << std::endl;
+            stopConnection();
+        }
     }
 
     void handle_connect(const boost::system::error_code& err)
     {
-        if (!err)
+        if (connStopped_)
+            return;
+
+        // The async_connect() function automatically opens the socket at the start
+        // of the asynchronous operation. If the socket is closed at this time then
+        // the timeout handler must have run first.
+        if (!socket_.is_open())
+        {
+            std::cout << "Connect timed out\n";
+            stopConnection();
+        }
+        // Check if the connect operation failed before the deadline expired.
+        else if (err)
+        {
+            std::cerr << "Error in handle connect: " << err.message() << std::endl;
+
+            // We need to close the socket used in the previous connection attempt
+            // before starting a new one.
+            socket_.close();
+        }
+        else
         {
             // The connection was successful. Send the request.
             baio::async_write(socket_, request_,
-                                     boost::bind(&URL::handle_write_request, this,
-                                                 baio::placeholders::error));
+                              boost::bind(&URL::handle_write_request, this,
+                                          baio::placeholders::error));
         }
-        else
-            std::cerr << "Error: " << err.message() << std::endl;
     }
 
     void handle_write_request(const boost::system::error_code& err)
     {
+        if (connStopped_)
+            return;
+
         if (!err)
         {
             // Read the response status line. The response_ streambuf will
@@ -125,11 +181,14 @@ private:
                                                       baio::placeholders::error));
         }
         else
-            std::cerr << "Error: " << err.message() << std::endl;
+            std::cerr << "Error in handle write request: " << err.message() << std::endl;
     }
 
     void handle_read_status_line(const boost::system::error_code& err)
     {
+        if (connStopped_)
+            return;
+
         if (!err)
         {
             // Check that response is OK.
@@ -142,7 +201,7 @@ private:
             std::getline(response_stream, status_message);
             if (!response_stream || http_version.substr(0, 5) != "HTTP/")
             {
-                std::cerr << "Error: invalid response from server" << std::endl;
+                std::cerr << "Error in handle read status line: invalid response from server" << std::endl;
                 return;
             }
 
@@ -157,10 +216,10 @@ private:
             }
             // If we reached the maximum redirections
             else if (redirectCnt == maxRedirectCnt)
-                std::cerr << "Error: " << maxRedirectCnt + " max redirection count attained!" << std::endl;
+                std::cerr << "Error in handle read status line: " << maxRedirectCnt + " max redirection count attained!" << std::endl;
             // If status code inform us about some untrivial way of communication
             else if (status_code != 200 && (status_code != 301 || status_code != 302))
-                std::cerr << "Error: response returned with status code " << status_code << std::endl;
+                std::cerr << "Error in handle read status line: response returned with status code " << status_code << std::endl;
             else
             {
                 // Read the response headers, which are terminated by a blank line.
@@ -170,11 +229,17 @@ private:
             }
         }
         else
-            std::cerr << "Error: " << err << std::endl;
+        {
+            std::cerr << "Error in handle read status line: " << err << std::endl;
+            stopConnection();
+        }
     }
 
     void handle_read_headers_redirection(const boost::system::error_code &err)
     {
+        if (connStopped_)
+            return;
+
         if (!err)
         {
             // Process the response headers, which are terminated by a blank line.
@@ -204,17 +269,24 @@ private:
                 // Note that we performed redirection
                 ++redirectCnt;
 
+                std::cout << "Found redirection. Changing location to another server." << std::endl;
                 establishConnection();
             }
             else
-                std::cerr << "Error: redirectoin URL is not valid!" << std::endl;
+                std::cerr << "Error in handle: redirectoin URL is not valid!" << std::endl;
         }
         else
-            std::cerr << "Error: " << err << std::endl;
+        {
+            std::cerr << "Error in handle read headers redirection: " << err << std::endl;
+            stopConnection();
+        }
     }
 
     void handle_read_headers(const boost::system::error_code &err)
     {
+        if (connStopped_)
+            return;
+
         if (!err)
         {
             // Process the response headers.
@@ -234,7 +306,7 @@ private:
 
             if (checkAvailableSpace(len))
             {
-                std::cerr << "Error: file is too large to be downloaded!" << std::endl;
+                std::cerr << "Error in handle read headers: file is too large to be downloaded!" << std::endl;
                 return;
             }
 
@@ -255,11 +327,17 @@ private:
             }
         }
         else
-            std::cerr << "Error: " << err << std::endl;
+        {
+            std::cerr << "Error in handle read headers: " << err << std::endl;
+            stopConnection();
+        }
     }
 
     void handle_read_content(const boost::system::error_code& err)
     {
+        if (connStopped_)
+            return;
+
         if (!err)
         {
             // Write all of the data that has been read so far.
@@ -267,6 +345,9 @@ private:
 
             // Show the progress bar
             view.printProgBar("Downloading the file " + file, ofs.tellp(), len);
+
+            // Set a deadline for the read operation.
+            deadline_.expires_from_now(boost::posix_time::seconds(30));
 
             // Continue reading remaining data until EOF.
             baio::async_read(socket_, response_,
@@ -278,7 +359,10 @@ private:
         else if (baio::error::eof == err)
             downloading_finished();
         else if (err != baio::error::eof)
-            std::cerr << "Error: " << err << std::endl;
+        {
+            std::cerr << "Error in handle read content: " << err << std::endl;
+            stopConnection();
+        }
     }
 
     void downloading_finished()
@@ -292,32 +376,69 @@ private:
         {
             // Rename the temporary file with .download extension to the name of the original file
             if (std::rename(tmpFile.c_str(), file.c_str()))
-                std::cerr << "Error: renaming downloaded file from " + tmpFile + " to " + file << std::endl;
+                std::cerr << "Error in downloading finished: renaming downloaded file from " + tmpFile + " to " + file << std::endl;
             else
                 // Send to process downloaded file to successor
                 successor->processFile(file);
         }
         else
-            std::cerr << "Error: downloaded file " + tmpFile + " is not complete!" << std::endl;
+            std::cerr << "Error in downloading finished: downloaded file " + tmpFile + " is not complete!" << std::endl;
     }
 
-    Viewer &            view;
+    // delete the temporary file
+    int clear_unfinished()
+    {
+        if (boost::filesystem::exists(tmpFile))
+            return std::remove(tmpFile.c_str());
+        else
+            return 0;
+    }
 
-    const std::string   fileExtension   = ".download";
-    const short         maxRedirectCnt  = 3; // maximum redirection
-    short               redirectCnt     = 0; // counter of total redirections
-    long                len;                 // Length of the file provided by server
-    std::regex          expresion{"^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$"};
-    std::smatch         match;
+    void check_deadline()
+    {
+        if (connStopped_)
+            return;
 
-    baio::io_service    io_service;
-    tcp::resolver       resolver_{io_service};
-    tcp::socket         socket_{io_service};
-    baio::streambuf     request_;
-    baio::streambuf     response_;
+        // Check whether the deadline has passed. We compare the deadline against
+        // the current time since a new asynchronous operation may have moved the
+        // deadline before this actor had a chance to run.
+        if (deadline_.expires_at() <= baio::deadline_timer::traits_type::now())
+        {
+            std::cout << "\nThe network seems to be very slow. Keep on trying?" << std::endl;
+            std::cout << "[y - I'll wait / n - Cancel]" << std::endl;
+            std::string response;
+            std::cin >> response;
 
-    std::string         server, path, file, tmpFile, protocol;
-    std::ofstream       ofs;
+            if ((response == "n") || (response == "N"))
+                stopConnection();
+            else if ((response == "y") || (response == "Y"))
+                // Set a new deadline
+                deadline_.expires_from_now(boost::posix_time::seconds(30));
+        }
+
+        // Put the actor back to sleep.
+        deadline_.async_wait(boost::bind(&URL::check_deadline, this));
+    }
+
+    Viewer &                view;
+
+    const std::string       fileExtension   = ".download";
+    const short             maxRedirectCnt  = 3; // maximum redirection
+    short                   redirectCnt     = 0; // counter of total redirections
+    bool                    connStopped_{false}; // for fast indicating of closed connection in the async methods
+    long                    len;                 // Length of the file provided by server
+    std::regex              expresion{"^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$"};
+    std::smatch             match;
+
+    baio::io_service        io_service;
+    tcp::resolver           resolver_{io_service};
+    tcp::socket             socket_{io_service};
+    baio::deadline_timer    deadline_{io_service};
+    baio::streambuf         request_;
+    baio::streambuf         response_;
+
+    std::string             server, path, file, tmpFile, protocol;
+    std::ofstream           ofs;
 };
 
 #endif //PROCESSINGLOGS_URLSTRATEGY_H
