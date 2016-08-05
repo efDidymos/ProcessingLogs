@@ -38,18 +38,8 @@ void Gziped::processFile(std::string fileName)
 
                 zlib_decompress(file, unzipedFile);
 
-                std::cout << "Do you want to display the uncompressed log?" << std::endl;
-                std::cout << "[y - display / n - quit application]" << std::endl;
-                std::cin >> response;
-
-                if ((response == "n") || (response == "N"))
-                {
-                    std::cout << "Quitting. Bye..." << std::endl;
-                    return;
-                }
-                else if ((response == "y") || (response == "Y"))
-                    // Call the appropriate obj in the chain for next processing
-                    successor->processFile(unzipedFile);
+                // Call the appropriate obj in the chain for next processing
+                successor->processFile(unzipedFile);
             }
             catch (const bio::gzip_error &exception)
             {
