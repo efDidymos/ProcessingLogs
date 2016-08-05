@@ -41,19 +41,8 @@ public:
                 std::cout << "Quitting. Bye..." << std::endl;
             else if ((response == "y") || (response == "Y"))
             {
-                server      = match[3];
-                path        = match[4];
-                file        = match[5];
-                protocol    = match[2];
-                form_request(server, path, file);
+                establishConnection();
 
-                // Start an asynchronous resolve to translate the server and service names
-                // into a list of endpoints.
-                tcp::resolver::query query(server, protocol);
-                resolver_.async_resolve(query,
-                                        boost::bind(&URL::handle_resolve, this,
-                                                    baio::placeholders::error,
-                                                    baio::placeholders::iterator));
                 // Fire the connection
                 io_service.run();
             }
@@ -67,6 +56,23 @@ public:
     }
 
 private:
+    void establishConnection()
+    {
+        server      = match[3];
+        path        = match[4];
+        file        = match[5];
+        protocol    = match[2];
+        form_request(server, path, file);
+
+        // Start an asynchronous resolve to translate the server and service names
+        // into a list of endpoints.
+        tcp::resolver::query query(server, protocol);
+        resolver_.async_resolve(query,
+                                boost::bind(&URL::handle_resolve, this,
+                                            baio::placeholders::error,
+                                            baio::placeholders::iterator));
+    }
+
     void form_request(const std::string &server, const std::string &path, const std::string &file)
     {
         // Form the request. We specify the "Connection: close" header so that the
@@ -195,22 +201,10 @@ private:
             // Check if the greped URL is valid
             if (std::regex_match(location, match, expresion))
             {
-                server      = match[3];
-                path        = match[4];
-                file        = match[5];
-                protocol    = match[2];
-                form_request(server, path, file);
-
                 // Note that we performed redirection
                 ++redirectCnt;
 
-                // Start an asynchronous resolve to translate the server and service names
-                // into a list of endpoints.
-                tcp::resolver::query query(server, protocol);
-                resolver_.async_resolve(query,
-                                        boost::bind(&URL::handle_resolve, this,
-                                                    baio::placeholders::error,
-                                                    baio::placeholders::iterator));
+                establishConnection();
             }
             else
                 std::cerr << "Error: redirectoin URL is not valid!" << std::endl;
