@@ -23,7 +23,7 @@ set(SOURCE_FILES
 add_executable(ProcessingLogs ${SOURCE_FILES})
 
 # see https://cmake.org/cmake/help/v3.5/module/FindBoost.html
-find_package(Boost 1.61.0 REQUIRED COMPONENTS filesystem system iostreams regex)
+find_package(Boost 1.54.0 REQUIRED COMPONENTS filesystem system iostreams regex)
 
 include_directories(${Boost_INCLUDE_DIR})
 
