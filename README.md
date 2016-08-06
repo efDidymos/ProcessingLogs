@@ -5,7 +5,7 @@
 [Ubuntu 14.04 LTS instructions](#ubuntu-1404-lts-instructions)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Updating toolchain](#updating-toolchain)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Installing Boost library](#installing-boost-library)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[From Ubuntu's repository](#from-Ubuntu-repository)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[From Ubuntu's repository](#from-ubuntus-repository)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Upstream versions](#upstream-versions)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources of application](#getting-the-sources-of-application)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compilation](#compilation)<br />
