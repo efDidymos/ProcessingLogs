@@ -7,14 +7,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[Installing Boost library](#installing-boost-library)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[From Ubuntu's repository](#from-ubuntus-repository)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Upstream versions](#upstream-versions)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Getting the sources of application](#getting-the-sources-of-application)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Compilation](#compilation)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Run](#run)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running tests](#running-tests)<br />
+[Getting the sources of application](#getting-the-sources-of-application)<br />
+[Compilation](#compilation)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
+[Run](#run)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Running tests](#running-tests)<br />
 
 #Info
 Lightweight adaptation of apache log viewer.
@@ -108,7 +108,7 @@ sudo ./b2 -q -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 sudo ./b2 install -sZLIB_SOURCE="/path/to/zlib-1.2.8"
 ```
 
-##Getting the sources of application
+#Getting the sources of application
 If you want to start using the application without (unit) tests, get the sources executing command:
 ```
 git clone git@github.com:efDidymos/ProcessingLogs.git
@@ -121,10 +121,10 @@ git clone --recursive git@github.com:efDidymos/ProcessingLogs.git
 ```
 and continue to [complete compilation](#compiling-the-whole-application-src--test).
 
-##Compilation
+#Compilation
 For interested person in deeply insights, recommended process is jump over the compile of source to [compile src + tests](#compiling-the-whole-application-src-+-test).
 
-###Compiling only the sources
+##Compiling only the sources
 ```
 cd /path/to/ProcessingLogs/src/
 cmake CMakeLists.txt
@@ -132,15 +132,15 @@ make
 ```
 And now, if you want you can [execute the application](#running-only-sources).
 
-###Compiling the whole application src + test
+##Compiling the whole application src + test
 ```
 cd /path/to/ProcessingLogs/
 cmake CMakeLists.txt
 make
 ```
 
-##Run
-###Running only sources
+#Run
+##Running only sources
 ```
 ./path/to/ProcessingLogs/src/ProcessingLogs <file>
 ```
@@ -148,7 +148,7 @@ or
 ```
 ./path/to/ProcessingLogs/src/ProcessingLogs <url_address>
 ```
-####Usage
+###Usage
 ```
 [q]-quit  [f]-filter options  [j]-move down  [k]-move up
            |
@@ -160,7 +160,7 @@ or
                                     |
                                     +-- Please enter code [1xx - 5xx] and press ENTER:
 ```
-###Running tests
+##Running tests
 For this step is required that the application was compiled with the unit tests. If not jump to [compile src + tests](#compiling-the-whole-application-src--test) section.
 ```
 ./path/to/ProcessingLogs/test/<file>
