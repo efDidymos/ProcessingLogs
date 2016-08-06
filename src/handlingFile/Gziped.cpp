@@ -42,7 +42,7 @@ void Gziped::processFile(std::string fileName)
                 // Call the appropriate obj in the chain for next processing
                 successor_->processFile(unzipedFile);
             }
-            catch (const bio::gzip_error &exception)
+            catch (const bio::gzip_error& exception)
             {
                 std::cerr << "\nBoost Description of Error: " << exception.what() << std::endl;
             }
@@ -55,7 +55,7 @@ void Gziped::processFile(std::string fileName)
         successor_->processFile(fileName);
 }
 
-void Gziped::zlib_decompress(std::ifstream &ifs, const std::string &unzipedFile) const
+void Gziped::zlib_decompress(std::ifstream& ifs, const std::string& unzipedFile) const
 {
     namespace bio = boost::iostreams;
 
@@ -66,7 +66,7 @@ void Gziped::zlib_decompress(std::ifstream &ifs, const std::string &unzipedFile)
     // ==============================================================================
     struct safe_ofstream_sink
     {
-        typedef char char_type;
+        typedef char          char_type;
         typedef bio::sink_tag category;
 
         std::ofstream& ofs;
@@ -74,7 +74,7 @@ void Gziped::zlib_decompress(std::ifstream &ifs, const std::string &unzipedFile)
         safe_ofstream_sink(std::ofstream& ofs) : ofs(ofs)
         { }
 
-        std::streamsize write(const char* s, std::streamsize n)
+        std::streamsize write(const char *s, std::streamsize n)
         {
             ofs.write(s, n);
             if (!ofs)

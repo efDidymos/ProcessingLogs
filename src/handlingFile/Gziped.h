@@ -10,11 +10,10 @@
 /**
  * Class unpacks supplied file
  */
-class Gziped: public IProcessing
+class Gziped : public IProcessing
 {
 public:
-    Gziped()
-    { }
+    Gziped() {}
 
     /**
      * Unpack the file
@@ -28,7 +27,7 @@ private:
      * @param file          - name of input file
      * @param unzipedFile   - name of output file
      */
-    void zlib_decompress(std::ifstream &file, const std::string &unzipedFile) const;
+    void zlib_decompress(std::ifstream& file, const std::string& unzipedFile) const;
 };
 
 

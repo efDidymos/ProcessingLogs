@@ -19,7 +19,7 @@ using boost::asio::ip::tcp;
 class URL: public IProcessing
 {
 public:
-    URL(Viewer & view) : view_(view)
+    URL(Viewer& view) : view_(view)
     { }
 
     virtual ~URL()
@@ -101,7 +101,7 @@ private:
         std::cout << "Quitting. Bye..." << std::endl;
     }
 
-    void form_request(const std::string &server, const std::string &path, const std::string &file)
+    void form_request(const std::string& server, const std::string& path, const std::string& file)
     {
         // Form the request. We specify the "Connection: close" header so that the
         // server will close the socket after transmitting the response. This will
@@ -421,7 +421,7 @@ private:
         deadline_.async_wait(boost::bind(&URL::check_deadline, this));
     }
 
-    Viewer &                view_;
+    Viewer&                 view_;
 
     const std::string       fileExtension_   = ".download";
     const short             maxRedirectCnt_  = 3; // maximum redirection

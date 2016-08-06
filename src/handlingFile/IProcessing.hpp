@@ -22,7 +22,7 @@ public:
 
     /**
      * Setting the next object which should take over performing if this object can not handle it
-     * @param IProcessing * nextObject
+     * @param IProcessing *nextObject
      */
     void setSuccessor(std::shared_ptr<IProcessing> nextObj)
     {
