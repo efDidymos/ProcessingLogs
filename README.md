@@ -67,7 +67,7 @@ Second step is to prepare libraries on which our application depends on. For beg
 ###From Ubuntu's repository
 For the time of writting it is **1.55.0**:
 ```
-sudo apt-get install \\
+sudo apt-get install \
 libboost-filesystem1.55-dev \
 libboost-iostreams1.55-dev \
 libboost-regex1.55-dev \
