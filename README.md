@@ -2,8 +2,8 @@
 
 [Info](#info)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Structure of the application](#structure-of-the-application)<br />
-[Ubuntu 14.04 LTS instructions](#ubuntu-1404-lts-instructions)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Updating toolchain](#updating-toolchain)<br />
+[Ubuntu instructions](#ubuntu-instructions)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Updating toolchain in Ubuntu 14.04 LTS](#updating-toolchain-in-ubuntu-1404-lts)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Installing Boost library](#installing-boost-library)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[From Ubuntu's repository](#from-ubuntus-repository)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Upstream versions](#upstream-versions)<br />
@@ -35,12 +35,11 @@ std::map<Request, std::vector<std::string>> type;
 ```
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
-#Ubuntu 14.04 LTS instructions
+#Ubuntu instructions
 I decided to use the latest **C++14** standard.
-Therefore the compiler needs to be newer than Ubuntu's default g++-4.8, which can handle the standard and contains appropriate STL library without linkage issues.
+Therefore the compiler needs to be newer than Ubuntu's 14.04 LTS default g++-4.8, which can handle the standard and contains appropriate STL library without linkage issues. In Ubuntu 16.04 LTS is this problem solved because its default compiler is in version 5.4.
 
-##Updating toolchain
-Firstly we need to prepare our toolchain.
+##Updating toolchain in Ubuntu 14.04 LTS
 Add external repository with:
 ```
 sudo add-apt-repository pp:ubuntu-toolchain-r/test
@@ -50,7 +49,7 @@ and after that update and upgrade your current development packages:
 sudo apt-get update 
 sudo apt-get upgrade
 ```
-finally install toolchain packages (currently the latest version of the compiler in the external repository is g++-**6**):
+finally install toolchain packages (I decided to use latest version of compiler from the external repository that for the time of writting is g++-**6**):
 ```
 sudo apt-get install g++-6 gcc-6 cmake
 ```
@@ -62,21 +61,20 @@ sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 100
 ```
 
 ##Installing Boost library
-Second step is to prepare libraries on which our application depends on. For beginners easier way is to install them from repository.
+Second step is to prepare libraries on which our application depends on. For beginners easier way is to install them from distribution repository.
 
 ###From Ubuntu's repository
-For the time of writting it is **1.55.0**:
-```
-sudo apt-get install \
-libboost-filesystem1.55-dev \
-libboost-iostreams1.55-dev \
-libboost-regex1.55-dev \
-libboost-system1.55-dev
-```
+For the time of writting there are diverse version.
+
+| Ubuntu 14.04 | Ubuntu 16.04 |
+| --- | --- |
+| Latest version **1.55.0** | Latest version **1.58.0** |
+| `sudo apt-get install \`<br />`libboost-filesystem1.55-dev \`<br />`libboost-iostreams1.55-dev \`<br />`libboost-regex1.55-dev \`<br />`libboost-system1.55-dev` | `sudo apt-get install \`<br />`libboost-filesystem1.58-dev \`<br />`libboost-iostreams1.58-dev \`<br />`libboost-regex1.58-dev \`<br />`libboost-system1.58-dev` |
+
 After this step you are ready to [getting the sources of application](#getting-the-sources-of-application).
 
 ###Upstream versions
-Download the latest sources of zlib library from http://www.zlib.net (for the time of writting it is **1.2.8**) because Boost iostreams depends on it and unpack it:
+If you are interested in latest version download the sources of zlib library from http://www.zlib.net (for the time of writting it is **1.2.8**) because Boost iostreams depends on it and unpack it:
 ```
 tar -xf /path/to/zlib-1.2.8.tar.gz
 ```
