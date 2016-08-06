@@ -28,12 +28,12 @@ enum Request
 class RequestMethod : public IRow
 {
 public:
-    RequestMethod(std::ifstream *file, unsigned short rowCount, Request requestMethod) :
-            IRow(file, rowCount), requestedMethod_(requestMethod)
+    RequestMethod(std::ifstream *file, unsigned short row_cnt, Request req_meth)
+            : IRow(file, row_cnt), req_meth_(req_meth)
     { }
 
-    void read(long *inPos,
-              long *outPos,
+    void read(long *in_pos,
+              long *out_pos,
               std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
@@ -45,7 +45,7 @@ public:
         // If we previously hit EOF clear flags failbit
         // to be able start working with the file again
         file_->clear();
-        file_->seekg(*inPos, std::ios_base::beg);
+        file_->seekg(*in_pos, std::ios_base::beg);
 
         int i = 0;
         std::string c1, c2, c3, c4, c5, c6;
@@ -56,7 +56,7 @@ public:
         {
             while (getline(*file_, line))
             {
-                *outPos = file_->tellg();
+                *out_pos = file_->tellg();
 
                 ss << line;
                 ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6;
@@ -66,7 +66,7 @@ public:
                 // ========================================================
                 // COMPARISON OF REQUESTS
                 // ========================================================
-                switch (requestedMethod_)
+                switch (req_meth_)
                 {
                     case UNKNOWN:
                         // If we want to find non different Request methods than
@@ -87,11 +87,11 @@ public:
                         // If in the specific founded group by regex
                         // is the same string as desired and not UNKNOWN
                         if (std::find(
-                                type_[requestedMethod_].begin(),
-                                type_[requestedMethod_].end(),
+                                type_[req_meth_].begin(),
+                                type_[req_meth_].end(),
                                 c6)
                             !=
-                            type_[requestedMethod_].end())
+                            type_[req_meth_].end())
                         {
                             rows->push_back(line);
                             ++i;
@@ -116,7 +116,7 @@ public:
     }
 
 private:
-    Request requestedMethod_;
+    Request req_meth_;
     std::map<Request, std::vector<std::string>> type_{
             {POST,    {"POST"}},
             {GET,     {"GET"}},

@@ -9,16 +9,16 @@
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 
-void Gziped::processFile(std::string fileName)
+void Gziped::process_file(std::string file_name)
 {
-    std::string ext = boost::filesystem::extension(fileName);
+    std::string ext = boost::filesystem::extension(file_name);
 
     // Check if the file exist and if it can be handled with this object
-    if (boost::filesystem::exists(fileName) && (ext == ".gz"))
+    if (boost::filesystem::exists(file_name) && (ext == ".gz"))
     {
-        std::ifstream file(fileName, std::ios::in);
+        std::ifstream file(file_name, std::ios::in);
 
-        std::cout << "Do you want to decompress " << fileName << "?" << std::endl;
+        std::cout << "Do you want to decompress " << file_name << "?" << std::endl;
         std::cout << "[y - decompress / n - quit application]" << std::endl;
         std::string response;
         std::cin >> response;
@@ -27,7 +27,7 @@ void Gziped::processFile(std::string fileName)
             std::cout << "Quitting. Bye..." << std::endl;
         else if ((response == "y") || (response == "Y"))
         {
-            std::cout << "Decompression of " << fileName << " has been started. Please be patient." << std::endl;
+            std::cout << "Decompression of " << file_name << " has been started. Please be patient." << std::endl;
 
             namespace bio = boost::iostreams;
 
@@ -35,12 +35,12 @@ void Gziped::processFile(std::string fileName)
             // by trimming the .gz extension from filename
             try
             {
-                std::string unzipedFile = fileName.substr(0, fileName.find(".gz"));
+                std::string unzipedFile = file_name.substr(0, file_name.find(".gz"));
 
                 zlib_decompress(file, unzipedFile);
 
                 // Call the appropriate obj in the chain for next processing
-                successor_->processFile(unzipedFile);
+                successor_->process_file(unzipedFile);
             }
             catch (const bio::gzip_error& exception)
             {
@@ -52,10 +52,10 @@ void Gziped::processFile(std::string fileName)
     }
     else
         // Hand over to successor obj
-        successor_->processFile(fileName);
+        successor_->process_file(file_name);
 }
 
-void Gziped::zlib_decompress(std::ifstream& ifs, const std::string& unzipedFile) const
+void Gziped::zlib_decompress(std::ifstream& ifs, const std::string& unziped_file) const
 {
     namespace bio = boost::iostreams;
 
@@ -93,7 +93,7 @@ void Gziped::zlib_decompress(std::ifstream& ifs, const std::string& unzipedFile)
         // full device is a "utility-device" to check how applications handle ENOSPC
         // more details in "man full"
 //        std::ofstream ofs("/dev/full");
-        std::ofstream ofs(unzipedFile, std::ios_base::out);
+        std::ofstream ofs(unziped_file, std::ios_base::out);
 
         // Setup the iostreams filter
         bio::filtering_streambuf<bio::output> filters;
@@ -103,7 +103,7 @@ void Gziped::zlib_decompress(std::ifstream& ifs, const std::string& unzipedFile)
         // "run" the filter
         bio::copy(ifs, filters);
 
-        std::cout << "Decompressed and saved as " << unzipedFile << std::endl;
+        std::cout << "Decompressed and saved as " << unziped_file << std::endl;
     }
     catch (const bio::gzip_error& exception)
     {

@@ -31,12 +31,12 @@ public:
      * Download a file from URL. Also checks if the URL is valid.
      * Also check if it contain a redirection if so then recursively
      * atempt to download a file from new location
-     * @param fileName as URL
+     * @param file_name as URL
      */
-    void processFile(std::string fileName) override
+    void process_file(std::string file_name) override
     {
         // Check if the argument is some type of URL
-        if (std::regex_match(fileName, match_, expresion_))
+        if (std::regex_match(file_name, match_, expresion_))
         {
             std::cout << "Do you want to download a file from URL link?" << std::endl;
             std::cout << "[y - download / n - quit application]" << std::endl;
@@ -47,7 +47,7 @@ public:
                 std::cout << "Quitting. Bye..." << std::endl;
             else if ((response == "y") || (response == "Y"))
             {
-                establishConnection();
+                establish_connection();
 
                 // Start the deadline actor. You will note that we're not setting any
                 // particular deadline here. Instead, the connect and input actors will
@@ -63,11 +63,11 @@ public:
         else
             // If the argument is not valid URL, try if the successor
             // can handle it
-            successor_->processFile(fileName);
+            successor_->process_file(file_name);
     }
 
 private:
-    void establishConnection()
+    void establish_connection()
     {
         server_     = match_[3];
         path_       = match_[4];
@@ -87,16 +87,16 @@ private:
     // This function terminates all the actors to shut down the connection. It
     // may be called by the user of the client class, or by the class itself in
     // response to graceful termination or an unrecoverable error.
-    void stopConnection()
+    void stop_connection()
     {
-        connStopped_ = true;
+        conn_stopped_ = true;
         boost::system::error_code ignored_ec;
         socket_.shutdown(tcp::socket::shutdown_both, ignored_ec);
         socket_.close(ignored_ec);
         deadline_.cancel();
 
         if (clear_unfinished() != 0)
-            std::cerr << "Error while removing temporary file " << tmpFile_ << std::endl;
+            std::cerr << "Error while removing temporary file " << tmp_file_ << std::endl;
 
         std::cout << "Quitting. Bye..." << std::endl;
     }
@@ -132,13 +132,13 @@ private:
         else
         {
             std::cerr << "Error in handle resolve: " << err.message() << std::endl;
-            stopConnection();
+            stop_connection();
         }
     }
 
     void handle_connect(const boost::system::error_code& err)
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         // The async_connect() function automatically opens the socket at the start
@@ -147,7 +147,7 @@ private:
         if (!socket_.is_open())
         {
             std::cout << "Connect timed out\n";
-            stopConnection();
+            stop_connection();
         }
         // Check if the connect operation failed before the deadline expired.
         else if (err)
@@ -169,7 +169,7 @@ private:
 
     void handle_write_request(const boost::system::error_code& err)
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         if (!err)
@@ -187,7 +187,7 @@ private:
 
     void handle_read_status_line(const boost::system::error_code& err)
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         if (!err)
@@ -208,7 +208,7 @@ private:
 
             // If status code inform us about redirection to other location
             // and we have not reached the maximum redirections
-            if ((status_code == 302 || status_code == 301) && (redirectCnt_ < maxRedirectCnt_))
+            if ((status_code == 302 || status_code == 301) && (act_redirect_cnt_ < max_redirect_cnt_))
             {
                 // Read the response headers, which are terminated by a blank line.
                 baio::async_read_until(socket_, response_, "\r\n\r\n",
@@ -216,8 +216,8 @@ private:
                                                           baio::placeholders::error));
             }
             // If we reached the maximum redirections
-            else if (redirectCnt_ == maxRedirectCnt_)
-                std::cerr << "Error in handle read status line: " << maxRedirectCnt_ + " max redirection count attained!" << std::endl;
+            else if (act_redirect_cnt_ == max_redirect_cnt_)
+                std::cerr << "Error in handle read status line: " << max_redirect_cnt_ + " max redirection count attained!" << std::endl;
             // If status code inform us about some untrivial way of communication
             else if (status_code != 200 && (status_code != 301 || status_code != 302))
                 std::cerr << "Error in handle read status line: response returned with status code " << status_code << std::endl;
@@ -232,13 +232,13 @@ private:
         else
         {
             std::cerr << "Error in handle read status line: " << err << std::endl;
-            stopConnection();
+            stop_connection();
         }
     }
 
-    void handle_read_headers_redirection(const boost::system::error_code &err)
+    void handle_read_headers_redirection(const boost::system::error_code& err)
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         if (!err)
@@ -268,10 +268,10 @@ private:
             if (std::regex_match(location, match_, expresion_))
             {
                 // Note that we performed redirection
-                ++redirectCnt_;
+                ++act_redirect_cnt_;
 
                 std::cout << "Found redirection. Changing location to another server." << std::endl;
-                establishConnection();
+                establish_connection();
             }
             else
                 std::cerr << "Error in handle: redirectoin URL is not valid!" << std::endl;
@@ -279,13 +279,13 @@ private:
         else
         {
             std::cerr << "Error in handle read headers redirection: " << err << std::endl;
-            stopConnection();
+            stop_connection();
         }
     }
 
-    void handle_read_headers(const boost::system::error_code &err)
+    void handle_read_headers(const boost::system::error_code& err)
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         if (!err)
@@ -305,7 +305,7 @@ private:
                 }
             }
 
-            if (checkAvailableSpace(len_))
+            if (chck_avail_space(len_))
             {
                 std::cerr << "Error in handle read headers: file is too large to be downloaded!" << std::endl;
                 return;
@@ -315,8 +315,8 @@ private:
             // Create the temporary file into which we will store the downloaded data
             // ---------------------------------------------------------------------
             // Add extension to name of the file signalize we work with the copy of the file
-            tmpFile_ = file_ + fileExtension_;
-            ofs_     = std::ofstream(tmpFile_, std::ios_base::app);
+            tmp_file_ = file_ + file_extens_;
+            ofs_     = std::ofstream(tmp_file_, std::ios_base::app);
             // ---------------------------------------------------------------------
             if (response_.size() > 0)
             {
@@ -330,13 +330,13 @@ private:
         else
         {
             std::cerr << "Error in handle read headers: " << err << std::endl;
-            stopConnection();
+            stop_connection();
         }
     }
 
     void handle_read_content(const boost::system::error_code& err)
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         if (!err)
@@ -345,7 +345,7 @@ private:
             ofs_ << &response_;
 
             // Show the progress bar
-            view_.printProgBar("Downloading the file " + file_, ofs_.tellp(), len_);
+            view_.print_prog_bar("Downloading the file " + file_, ofs_.tellp(), len_);
 
             // Set a deadline for the read operation.
             deadline_.expires_from_now(boost::posix_time::seconds(30));
@@ -362,7 +362,7 @@ private:
         else if (err != baio::error::eof)
         {
             std::cerr << "Error in handle read content: " << err << std::endl;
-            stopConnection();
+            stop_connection();
         }
     }
 
@@ -373,31 +373,31 @@ private:
         // ---------------------------------------------------------------------
         ofs_.close();
         // ---------------------------------------------------------------------
-        if (boost::filesystem::file_size(tmpFile_) == len_)
+        if (boost::filesystem::file_size(tmp_file_) == len_)
         {
             // Rename the temporary file with .download extension to the name of the original file
-            if (std::rename(tmpFile_.c_str(), file_.c_str()))
-                std::cerr << "Error in downloading finished: renaming downloaded file from " + tmpFile_ + " to " + file_ << std::endl;
+            if (std::rename(tmp_file_.c_str(), file_.c_str()))
+                std::cerr << "Error in downloading finished: renaming downloaded file from " + tmp_file_ + " to " + file_ << std::endl;
             else
                 // Send to process downloaded file to successor
-                successor_->processFile(file_);
+                successor_->process_file(file_);
         }
         else
-            std::cerr << "Error in downloading finished: downloaded file " + tmpFile_ + " is not complete!" << std::endl;
+            std::cerr << "Error in downloading finished: downloaded file " + tmp_file_ + " is not complete!" << std::endl;
     }
 
     // delete the temporary file
     int clear_unfinished()
     {
-        if (boost::filesystem::exists(tmpFile_))
-            return std::remove(tmpFile_.c_str());
+        if (boost::filesystem::exists(tmp_file_))
+            return std::remove(tmp_file_.c_str());
         else
             return 0;
     }
 
     void check_deadline()
     {
-        if (connStopped_)
+        if (conn_stopped_)
             return;
 
         // Check whether the deadline has passed. We compare the deadline against
@@ -411,7 +411,7 @@ private:
             std::cin >> response;
 
             if ((response == "n") || (response == "N"))
-                stopConnection();
+                stop_connection();
             else if ((response == "y") || (response == "Y"))
                 // Set a new deadline
                 deadline_.expires_from_now(boost::posix_time::seconds(30));
@@ -423,10 +423,10 @@ private:
 
     Viewer&                 view_;
 
-    const std::string       fileExtension_   = ".download";
-    const short             maxRedirectCnt_  = 3; // maximum redirection
-    short                   redirectCnt_     = 0; // counter of total redirections
-    bool                    connStopped_{false}; // for fast indicating of closed connection in the async methods
+    const std::string       file_extens_   = ".download";
+    const short             max_redirect_cnt_  = 3; // maximum redirection
+    short                   act_redirect_cnt_     = 0; // counter of total redirections
+    bool                    conn_stopped_{false}; // for fast indicating of closed connection in the async methods
     long                    len_;                 // Length of the file provided by server
     std::regex              expresion_{"^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$"};
     std::smatch             match_;
@@ -438,7 +438,7 @@ private:
     baio::streambuf         request_;
     baio::streambuf         response_;
 
-    std::string             server_, path_, file_, tmpFile_, protocol_;
+    std::string             server_, path_, file_, tmp_file_, protocol_;
     std::ofstream           ofs_;
 };
 

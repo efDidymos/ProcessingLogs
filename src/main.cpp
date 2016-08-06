@@ -26,11 +26,11 @@ int main(int argc, char *argv[])
         shared_ptr<IProcessing> unziped(new Unziped(view));
 
         // Create the chain of responsibility
-        url->setSuccessor(gzip);
-        gzip->setSuccessor(unziped);
+        url->set_successor(gzip);
+        gzip->set_successor(unziped);
 
         // Issue the argument
-        url->processFile(argv[1]);
+        url->process_file(argv[1]);
     }
     return 0;
 }

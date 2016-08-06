@@ -20,12 +20,12 @@ class HTTPCode: public IRow
 {
 
 public:
-    HTTPCode(std::ifstream *file, unsigned short rowCount, std::string code) :
-            IRow(file, rowCount), code_(code)
+    HTTPCode(std::ifstream *file, unsigned short row_cnt, std::string code)
+            : IRow(file, row_cnt), code_(code)
     { }
 
-    virtual void read(long *inPos,
-                      long *outPos,
+    virtual void read(long *in_pos,
+                      long *out_pos,
                       std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
@@ -38,7 +38,7 @@ public:
         // If we previously hit EOF clear flags failbit
         // to be able start working with the file again
         file_->clear();
-        file_->seekg(*inPos, std::ios_base::beg);
+        file_->seekg(*in_pos, std::ios_base::beg);
 
         int i = 0;
         std::string c1, c2, c3, c4, c5, c6, c7, c8, c9;
@@ -49,9 +49,9 @@ public:
         {
             while (getline(*file_, line))
             {
-                if (i < rowCount_)
+                if (i < row_cnt_)
                 {
-                    *outPos = file_->tellg();
+                    *out_pos = file_->tellg();
 
                     ss << line;
                     ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6 >> c7 >> c8 >> c9;

@@ -10,12 +10,12 @@
 #include "../rowsFilteringStrategies/RequestMethod.hpp"
 #include "../rowsFilteringStrategies/Date.hpp"
 
-void Unziped::processFile(std::string fileName)
+void Unziped::process_file(std::string file_name)
 {
-    std::string ext = boost::filesystem::extension(fileName);
+    std::string ext = boost::filesystem::extension(file_name);
 
     // Check if the file exist and if it can be handled with this object
-    if (boost::filesystem::exists(fileName) && (ext == ".log"))
+    if (boost::filesystem::exists(file_name) && (ext == ".log"))
     {
         std::cout << "Do you want to display the uncompressed log?" << std::endl;
         std::cout << "[y - display / n - quit application]" << std::endl;
@@ -29,24 +29,24 @@ void Unziped::processFile(std::string fileName)
         }
         else if ((response == "y") || (response == "Y"))
         {
-            std::ifstream file(fileName, std::ios::in);
+            std::ifstream file(file_name, std::ios::in);
 
             if (!file.is_open())
             {
-                std::cout << "File " << fileName << " can not open!" << std::endl;
+                std::cout << "File " << file_name << " can not open!" << std::endl;
             }
             else
             {
-                std::cout << "The " << fileName << " opened successfully." << std::endl;
+                std::cout << "The " << file_name << " opened successfully." << std::endl;
 
-                unsigned short int rowCount = view_.getRowsCount();
+                unsigned short int row_cnt = view_.get_rows_cnt();
 
                 // Create the log representation of the file
                 // Firstly we define to read and display all rows
-                Log theLog(&file, view_, std::make_unique<AllRows>(&file, rowCount));
-                theLog.showCurrRows();
+                Log the_log(&file, view_, std::make_unique<AllRows>(&file, row_cnt));
+                the_log.show_curr_rows();
 
-                view_.toggleBufferOff();
+                view_.toggle_buff_off();
 
                 char c = ' ';
                 std::cin.get(c);
@@ -55,17 +55,17 @@ void Unziped::processFile(std::string fileName)
                 {
                     if (c == 'j')       // j - move down one page
                     {
-                        theLog.getNextRows();
-                        theLog.showCurrRows();
+                        the_log.get_next_rows();
+                        the_log.show_curr_rows();
                     }
                     else if (c == 'k')  // k - move up one page
                     {
-                        theLog.getPrevRows();
-                        theLog.showCurrRows();
+                        the_log.get_prev_rows();
+                        the_log.show_curr_rows();
                     }
                     else if (c == 'f')  // f - display filtering options
                     {
-                        view_.printFilterCmdMenu();
+                        view_.print_filter_cmd_menu();
 
                         // Ignore what is buffered and after that read single char
                         // USE BELLOW CODE ONLY IF THE view_.toggleBufferON();
@@ -74,22 +74,22 @@ void Unziped::processFile(std::string fileName)
 
                         if (c == '0')  // Default: Remove filter and show all rows
                         {
-                            theLog.changeDisplayRowStrategy(std::make_unique<AllRows>(&file, rowCount));
-                            theLog.showCurrRows();
+                            the_log.change_display_row_strategy(std::make_unique<AllRows>(&file, row_cnt));
+                            the_log.show_curr_rows();
                         }
                         else if (c == '1')  // filter rows by HTTP Code
                         {
-                            view_.printFilterHTTPCodeCmdMenu();
+                            view_.print_filter_cmd_menu_HTTP_code();
 
                             std::string code;
                             std::cin >> code;
 
-                            theLog.changeDisplayRowStrategy(std::make_unique<HTTPCode>(&file, rowCount, code));
-                            theLog.showCurrRows();
+                            the_log.change_display_row_strategy(std::make_unique<HTTPCode>(&file, row_cnt, code));
+                            the_log.show_curr_rows();
                         }
                         else if (c == '2')  // filter rows by Request method
                         {
-                            view_.printFilterRequestMCmdMenu();
+                            view_.print_filter_cmd_menu_req_meth();
 
                             // Ignore what is buffered and after that read single char
                             // USE BELLOW CODE ONLY IF THE view_.toggleBufferON();
@@ -100,23 +100,27 @@ void Unziped::processFile(std::string fileName)
                             switch (opt)
                             {
                                 case Request::POST: // POST
-                                    theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::POST));
-                                    theLog.showCurrRows();
+                                    the_log.change_display_row_strategy(
+                                            std::make_unique<RequestMethod>(&file, row_cnt, Request::POST));
+                                    the_log.show_curr_rows();
                                     break;
 
                                 case Request::GET: // GET
-                                    theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::GET));
-                                    theLog.showCurrRows();
+                                    the_log.change_display_row_strategy(
+                                            std::make_unique<RequestMethod>(&file, row_cnt, Request::GET));
+                                    the_log.show_curr_rows();
                                     break;
 
                                 case Request::HEAD: // HEAD
-                                    theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::HEAD));
-                                    theLog.showCurrRows();
+                                    the_log.change_display_row_strategy(
+                                            std::make_unique<RequestMethod>(&file, row_cnt, Request::HEAD));
+                                    the_log.show_curr_rows();
                                     break;
 
                                 case Request::UNKNOWN: // Unknown
-                                    theLog.changeDisplayRowStrategy(std::make_unique<RequestMethod>(&file, rowCount, Request::UNKNOWN));
-                                    theLog.showCurrRows();
+                                    the_log.change_display_row_strategy(
+                                            std::make_unique<RequestMethod>(&file, row_cnt, Request::UNKNOWN));
+                                    the_log.show_curr_rows();
                                     break;
 
                                 default:
@@ -125,13 +129,13 @@ void Unziped::processFile(std::string fileName)
                         }
                         else if (c == '3')  // filter rows by Date
                         {
-                            view_.printFilterDateCmdMenu();
+                            view_.print_filter_cmd_menu_date();
 
                             std::string date;
                             std::cin >> date;
 
-                            theLog.changeDisplayRowStrategy(std::make_unique<Date>(&file, rowCount, date));
-                            theLog.showCurrRows();
+                            the_log.change_display_row_strategy(std::make_unique<Date>(&file, row_cnt, date));
+                            the_log.show_curr_rows();
                         }
                     }
                     // Ignore what is buffered and after that read single char
@@ -146,5 +150,5 @@ void Unziped::processFile(std::string fileName)
     }
     else
         // Hand over to successor obj
-        std::cout << "No successor for handling " << fileName << "... ignore." << std::endl;
+        std::cout << "No successor for handling " << file_name << "... ignore." << std::endl;
 }

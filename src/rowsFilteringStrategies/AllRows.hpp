@@ -17,13 +17,13 @@
 class AllRows: public IRow
 {
 public:
-    AllRows(std::ifstream *file, unsigned short rowCount) :
-            IRow(file, rowCount)
+    AllRows(std::ifstream *file, unsigned short row_cnt) :
+            IRow(file, row_cnt)
     {
     }
 
-    void read(long *inPos,
-              long *outPos,
+    void read(long *in_pos,
+              long *out_pos,
               std::vector<std::string> *rows) override
     {
 #ifndef NDEBUG
@@ -36,7 +36,7 @@ public:
         // If we previously hit EOF clear flags failbit
         // to be able start working with the file again
         file_->clear();
-        file_->seekg(*inPos, std::ios_base::beg);
+        file_->seekg(*in_pos, std::ios_base::beg);
 
         int i = 0;
         std::string line;
@@ -45,9 +45,9 @@ public:
         {
             while (getline(*file_, line))
             {
-                if (i < rowCount_)
+                if (i < row_cnt_)
                 {
-                    *outPos = file_->tellg();
+                    *out_pos = file_->tellg();
                     rows->push_back(line);
                     ++i;
                 }

@@ -16,11 +16,11 @@ public:
     /**
      * Opens file and reserve container for reading n rows
      * @param file.log
-     * @param rowCount
+     * @param row_cnt
      * @return
      */
-    IRow(std::ifstream *file, unsigned short rowCount) :
-            file_(file), rowCount_(rowCount)
+    IRow(std::ifstream *file, unsigned short row_cnt) :
+            file_(file), row_cnt_(row_cnt)
     {
         // Before use repeated working with file by changing strategy
         // reset the EOF and failbit
@@ -29,17 +29,17 @@ public:
 
     /**
      * Read n rows from specific position of the file
-     * @param inPos
-     * @param outPos
+     * @param in_pos
+     * @param out_pos
      * @param rows
      */
-    virtual void read(long *inPos,
-                      long *outPos,
+    virtual void read(long *in_pos,
+                      long *out_pos,
                       std::vector<std::string> *rows) = 0;
 
 protected:
     std::ifstream *file_;
-    unsigned short rowCount_;
+    unsigned short row_cnt_;
 };
 
 

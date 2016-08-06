@@ -29,13 +29,13 @@ public:
 
         // If autodetection fails in recognition of terminal size
         // use 30 rows as default
-        terminalRows_ = size.ws_row;
-        if (terminalRows_ == 0)
-            terminalRows_ = 30;
+        terminal_rows_ = size.ws_row;
+        if (terminal_rows_ == 0)
+            terminal_rows_ = 30;
 
-        terminalColumns_ = size.ws_col;
-        if (terminalColumns_ == 0)
-            terminalColumns_ = 30;
+        terminal_columns_ = size.ws_col;
+        if (terminal_columns_ == 0)
+            terminal_columns_ = 30;
     }
 
     /**
@@ -47,7 +47,7 @@ public:
      * @param value
      * @param base
      */
-    void printProgBar(std::string msg, double value, long base)
+    void print_prog_bar(std::string msg, double value, long base)
     {
         std::string bar;
         int percent = ((value / base) * 100);
@@ -68,10 +68,10 @@ public:
     /**
      * Print the main menu
      */
-    void printCmdMenu() const
+    void print_cmd_menu() const
     {
         std::cout << "\n ";
-        printHorizontalLine();
+        print_horiz_line();
 
         std::cout << "\n [q]-quit  [f]-filter options  [j]-move down  [k]-move up";
     }
@@ -79,19 +79,19 @@ public:
     /**
      * Print the separator
      */
-    void printHorizontalLine() const
+    void print_horiz_line() const
     {
-        std::cout.width(terminalColumns_);
+        std::cout.width(terminal_columns_);
         std::cout.fill('-');
     }
 
     /**
      * Print the sub menu for filtering
      */
-    void printFilterCmdMenu() const
+    void print_filter_cmd_menu() const
     {
-        // Appended four white spaces due to completly overwrite the getPrevRows line
-        // without leaving a text fragments from getPrevRows message
+        // Appended four white spaces due to completly overwrite the get_prev_rows line
+        // without leaving a text fragments from get_prev_rows message
         std::cout << "\r FILTER BY: (0) None  (1) HTTP Code  (2) Request method  (3) Date";
         std::cout.flush();
     }
@@ -99,25 +99,16 @@ public:
     /**
      * Print the sub sub menu for filtering by Request Method
      */
-    void printFilterRequestMCmdMenu() const
+    void print_filter_cmd_menu_req_meth() const
     {
         std::cout << "\r FILTER Request method BY: (0) POST  (1) GET  (2) HEAD  (3) Unknown";
         std::cout.flush();
     }
 
     /**
-     * Returning the size of the terminal without the size of menu
-     * @return
-     */
-    const unsigned short int getRowsCount() const
-    {
-        return terminalRows_ - 5;    // (terminalRows_ - 5) - last lines are for displaying pseudo menu
-    }
-
-    /**
      * Print the sub sub menu for filtering by Date
      */
-    void printFilterDateCmdMenu()
+    void print_filter_cmd_menu_date()
     {
         std::cout << "\r Please enter day [01-31] and press ENTER:                        ";
         std::cout.flush();
@@ -126,10 +117,19 @@ public:
     /**
      * Print the sub sub menu for filtering by HTTP Code
      */
-    void printFilterHTTPCodeCmdMenu()
+    void print_filter_cmd_menu_HTTP_code()
     {
         std::cout << "\r Please enter code [1xx - 5xx] and press ENTER:                   ";
         std::cout.flush();
+    }
+
+    /**
+     * Returning the size of the terminal without the size of menu
+     * @return
+     */
+    const unsigned short int get_rows_cnt() const
+    {
+        return terminal_rows_ - 5;    // (terminal_rows_ - 5) - last lines are for displaying pseudo menu
     }
 
     // ==============================================================================
@@ -143,7 +143,7 @@ public:
     /**
      * Disables buffered input
      */
-    void toggleBufferOff()
+    void toggle_buff_off()
     {
         struct termios t;
         tcgetattr(STDIN_FILENO, &t);
@@ -154,7 +154,7 @@ public:
     /**
      * Enables buffered input
      */
-    void toggleBufferOn()
+    void toggle_buff_on()
     {
         struct termios t;
         tcgetattr(STDIN_FILENO, &t);
@@ -163,8 +163,8 @@ public:
     }
 
 private:
-    unsigned short int  terminalRows_;
-    unsigned short int  terminalColumns_;
+    unsigned short int  terminal_rows_;
+    unsigned short int  terminal_columns_;
     struct termios      t_;
 };
 

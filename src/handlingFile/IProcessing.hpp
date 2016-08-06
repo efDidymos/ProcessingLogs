@@ -16,17 +16,17 @@ class IProcessing
 public:
     /**
      * Processing the argument
-     * @param fileName
+     * @param file_name
      */
-    virtual void processFile(std::string fileName) = 0;
+    virtual void process_file(std::string file_name) = 0;
 
     /**
      * Setting the next object which should take over performing if this object can not handle it
      * @param IProcessing *nextObject
      */
-    void setSuccessor(std::shared_ptr<IProcessing> nextObj)
+    void set_successor(std::shared_ptr<IProcessing> next_obj)
     {
-        successor_ = nextObj;
+        successor_ = next_obj;
     }
 
 protected:
@@ -35,7 +35,7 @@ protected:
      * @param size
      * @return bool true if the file is too big
      */
-    bool checkAvailableSpace(const long size)
+    bool chck_avail_space(const long size)
     {
         // Get available space of the current directory
         boost::filesystem::space_info si = boost::filesystem::space(".");

@@ -20,9 +20,9 @@ public:
     /**
      * Validate the file and call actions that
      * can be performed on the file
-     * @param fileName.log
+     * @param file_name.log
      */
-    void processFile(std::string fileName) override;
+    void process_file(std::string file_name) override;
 
 private:
     inline void clearBuffer() { std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); }

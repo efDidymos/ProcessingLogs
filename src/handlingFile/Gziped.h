@@ -17,17 +17,17 @@ public:
 
     /**
      * Unpack the file
-     * @param fileName.gz
+     * @param file_name.gz
      */
-    void processFile(std::string fileName) override;
+    void process_file(std::string file_name) override;
 
 private:
     /**
      * Unpack the file
      * @param file          - name of input file
-     * @param unzipedFile   - name of output file
+     * @param unziped_file   - name of output file
      */
-    void zlib_decompress(std::ifstream& file, const std::string& unzipedFile) const;
+    void zlib_decompress(std::ifstream& file, const std::string& unziped_file) const;
 };
 
 
