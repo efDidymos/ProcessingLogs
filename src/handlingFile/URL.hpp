@@ -8,9 +8,10 @@
 #include "IProcessing.hpp"
 #include "../Viewer.hpp"
 
+#include <fstream>
+#include <regex>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include <regex>
 
 namespace baio = boost::asio;
 using boost::asio::ip::tcp;

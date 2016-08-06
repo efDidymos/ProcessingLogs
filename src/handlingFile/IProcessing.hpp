@@ -6,7 +6,6 @@
 #define PROCESSINGLOGS_STRATEGYINTERFACE_HPP
 
 #include <iostream>
-#include <memory>
 #include <boost/filesystem.hpp>
 
 /**

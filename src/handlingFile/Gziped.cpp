@@ -4,6 +4,7 @@
 
 #include "Gziped.h"
 
+#include <fstream>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
