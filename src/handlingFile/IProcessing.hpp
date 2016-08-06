@@ -26,12 +26,10 @@ public:
      */
     void setSuccessor(std::shared_ptr<IProcessing> nextObj)
     {
-        successor = nextObj;
+        successor_ = nextObj;
     }
 
 protected:
-    std::shared_ptr<IProcessing> successor;
-
     /**
      * Check if the size of a file is not bigger than available space
      * @param size
@@ -44,6 +42,8 @@ protected:
 
         return size > si.available;
     }
+
+    std::shared_ptr<IProcessing> successor_;
 };
 
 

@@ -14,7 +14,7 @@
 class Unziped: public IProcessing
 {
 public:
-    Unziped(Viewer & view) : view(view)
+    Unziped(Viewer & view) : view_(view)
     { }
 
     /**
@@ -26,7 +26,7 @@ public:
 
 private:
     inline void clearBuffer() { std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); }
-    Viewer & view;
+    Viewer & view_;
 };
 
 

@@ -35,19 +35,19 @@ public:
 
         // If we previously hit EOF clear flags failbit
         // to be able start working with the file again
-        file->clear();
-        file->seekg(*inPos, std::ios_base::beg);
+        file_->clear();
+        file_->seekg(*inPos, std::ios_base::beg);
 
         int i = 0;
         std::string line;
 
         try
         {
-            while (getline(*file, line))
+            while (getline(*file_, line))
             {
-                if (i < rowCount)
+                if (i < rowCount_)
                 {
-                    *outPos = file->tellg();
+                    *outPos = file_->tellg();
                     rows->push_back(line);
                     ++i;
                 }
@@ -59,9 +59,9 @@ public:
         {
             std::cerr << "In AllRows strategy exception happened: " << exception.what() << "\n"
                       << "Error bits are: "
-                      << "\nfailbit: " << file->fail()
-                      << "\neofbit: " << file->eof()
-                      << "\nbadbit: " << file->bad() << std::endl;
+                      << "\nfailbit: " << file_->fail()
+                      << "\neofbit: " << file_->eof()
+                      << "\nbadbit: " << file_->bad() << std::endl;
         }
 
 #ifndef NDEBUG

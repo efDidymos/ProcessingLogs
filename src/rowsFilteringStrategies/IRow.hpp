@@ -20,7 +20,7 @@ public:
      * @return
      */
     IRow(std::ifstream *file, unsigned short rowCount) :
-            file(file), rowCount(rowCount)
+            file_(file), rowCount_(rowCount)
     {
         // Before use repeated working with file by changing strategy
         // reset the EOF and failbit
@@ -38,8 +38,8 @@ public:
                       std::vector<std::string> *rows) = 0;
 
 protected:
-    std::ifstream *file;
-    unsigned short rowCount;
+    std::ifstream *file_;
+    unsigned short rowCount_;
 };
 
 

@@ -29,11 +29,13 @@ public:
 
         // If autodetection fails in recognition of terminal size
         // use 30 rows as default
-        terminalRows = size.ws_row;
-        if (terminalRows == 0) terminalRows = 30;
+        terminalRows_ = size.ws_row;
+        if (terminalRows_ == 0)
+            terminalRows_ = 30;
 
-        terminalColumns = size.ws_col;
-        if (terminalColumns == 0) terminalColumns = 30;
+        terminalColumns_ = size.ws_col;
+        if (terminalColumns_ == 0)
+            terminalColumns_ = 30;
     }
 
     /**
@@ -53,17 +55,11 @@ public:
         for (int i = 0; i < 50; ++i)
         {
             if (i < (percent / 2))
-            {
                 bar.replace(i, 1, "=");
-            }
             else if (i == (percent / 2))
-            {
                 bar.replace(i, 1, ">");
-            }
             else
-            {
                 bar.replace(i, 1, " ");
-            }
         }
 
         std::cout << "\r " << msg << " [" << bar << "] " << percent << "%    " << std::flush;
@@ -85,7 +81,7 @@ public:
      */
     void printHorizontalLine() const
     {
-        std::cout.width(terminalColumns);
+        std::cout.width(terminalColumns_);
         std::cout.fill('-');
     }
 
@@ -115,7 +111,7 @@ public:
      */
     const unsigned short int getRowsCount() const
     {
-        return terminalRows - 5;    // (rowCount - 5) - last lines are for displaying pseudo menu
+        return terminalRows_ - 5;    // (terminalRows_ - 5) - last lines are for displaying pseudo menu
     }
 
     /**
@@ -167,9 +163,9 @@ public:
     }
 
 private:
-    unsigned short int terminalRows;
-    unsigned short int terminalColumns;
-    struct termios t;
+    unsigned short int  terminalRows_;
+    unsigned short int  terminalColumns_;
+    struct termios      t_;
 };
 
 #endif //PROCESSINGLOGS_VIEWER_HPP

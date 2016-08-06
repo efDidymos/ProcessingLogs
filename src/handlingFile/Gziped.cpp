@@ -40,7 +40,7 @@ void Gziped::processFile(std::string fileName)
                 zlib_decompress(file, unzipedFile);
 
                 // Call the appropriate obj in the chain for next processing
-                successor->processFile(unzipedFile);
+                successor_->processFile(unzipedFile);
             }
             catch (const bio::gzip_error &exception)
             {
@@ -52,7 +52,7 @@ void Gziped::processFile(std::string fileName)
     }
     else
         // Hand over to successor obj
-        successor->processFile(fileName);
+        successor_->processFile(fileName);
 }
 
 void Gziped::zlib_decompress(std::ifstream &ifs, const std::string &unzipedFile) const

@@ -29,7 +29,7 @@ class RequestMethod : public IRow
 {
 public:
     RequestMethod(std::ifstream *file, unsigned short rowCount, Request requestMethod) :
-            IRow(file, rowCount), requestedMethod(requestMethod)
+            IRow(file, rowCount), requestedMethod_(requestMethod)
     { }
 
     void read(long *inPos,
@@ -44,8 +44,8 @@ public:
 
         // If we previously hit EOF clear flags failbit
         // to be able start working with the file again
-        file->clear();
-        file->seekg(*inPos, std::ios_base::beg);
+        file_->clear();
+        file_->seekg(*inPos, std::ios_base::beg);
 
         int i = 0;
         std::string c1, c2, c3, c4, c5, c6;
@@ -54,9 +54,9 @@ public:
 
         try
         {
-            while (getline(*file, line))
+            while (getline(*file_, line))
             {
-                *outPos = file->tellg();
+                *outPos = file_->tellg();
 
                 ss << line;
                 ss >> c1 >> c2 >> c3 >> c4 >> c5 >> c6;
@@ -66,17 +66,17 @@ public:
                 // ========================================================
                 // COMPARISON OF REQUESTS
                 // ========================================================
-                switch (requestedMethod)
+                switch (requestedMethod_)
                 {
                     case UNKNOWN:
                         // If we want to find non different Request methods than
                         // the traditional POST, GET, HEAD
                         if (std::find(
-                                type[UNKNOWN].begin(),
-                                type[UNKNOWN].end(),
+                                type_[UNKNOWN].begin(),
+                                type_[UNKNOWN].end(),
                                 c6)
                             ==
-                            type[UNKNOWN].end())
+                            type_[UNKNOWN].end())
                         {
                             rows->push_back(line);
                             ++i;
@@ -87,11 +87,11 @@ public:
                         // If in the specific founded group by regex
                         // is the same string as desired and not UNKNOWN
                         if (std::find(
-                                type[requestedMethod].begin(),
-                                type[requestedMethod].end(),
+                                type_[requestedMethod_].begin(),
+                                type_[requestedMethod_].end(),
                                 c6)
                             !=
-                            type[requestedMethod].end())
+                            type_[requestedMethod_].end())
                         {
                             rows->push_back(line);
                             ++i;
@@ -103,9 +103,9 @@ public:
         {
             std::cerr << "In RequestMethod Exception happened: " << exception.what() << "\n"
                       << "Error bits are: "
-                      << "\nfailbit: " << file->fail()
-                      << "\neofbit: " << file->eof()
-                      << "\nbadbit: " << file->bad() << std::endl;
+                      << "\nfailbit: " << file_->fail()
+                      << "\neofbit: " << file_->eof()
+                      << "\nbadbit: " << file_->bad() << std::endl;
         }
 
 #ifndef NDEBUG
@@ -116,9 +116,8 @@ public:
     }
 
 private:
-    Request requestedMethod;
-
-    std::map<Request, std::vector<std::string>> type{
+    Request requestedMethod_;
+    std::map<Request, std::vector<std::string>> type_{
             {POST,    {"POST"}},
             {GET,     {"GET"}},
             {HEAD,    {"HEAD", "Head"}},

@@ -39,14 +39,14 @@ void Unziped::processFile(std::string fileName)
             {
                 std::cout << "The " << fileName << " opened successfully." << std::endl;
 
-                unsigned short int rowCount = view.getRowsCount();
+                unsigned short int rowCount = view_.getRowsCount();
 
                 // Create the log representation of the file
                 // Firstly we define to read and display all rows
-                Log theLog(&file, view, std::make_unique<AllRows>(&file, rowCount));
+                Log theLog(&file, view_, std::make_unique<AllRows>(&file, rowCount));
                 theLog.showCurrRows();
 
-                view.toggleBufferOff();
+                view_.toggleBufferOff();
 
                 char c = ' ';
                 std::cin.get(c);
@@ -65,10 +65,10 @@ void Unziped::processFile(std::string fileName)
                     }
                     else if (c == 'f')  // f - display filtering options
                     {
-                        view.printFilterCmdMenu();
+                        view_.printFilterCmdMenu();
 
                         // Ignore what is buffered and after that read single char
-                        // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
+                        // USE BELLOW CODE ONLY IF THE view_.toggleBufferON();
     //                    clearBuffer();
                         std::cin.get(c);
 
@@ -79,7 +79,7 @@ void Unziped::processFile(std::string fileName)
                         }
                         else if (c == '1')  // filter rows by HTTP Code
                         {
-                            view.printFilterHTTPCodeCmdMenu();
+                            view_.printFilterHTTPCodeCmdMenu();
 
                             std::string code;
                             std::cin >> code;
@@ -89,10 +89,10 @@ void Unziped::processFile(std::string fileName)
                         }
                         else if (c == '2')  // filter rows by Request method
                         {
-                            view.printFilterRequestMCmdMenu();
+                            view_.printFilterRequestMCmdMenu();
 
                             // Ignore what is buffered and after that read single char
-                            // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
+                            // USE BELLOW CODE ONLY IF THE view_.toggleBufferON();
     //                        clearBuffer();
                             std::cin.get(c);
                             int opt = c - '0';  // convert char to int
@@ -125,7 +125,7 @@ void Unziped::processFile(std::string fileName)
                         }
                         else if (c == '3')  // filter rows by Date
                         {
-                            view.printFilterDateCmdMenu();
+                            view_.printFilterDateCmdMenu();
 
                             std::string date;
                             std::cin >> date;
@@ -135,7 +135,7 @@ void Unziped::processFile(std::string fileName)
                         }
                     }
                     // Ignore what is buffered and after that read single char
-                    // USE BELLOW CODE ONLY IF THE view.toggleBufferON();
+                    // USE BELLOW CODE ONLY IF THE view_.toggleBufferON();
     //                clearBuffer();
                     std::cin.get(c);
                 }

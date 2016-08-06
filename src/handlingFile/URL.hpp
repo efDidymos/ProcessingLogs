@@ -19,7 +19,7 @@ using boost::asio::ip::tcp;
 class URL: public IProcessing
 {
 public:
-    URL(Viewer & view) : view(view)
+    URL(Viewer & view) : view_(view)
     { }
 
     virtual ~URL()
@@ -36,7 +36,7 @@ public:
     void processFile(std::string fileName) override
     {
         // Check if the argument is some type of URL
-        if (std::regex_match(fileName, match, expresion))
+        if (std::regex_match(fileName, match_, expresion_))
         {
             std::cout << "Do you want to download a file from URL link?" << std::endl;
             std::cout << "[y - download / n - quit application]" << std::endl;
@@ -55,7 +55,7 @@ public:
                 deadline_.async_wait(boost::bind(&URL::check_deadline, this));
 
                 // Fire the connection
-                io_service.run();
+                io_service_.run();
             }
             else
                 std::cout << "Bad response. Quitting. Bye..." << std::endl;
@@ -63,21 +63,21 @@ public:
         else
             // If the argument is not valid URL, try if the successor
             // can handle it
-            successor->processFile(fileName);
+            successor_->processFile(fileName);
     }
 
 private:
     void establishConnection()
     {
-        server      = match[3];
-        path        = match[4];
-        file        = match[5];
-        protocol    = match[2];
-        form_request(server, path, file);
+        server_     = match_[3];
+        path_       = match_[4];
+        file_       = match_[5];
+        protocol_   = match_[2];
+        form_request(server_, path_, file_);
 
         // Start an asynchronous resolve to translate the server and service names
         // into a list of endpoints.
-        tcp::resolver::query query(server, protocol);
+        tcp::resolver::query query(server_, protocol_);
         resolver_.async_resolve(query,
                                 boost::bind(&URL::handle_resolve, this,
                                             baio::placeholders::error,
@@ -96,7 +96,7 @@ private:
         deadline_.cancel();
 
         if (clear_unfinished() != 0)
-            std::cerr << "Error while removing temporary file " << tmpFile << std::endl;
+            std::cerr << "Error while removing temporary file " << tmpFile_ << std::endl;
 
         std::cout << "Quitting. Bye..." << std::endl;
     }
@@ -208,7 +208,7 @@ private:
 
             // If status code inform us about redirection to other location
             // and we have not reached the maximum redirections
-            if ((status_code == 302 || status_code == 301) && (redirectCnt < maxRedirectCnt))
+            if ((status_code == 302 || status_code == 301) && (redirectCnt_ < maxRedirectCnt_))
             {
                 // Read the response headers, which are terminated by a blank line.
                 baio::async_read_until(socket_, response_, "\r\n\r\n",
@@ -216,8 +216,8 @@ private:
                                                           baio::placeholders::error));
             }
             // If we reached the maximum redirections
-            else if (redirectCnt == maxRedirectCnt)
-                std::cerr << "Error in handle read status line: " << maxRedirectCnt + " max redirection count attained!" << std::endl;
+            else if (redirectCnt_ == maxRedirectCnt_)
+                std::cerr << "Error in handle read status line: " << maxRedirectCnt_ + " max redirection count attained!" << std::endl;
             // If status code inform us about some untrivial way of communication
             else if (status_code != 200 && (status_code != 301 || status_code != 302))
                 std::cerr << "Error in handle read status line: response returned with status code " << status_code << std::endl;
@@ -265,10 +265,10 @@ private:
             response_.consume(response_.size());
 
             // Check if the greped URL is valid
-            if (std::regex_match(location, match, expresion))
+            if (std::regex_match(location, match_, expresion_))
             {
                 // Note that we performed redirection
-                ++redirectCnt;
+                ++redirectCnt_;
 
                 std::cout << "Found redirection. Changing location to another server." << std::endl;
                 establishConnection();
@@ -301,11 +301,11 @@ private:
                 {
                     contentLght = header.substr(16);
                     if (auto pos = contentLght.find("\r"))
-                        len = std::stol(contentLght.substr(0, pos));
+                        len_ = std::stol(contentLght.substr(0, pos));
                 }
             }
 
-            if (checkAvailableSpace(len))
+            if (checkAvailableSpace(len_))
             {
                 std::cerr << "Error in handle read headers: file is too large to be downloaded!" << std::endl;
                 return;
@@ -315,8 +315,8 @@ private:
             // Create the temporary file into which we will store the downloaded data
             // ---------------------------------------------------------------------
             // Add extension to name of the file signalize we work with the copy of the file
-            tmpFile = file + fileExtension;
-            ofs     = std::ofstream(tmpFile, std::ios_base::app);
+            tmpFile_ = file_ + fileExtension_;
+            ofs_     = std::ofstream(tmpFile_, std::ios_base::app);
             // ---------------------------------------------------------------------
             if (response_.size() > 0)
             {
@@ -342,10 +342,10 @@ private:
         if (!err)
         {
             // Write all of the data that has been read so far.
-            ofs << &response_;
+            ofs_ << &response_;
 
             // Show the progress bar
-            view.printProgBar("Downloading the file " + file, ofs.tellp(), len);
+            view_.printProgBar("Downloading the file " + file_, ofs_.tellp(), len_);
 
             // Set a deadline for the read operation.
             deadline_.expires_from_now(boost::posix_time::seconds(30));
@@ -371,26 +371,26 @@ private:
         // ---------------------------------------------------------------------
         // Close the temporary file
         // ---------------------------------------------------------------------
-        ofs.close();
+        ofs_.close();
         // ---------------------------------------------------------------------
-        if (boost::filesystem::file_size(tmpFile) == len)
+        if (boost::filesystem::file_size(tmpFile_) == len_)
         {
             // Rename the temporary file with .download extension to the name of the original file
-            if (std::rename(tmpFile.c_str(), file.c_str()))
-                std::cerr << "Error in downloading finished: renaming downloaded file from " + tmpFile + " to " + file << std::endl;
+            if (std::rename(tmpFile_.c_str(), file_.c_str()))
+                std::cerr << "Error in downloading finished: renaming downloaded file from " + tmpFile_ + " to " + file_ << std::endl;
             else
                 // Send to process downloaded file to successor
-                successor->processFile(file);
+                successor_->processFile(file_);
         }
         else
-            std::cerr << "Error in downloading finished: downloaded file " + tmpFile + " is not complete!" << std::endl;
+            std::cerr << "Error in downloading finished: downloaded file " + tmpFile_ + " is not complete!" << std::endl;
     }
 
     // delete the temporary file
     int clear_unfinished()
     {
-        if (boost::filesystem::exists(tmpFile))
-            return std::remove(tmpFile.c_str());
+        if (boost::filesystem::exists(tmpFile_))
+            return std::remove(tmpFile_.c_str());
         else
             return 0;
     }
@@ -421,25 +421,25 @@ private:
         deadline_.async_wait(boost::bind(&URL::check_deadline, this));
     }
 
-    Viewer &                view;
+    Viewer &                view_;
 
-    const std::string       fileExtension   = ".download";
-    const short             maxRedirectCnt  = 3; // maximum redirection
-    short                   redirectCnt     = 0; // counter of total redirections
+    const std::string       fileExtension_   = ".download";
+    const short             maxRedirectCnt_  = 3; // maximum redirection
+    short                   redirectCnt_     = 0; // counter of total redirections
     bool                    connStopped_{false}; // for fast indicating of closed connection in the async methods
-    long                    len;                 // Length of the file provided by server
-    std::regex              expresion{"^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$"};
-    std::smatch             match;
+    long                    len_;                 // Length of the file provided by server
+    std::regex              expresion_{"^((http[s]?):\\/?\\/?)([^:\\/\\s]+)(.*\\/)(.*)$"};
+    std::smatch             match_;
 
-    baio::io_service        io_service;
-    tcp::resolver           resolver_{io_service};
-    tcp::socket             socket_{io_service};
-    baio::deadline_timer    deadline_{io_service};
+    baio::io_service        io_service_;
+    tcp::resolver           resolver_{io_service_};
+    tcp::socket             socket_{io_service_};
+    baio::deadline_timer    deadline_{io_service_};
     baio::streambuf         request_;
     baio::streambuf         response_;
 
-    std::string             server, path, file, tmpFile, protocol;
-    std::ofstream           ofs;
+    std::string             server_, path_, file_, tmpFile_, protocol_;
+    std::ofstream           ofs_;
 };
 
 #endif //PROCESSINGLOGS_URLSTRATEGY_H

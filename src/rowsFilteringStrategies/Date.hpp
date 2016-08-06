@@ -21,7 +21,7 @@ class Date: public IRow
 
 public:
     Date(std::ifstream *file, unsigned short rowCount, std::string date) :
-            IRow(file, rowCount), date(date)
+            IRow(file, rowCount), date_(date)
     { }
 
     virtual void read(long *inPos,
@@ -37,8 +37,8 @@ public:
 
         // If we previously hit EOF clear flags failbit
         // to be able start working with the file again
-        file->clear();
-        file->seekg(*inPos, std::ios_base::beg);
+        file_->clear();
+        file_->seekg(*inPos, std::ios_base::beg);
 
         int i = 0;
         std::string c1, c2, c3, c4;
@@ -47,18 +47,18 @@ public:
 
         try
         {
-            while (getline(*file, line))
+            while (getline(*file_, line))
             {
-                if (i < rowCount)
+                if (i < rowCount_)
                 {
-                    *outPos = file->tellg();
+                    *outPos = file_->tellg();
 
                     ss << line;
                     ss >> c1 >> c2 >> c3 >> c4;
                     ss.str(""); // erase the buffer
                     c4 = c4.substr(1, 2);  // Trim the date in read line
 
-                    if (c4 == date)
+                    if (c4 == date_)
                     {
                         rows->push_back(line);
                         ++i;
@@ -72,9 +72,9 @@ public:
         {
             std::cerr << "In Date strategy Exception happened: " << exception.what() << "\n"
                       << "Error bits are: "
-                      << "\nfailbit: " << file->fail()
-                      << "\neofbit: " << file->eof()
-                      << "\nbadbit: " << file->bad() << std::endl;
+                      << "\nfailbit: " << file_->fail()
+                      << "\neofbit: " << file_->eof()
+                      << "\nbadbit: " << file_->bad() << std::endl;
         }
 
 #ifndef NDEBUG
@@ -85,7 +85,7 @@ public:
     }
 
 private:
-    std::string date;
+    std::string date_;
 };
 
 

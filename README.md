@@ -31,7 +31,7 @@ More info about log format at: http://httpd.apache.org/docs/2.2/mod/mod_log_conf
 The application was designed to be modular. It can be extended for example to add an another chain for manipulating with the input argument (dir handlingFile) or add another strategy for displaying contents (dir rowsFilteringStrategies).
 Also the class RequestMethod was designed in such manner that one can be more specific for selecting names of the request method by adjusting the enum Request and define its explicit version in
 ```
-std::map<Request, std::vector<std::string>> type;
+std::map<Request, std::vector<std::string>> type_;
 ```
 ![alt tag](https://raw.githubusercontent.com/efDidymos/ProcessingLogs/master/Diagram-ProcessingLogs.png)
 
