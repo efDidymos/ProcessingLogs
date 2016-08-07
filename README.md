@@ -3,6 +3,7 @@
 [Info](#info)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Structure of the application](#structure-of-the-application)<br />
 [Ubuntu instructions](#ubuntu-instructions)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Updating toolchain in Ubuntu 16.04 LTS](#updating-toolchain-in-ubuntu-1604-lts)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Updating toolchain in Ubuntu 14.04 LTS](#updating-toolchain-in-ubuntu-1404-lts)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Installing Boost library](#installing-boost-library)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[From Ubuntu's repository](#from-ubuntus-repository)<br />
@@ -38,6 +39,12 @@ std::map<Request, std::vector<std::string>> type_;
 #Ubuntu instructions
 I decided to use the latest **C++14** standard.
 Therefore the compiler needs to be newer than Ubuntu's 14.04 LTS default g++-4.8, which can handle the standard and contains appropriate STL library without linkage issues. In Ubuntu 16.04 LTS is this problem solved because its default compiler is in version 5.4.
+
+##Updating toolchain in Ubuntu 16.04 LTS
+Just install new build tool by running command:
+```
+sudo add-apt-install cmake
+```
 
 ##Updating toolchain in Ubuntu 14.04 LTS
 Add external repository with:
