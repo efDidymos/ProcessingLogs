@@ -42,7 +42,7 @@ Therefore the compiler needs to be newer than Ubuntu's 14.04 LTS default g++-4.8
 ##Updating toolchain in Ubuntu 14.04 LTS
 Add external repository with:
 ```
-sudo add-apt-repository pp:ubuntu-toolchain-r/test
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 ```
 and after that update and upgrade your current development packages:
 ```
