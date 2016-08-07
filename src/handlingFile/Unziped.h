@@ -11,7 +11,7 @@
 /**
  * Class calls strategies for manipulating with the file
  */
-class Unziped: public IProcessing
+class Unziped : public IProcessing
 {
 public:
     Unziped(Viewer& view) : view_(view)
@@ -22,10 +22,10 @@ public:
      * can be performed on the file
      * @param file_name.log
      */
-    void process_file(std::string file_name) override;
+    void process_file(const std::string file_name) override;
 
 private:
-    inline void clearBuffer() { std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); }
+    inline void clearBuffer() const { std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); }
     Viewer& view_;
 };
 

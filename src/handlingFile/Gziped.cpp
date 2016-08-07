@@ -9,7 +9,7 @@
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 
-void Gziped::process_file(std::string file_name)
+void Gziped::process_file(const std::string file_name)
 {
     std::string ext = boost::filesystem::extension(file_name);
 
@@ -68,8 +68,7 @@ void Gziped::zlib_decompress(std::ifstream& ifs, const std::string& unziped_file
     {
         typedef char          char_type;
         typedef bio::sink_tag category;
-
-        std::ofstream& ofs;
+        std::ofstream&        ofs;
 
         safe_ofstream_sink(std::ofstream& ofs) : ofs(ofs)
         { }

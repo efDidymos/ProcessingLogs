@@ -16,7 +16,7 @@
 namespace baio = boost::asio;
 using boost::asio::ip::tcp;
 
-class URL: public IProcessing
+class URL : public IProcessing
 {
 public:
     URL(Viewer& view) : view_(view)
@@ -33,7 +33,7 @@ public:
      * atempt to download a file from new location
      * @param file_name as URL
      */
-    void process_file(std::string file_name) override
+    void process_file(const std::string file_name) override
     {
         // Check if the argument is some type of URL
         if (std::regex_match(file_name, match_, expresion_))

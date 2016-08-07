@@ -14,13 +14,12 @@
 /**
  * Class display all rows from file
  */
-class AllRows: public IRow
+class AllRows : public IRow
 {
 public:
-    AllRows(std::ifstream *file, unsigned short row_cnt) :
-            IRow(file, row_cnt)
-    {
-    }
+    AllRows(std::ifstream *file, unsigned short row_cnt)
+        : IRow(file, row_cnt)
+    { }
 
     void read(long *in_pos,
               long *out_pos,

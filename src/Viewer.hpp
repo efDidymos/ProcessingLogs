@@ -47,7 +47,7 @@ public:
      * @param value
      * @param base
      */
-    void print_prog_bar(std::string msg, double value, long base)
+    void print_prog_bar(const std::string msg, const double value, const long base) const
     {
         std::string bar;
         int percent = ((value / base) * 100);
@@ -108,7 +108,7 @@ public:
     /**
      * Print the sub sub menu for filtering by Date
      */
-    void print_filter_cmd_menu_date()
+    void print_filter_cmd_menu_date() const
     {
         std::cout << "\r Please enter day [01-31] and press ENTER:                        ";
         std::cout.flush();
@@ -117,7 +117,7 @@ public:
     /**
      * Print the sub sub menu for filtering by HTTP Code
      */
-    void print_filter_cmd_menu_HTTP_code()
+    void print_filter_cmd_menu_HTTP_code() const
     {
         std::cout << "\r Please enter code [1xx - 5xx] and press ENTER:                   ";
         std::cout.flush();
@@ -143,7 +143,7 @@ public:
     /**
      * Disables buffered input
      */
-    void toggle_buff_off()
+    void toggle_buff_off() const
     {
         struct termios t;
         tcgetattr(STDIN_FILENO, &t);
@@ -154,7 +154,7 @@ public:
     /**
      * Enables buffered input
      */
-    void toggle_buff_on()
+    void toggle_buff_on() const
     {
         struct termios t;
         tcgetattr(STDIN_FILENO, &t);

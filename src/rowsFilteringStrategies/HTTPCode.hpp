@@ -16,7 +16,7 @@
 /**
  * Class display only rows for specific HTTP Code
  */
-class HTTPCode: public IRow
+class HTTPCode : public IRow
 {
 
 public:

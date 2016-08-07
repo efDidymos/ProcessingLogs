@@ -29,7 +29,7 @@ class RequestMethod : public IRow
 {
 public:
     RequestMethod(std::ifstream *file, unsigned short row_cnt, Request req_meth)
-            : IRow(file, row_cnt), req_meth_(req_meth)
+        : IRow(file, row_cnt), req_meth_(req_meth)
     { }
 
     void read(long *in_pos,

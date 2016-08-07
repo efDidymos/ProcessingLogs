@@ -13,13 +13,14 @@
 class Gziped : public IProcessing
 {
 public:
-    Gziped() {}
+    Gziped()
+    {}
 
     /**
      * Unpack the file
      * @param file_name.gz
      */
-    void process_file(std::string file_name) override;
+    void process_file(const std::string file_name) override;
 
 private:
     /**

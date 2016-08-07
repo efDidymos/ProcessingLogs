@@ -10,7 +10,7 @@
 #include "../rowsFilteringStrategies/RequestMethod.hpp"
 #include "../rowsFilteringStrategies/Date.hpp"
 
-void Unziped::process_file(std::string file_name)
+void Unziped::process_file(const std::string file_name)
 {
     std::string ext = boost::filesystem::extension(file_name);
 

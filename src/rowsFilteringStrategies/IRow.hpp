@@ -19,8 +19,8 @@ public:
      * @param row_cnt
      * @return
      */
-    IRow(std::ifstream *file, unsigned short row_cnt) :
-            file_(file), row_cnt_(row_cnt)
+    IRow(std::ifstream *file, unsigned short row_cnt)
+        : file_(file), row_cnt_(row_cnt)
     {
         // Before use repeated working with file by changing strategy
         // reset the EOF and failbit

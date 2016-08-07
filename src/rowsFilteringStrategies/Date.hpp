@@ -16,12 +16,12 @@
 /**
  * Class display only rows for specific day
  */
-class Date: public IRow
+class Date : public IRow
 {
 
 public:
-    Date(std::ifstream *file, unsigned short row_cnt, std::string date) :
-            IRow(file, row_cnt), date_(date)
+    Date(std::ifstream *file, unsigned short row_cnt, std::string date)
+        : IRow(file, row_cnt), date_(date)
     { }
 
     virtual void read(long *in_pos,
