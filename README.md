@@ -12,6 +12,7 @@
 [Compilation](#compilation)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
+[Cleaning](#cleaning)<br />
 [Run](#run)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
@@ -144,6 +145,13 @@ cd /path/to/ProcessingLogs/
 mkdir build
 cd build && cmake ..
 make
+```
+
+#Cleaning
+Just remove the build directory:
+```
+cd /path/to/ProcessingLogs/
+rm -rf build
 ```
 
 #Run
