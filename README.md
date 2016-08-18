@@ -131,8 +131,9 @@ For interested person in deeply insights, recommended process is jump over the c
 
 ##Compiling only the sources
 ```
-cd /path/to/ProcessingLogs/src/
-cmake CMakeLists.txt
+cd /path/to/ProcessingLogs/
+mkdir build
+cd build && cmake ..
 make
 ```
 And now, if you want you can [execute the application](#running-only-sources).
@@ -140,18 +141,19 @@ And now, if you want you can [execute the application](#running-only-sources).
 ##Compiling the whole application src + test
 ```
 cd /path/to/ProcessingLogs/
-cmake CMakeLists.txt
+mkdir build
+cd build && cmake ..
 make
 ```
 
 #Run
 ##Running only sources
 ```
-./path/to/ProcessingLogs/src/ProcessingLogs <file>
+./path/to/ProcessingLogs/build/src/ProcessingLogs <file>
 ```
 or
 ```
-./path/to/ProcessingLogs/src/ProcessingLogs <url_address>
+./path/to/ProcessingLogs/build/src/ProcessingLogs <url_address>
 ```
 ###Usage
 ```
@@ -168,5 +170,5 @@ or
 ##Running tests
 For this step is required that the application was compiled with the unit tests. If not jump to [compile src + tests](#compiling-the-whole-application-src--test) section.
 ```
-./path/to/ProcessingLogs/test/<file>
+./path/to/ProcessingLogs/build/test/<file>
 ```
