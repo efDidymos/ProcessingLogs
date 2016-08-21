@@ -11,14 +11,14 @@
 [Getting the sources of application](#getting-the-sources-of-application)<br />
 [Compilation](#compilation)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Building distribution .deb package](#asd)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Building distribution .deb package](#building-distribution-deb-package)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
 [Cleaning](#cleaning)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Build from sources](#asd)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;[Build as distribution package](#)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Build from sources](#build-from-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Build as distribution package](#build-as-distribution-package)<br />
 [Run](#run)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running only sources installed via distribution package](#asd)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running only sources installed via distribution package](#running-only-sources-installed-via-distribution-package)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Running tests](#running-tests)<br />
 
@@ -182,7 +182,7 @@ rm -rf build
 ```
 ##Build as distribution package
 If you built and installed the .deb package then you need to remove it from your package system. 
-Therefore for Ubuntu run `sudo apt-get remove processinglogs`
+Therefore for Ubuntu run: `sudo apt-get remove processinglogs`
 
 #Run
 ##Running only sources
@@ -194,7 +194,7 @@ or
 ./path/to/ProcessingLogs/build/src/ProcessingLogs <url_address>
 ```
 ###Running only sources installed via distribution package
-If you followed instructions on Building distribution .deb package then you can simply execeute
+If you followed instructions on [Building distribution .deb package](#building-distribution-deb-package) then you can simply execeute:
 ```
 ProcessingLogs <url_address>
 ```
