@@ -11,10 +11,14 @@
 [Getting the sources of application](#getting-the-sources-of-application)<br />
 [Compilation](#compilation)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compiling only the sources](#compiling-only-the-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Building distribution .deb package](#asd)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Compiling the whole application src + test](#compiling-the-whole-application-src--test)<br />
 [Cleaning](#cleaning)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Build from sources](#asd)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;[Build as distribution package](#)<br />
 [Run](#run)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Running only sources](#running-only-sources)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Running only sources installed via distribution package](#asd)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Usage](#usage)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;[Running tests](#running-tests)<br />
 
@@ -132,12 +136,34 @@ For interested person in deeply insights, recommended process is jump over the c
 
 ##Compiling only the sources
 ```
-cd /path/to/ProcessingLogs/
+cd /path/to/ProcessingLogs/src
 mkdir build
 cd build && cmake ..
 make
 ```
 And now, if you want you can [execute the application](#running-only-sources).
+Or if you are interested in building the distribution package read bellow instructions.
+
+###Building distribution .deb package
+Edit the CMakeLists.txt file with your favourite text editor:
+```
+vim /path/to/ProcessingLogs/src/CMakeLists.txt
+```
+locate and change the line from
+```
+set(GENERATE_DEB false) # Switch to build .deb package
+```
+to:
+```
+set(GENERATE_DEB true) # Switch to build .deb package
+```
+After that jump to build dir from previous section and regenerate builds with cmake. Finally build the distribution (.deb) package inside the current dir (/path/to/ProcessingLogs/src/build) by executing the command make package:
+```
+cd /path/to/ProcessingLogs/src/build
+cmake ..
+make package
+```
+At the end you can install the package via `sudo dpkg -i ProcessingLogs-1.0.0-Linux.deb`
 
 ##Compiling the whole application src + test
 ```
@@ -148,11 +174,15 @@ make
 ```
 
 #Cleaning
+##Build from sources
 Just remove the build directory:
 ```
 cd /path/to/ProcessingLogs/
 rm -rf build
 ```
+##Build as distribution package
+If you built and installed the .deb package then you need to remove it from your package system. 
+Therefore for Ubuntu run `sudo apt-get remove processinglogs`
 
 #Run
 ##Running only sources
@@ -163,6 +193,12 @@ or
 ```
 ./path/to/ProcessingLogs/build/src/ProcessingLogs <url_address>
 ```
+###Running only sources installed via distribution package
+If you followed instructions on Building distribution .deb package then you can simply execeute
+```
+ProcessingLogs <url_address>
+```
+
 ###Usage
 ```
 [q]-quit  [f]-filter options  [j]-move down  [k]-move up
